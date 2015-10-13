@@ -7,6 +7,7 @@
   xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl"
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:wfn="http://www.wwp.northeastern.edu/ns/functions"
   exclude-result-prefixes="#all">
 
   <xd:doc scope="stylesheet">
@@ -44,6 +45,7 @@
   <xsl:param name="jqueryBlockUIJS" select="concat($filePrefix,'js/jquery/plugins/jquery.blockUI.js')"/>
   <xsl:param name="teibpJS"    select="concat($filePrefix,'js/tapas-generic.js')"/>
   <xsl:param name="fullHTML"   select="'false'"/> <!-- set to 'true' to get browsable output for debugging -->
+  <xsl:variable name="root" select="/" as="node()"/>
   <xsl:variable name="htmlFooter">
     <div id="footer"> This is the <a href="{$tapasHome}">TAPAS</a> generic view.</div>
   </xsl:variable>
@@ -212,13 +214,18 @@
 
   <xsl:template name="contextual">
     <div id="tei_contextual">
-      <xsl:for-each select="
-          //name/@ref
-        | //orgName/@ref
-        | //persName/@ref
-        | //placeName/@ref
-        | //rs/@ref">
-        <xsl:sort select="concat(local-name(..),'=',.)"/>
+      <xsl:variable name="list_of_refs">
+        <xsl:for-each select="
+            //name/@ref
+          | //orgName/@ref
+          | //persName/@ref
+          | //placeName/@ref
+          | //rs/@ref">
+          <xsl:sort select="concat(local-name(..),'=',.)"/>
+          <xsl:value-of select="."/>
+        </xsl:for-each>
+      </xsl:variable>
+      <xsl:for-each select="distinct-values( $list_of_refs )">
         <xsl:call-template name="generateContextItem">
           <xsl:with-param name="ref" select="."/>
         </xsl:call-template>
@@ -454,16 +461,21 @@
     </xd:desc>
   </xd:doc>
   <xsl:template match="figure[graphic[@url]]" priority="99">
+    <!-- Checking all data as of 2015-08-29, there are no <figure>s -->
+    <!-- that use <media>, <formula>, or <binaryObject>, nor any that -->
+    <!-- have multiple <head>s. However, there are 2 cases (in 7 files -->
+    <!-- due to version duplication, I think) that have multiple -->
+    <!-- <figDesc> children. -->
     <xsl:element name="{local-name(.)}">
       <xsl:apply-templates select="@*"/>
       <xsl:call-template name="addID"/>
-      <img alt="{normalize-space(figDesc)}" src="{graphic/@url}"/>
-      <xsl:apply-templates select="*[ not( self::graphic | self::figDesc ) ]"/>
+      <img alt="{wfn:mult_to_1(figDesc)}" src="{graphic/@url}"/>
+      <xsl:apply-templates select="* except ( self::graphic, self::figDesc )"/>
     </xsl:element>
   </xsl:template>
 
   <xsl:template name="addID">
-    <xsl:if test="not(@xml:id) and not(ancestor::eg:egXML)">
+    <xsl:if test="not( @xml:id ) and not( ancestor::eg:egXML )">
       <xsl:attribute name="id">
         <xsl:call-template name="generate-unique-id">
           <xsl:with-param name="root" select="generate-id()"/>
@@ -857,8 +869,14 @@
         <xsl:comment> uri=<xsl:value-of select="$uri"/> </xsl:comment>
         <xsl:comment> scheme=<xsl:value-of select="$scheme"/> </xsl:comment>
         <xsl:comment> fragID=<xsl:value-of select="$fragID"/> </xsl:comment>
-        <xsl:if test="id( $uri )">
-          <xsl:apply-templates select="id( $uri )" mode="genCon">
+        <xsl:variable name="IDentified">
+          <xsl:for-each select="$root">
+            <xsl:copy-of select="id( $uri )"/>
+          </xsl:for-each>
+        </xsl:variable>
+        <xsl:comment> IDentified, which is <xsl:value-of select="exists($IDentified)"/>=<xsl:value-of select="$IDentified"/>.</xsl:comment>
+        <xsl:if test="$IDentified">
+          <xsl:apply-templates select="$IDentified" mode="genCon">
             <xsl:with-param name="ref" select="$ref"/>
           </xsl:apply-templates>
         </xsl:if>
@@ -869,8 +887,14 @@
         <xsl:comment> scheme=<xsl:value-of select="$scheme"/> </xsl:comment>
         <xsl:comment> fragID=<xsl:value-of select="$fragID"/> </xsl:comment>
         <!-- just a bare name identifier, i.e. local -->
-        <xsl:if test="id( $fragID )">
-          <xsl:apply-templates select="id( $fragID )" mode="genCon">
+        <xsl:variable name="IDentified">
+          <xsl:for-each select="$root">
+            <xsl:copy-of select="id( $fragID )"/>
+          </xsl:for-each>
+        </xsl:variable>
+        <xsl:comment> IDentified, which is <xsl:value-of select="exists($IDentified)"/>=<xsl:value-of select="$IDentified"/>.</xsl:comment>
+        <xsl:if test="$IDentified">
+          <xsl:apply-templates select="$IDentified" mode="genCon">
             <xsl:with-param name="ref" select="$ref"/>
           </xsl:apply-templates>
         </xsl:if>
@@ -1219,5 +1243,20 @@
       </span>
     </xsl:for-each>
   </xsl:template>
+
+  <xd:doc>
+    <xd:desc>Take one or more nodes (most likely child elements),
+    and convert to a single string</xd:desc>
+  </xd:doc>
+  <xsl:function name="wfn:mult_to_1">
+    <xsl:param name="nodes"/>
+    <!-- need to add heuristics someday to insert proper punction -->
+    <xsl:variable name="one">
+      <xsl:for-each select="$nodes">
+        <xsl:value-of select="concat(.,' ')"/>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:value-of select="normalize-space( $one )"/>
+  </xsl:function>
 
 </xsl:stylesheet>
