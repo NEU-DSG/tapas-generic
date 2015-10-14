@@ -80,10 +80,12 @@
 
   <xd:doc>
     <xd:desc>
-      <xd:p>Match document root and maybe create and html5 wrapper for the
-      the TEI document, which is copied, with some modification, into an
-      HTML <tt>&lt;div></tt>. Depending on value of the 'fullHTML' parameter,
-      we either include the HTML wrappre or only the <tt>&lt;div></tt>.</xd:p>
+      <xd:p>Match document root, and process the input
+      the TEI document in several passes which copy it, with some modification, into an
+      HTML <tt>&lt;div></tt>. Then, depending on value of the 'fullHTML' parameter,
+      output that <tt>&lt;div></tt> in an HTML5 wrapper (so the result can
+        be viewed stand-alone, mostly for debugging), or only the <tt>&lt;div></tt>
+        itself.</xd:p>
     </xd:desc>
   </xd:doc>
   <xsl:template match="/" name="htmlShell" priority="42">
@@ -106,7 +108,7 @@
         </html>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:if test="$fullHTML != 'false'">
+        <xsl:if test="$fullHTML ne 'false'">
           <xsl:message>WARNING: unrecognized value of 'fullHTML' parameter; presuming false</xsl:message>
         </xsl:if>
         <xsl:copy-of select="$tg"/>
@@ -231,7 +233,9 @@
       <xsl:for-each select="distinct-values( $list_of_refs )">
         <xsl:variable name="thisRef" select="."/>
         <xsl:message>debug3: generateContextItem( <xsl:value-of select="."/> )</xsl:message>
-        <xsl:apply-templates select="($root//(name|orgName|persName|placeName|rs)[@ref eq $thisRef])[1]" mode="generateContextItem"/>
+        <xsl:call-template name="generateContextItem">
+          <xsl:with-param name="ref" select="$thisRef"/>
+        </xsl:call-template>
       </xsl:for-each>
     </div>
   </xsl:template>
@@ -621,7 +625,7 @@
     <xsl:param name="suffix"/>
     <xsl:variable name="id" select="concat($base,$suffix)"/>
     <xsl:choose>
-      <xsl:when test="key('IDs',$id)">
+      <xsl:when test="key('IDs', $id, $root)">
         <xsl:call-template name="generate-unique-id">
           <xsl:with-param name="base" select="$base"/>
           <xsl:with-param name="suffix" select="concat($suffix,'f')"/>
@@ -858,9 +862,9 @@
   <xd:doc>
     <xd:desc>Generate an entry for the separate "contextual information" block</xd:desc>
   </xd:doc>
-  <xsl:template match="name|orgName|persName|placeName|rs" mode="generateContextItem">
-    <xsl:comment> debug 0: referer is a <xsl:value-of select="local-name(.)"/>; ref=<xsl:value-of select="@ref"/>. </xsl:comment>
-    <xsl:variable name="uri" select="normalize-space(@ref)"/>
+  <xsl:template name="generateContextItem">
+    <xsl:param name="ref"/>
+    <xsl:variable name="uri" select="normalize-space($ref)"/>
     <xsl:variable name="scheme" select="substring-before($uri,':')"/>
     <xsl:variable name="fragID" select="substring-after($uri,'#')"/>
     <xsl:variable name="non-NCName-chars" select="concat(';?~ !@$%^&amp;*()+=[]&lt;&gt;,/\',$lcub,$rcub,$quot,$apos)"/>
@@ -880,7 +884,7 @@
         <xsl:comment> IDentified, which is a <xsl:value-of select="local-name($IDentified)"/>=<xsl:value-of select="$IDentified"/>.</xsl:comment>
         <xsl:if test="$IDentified">
           <xsl:apply-templates select="$IDentified" mode="genCon">
-            <xsl:with-param name="ref" select="@ref"/>
+            <xsl:with-param name="ref" select="$ref"/>
           </xsl:apply-templates>
         </xsl:if>
       </xsl:when>
@@ -898,24 +902,24 @@
         <xsl:comment> IDentified, which is a <xsl:value-of select="local-name($IDentified)"/>=<xsl:value-of select="$IDentified"/>.</xsl:comment>
         <xsl:if test="$IDentified">
           <xsl:apply-templates select="$IDentified" mode="genCon">
-            <xsl:with-param name="ref" select="@ref"/>
+            <xsl:with-param name="ref" select="$ref"/>
           </xsl:apply-templates>
         </xsl:if>
       </xsl:when>
       <xsl:when test="starts-with( $scheme,'http')  and  contains($uri,'wikipedia.org/')">
-        <xsl:comment> debug 4: Wikipedia!</xsl:comment>
+        <xsl:comment> debug 3: Wikipedia!</xsl:comment>
         <div class="contextualItem-world-wide-web">
           <a name="{$uri}" href="{$uri}">Wikipedia article</a>          
         </div>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:comment> debug 3: </xsl:comment>
+        <xsl:comment> debug 4: </xsl:comment>
         <xsl:comment> uri=<xsl:value-of select="$uri"/> </xsl:comment>
         <xsl:comment> scheme=<xsl:value-of select="$scheme"/> </xsl:comment>
         <xsl:comment> fragID=<xsl:value-of select="$fragID"/> </xsl:comment>
         <xsl:if test="document( $uri, $input )">
           <xsl:apply-templates select="document( $uri, $input )" mode="genCon">
-            <xsl:with-param name="ref" select="@ref"/>
+            <xsl:with-param name="ref" select="$ref"/>
           </xsl:apply-templates>
         </xsl:if>
       </xsl:otherwise>
@@ -944,9 +948,9 @@
   <!-- the possibility of <personGrp> or <nym> because there are *none* in -->
   <!-- the profiling data. -->
   <xsl:template match="org|person|place" mode="genCon">
-    <xsl:param name="flatRef"/>
     <div class="contextualItem-{local-name(.)}">
-      <a id="{substring-after($flatRef,'#')}"/>
+      <!-- This node *has* to have an @xml:id, or we would never have gotten here -->
+      <a id="{@xml:id}"/>
       <p class="identifier">
         <!-- We're relying on the fact that <orgName> does not appear as -->
         <!-- a child of <person> or <place>, <persName> does not appear -->
