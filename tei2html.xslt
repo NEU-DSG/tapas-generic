@@ -60,7 +60,12 @@
   </xsl:variable>
 
   <xsl:key name="IDs" match="//*" use="@xml:id"/>
-
+  <xsl:key name="REFs" match="//name" use="@ref"/>
+  <xsl:key name="REFs" match="//orgName" use="@ref"/>
+  <xsl:key name="REFs" match="//persName" use="@ref"/>
+  <xsl:key name="REFs" match="//placeName" use="@ref"/>
+  <xsl:key name="REFs" match="//rs" use="@ref"/>
+  
   <!-- special characters -->
   <xsl:variable name="quot"><text>"</text></xsl:variable>
   <xsl:variable name="apos"><text>'</text></xsl:variable>
@@ -214,21 +219,19 @@
 
   <xsl:template name="contextual">
     <div id="tei_contextual">
-      <xsl:variable name="list_of_refs">
-        <xsl:for-each select="
+      <xsl:variable name="list_of_refs"
+        select="tokenize( string-join(
             //name/@ref
           | //orgName/@ref
           | //persName/@ref
           | //placeName/@ref
-          | //rs/@ref">
-          <xsl:sort select="concat(local-name(..),'=',.)"/>
-          <xsl:value-of select="."/>
-        </xsl:for-each>
-      </xsl:variable>
+          | //rs/@ref,' '),'\s+')"/>
+      <xsl:message>debug1: <xsl:value-of select="$list_of_refs"/></xsl:message>
+      <xsl:message>debug2: <xsl:value-of select="distinct-values($list_of_refs)"/></xsl:message>
       <xsl:for-each select="distinct-values( $list_of_refs )">
-        <xsl:call-template name="generateContextItem">
-          <xsl:with-param name="ref" select="."/>
-        </xsl:call-template>
+        <xsl:variable name="thisRef" select="."/>
+        <xsl:message>debug3: generateContextItem( <xsl:value-of select="."/> )</xsl:message>
+        <xsl:apply-templates select="($root//(name|orgName|persName|placeName|rs)[@ref eq $thisRef])[1]" mode="generateContextItem"/>
       </xsl:for-each>
     </div>
   </xsl:template>
@@ -431,7 +434,7 @@
         <a class="note-marker">
           <xsl:variable name="ID">
             <xsl:call-template name="generate-unique-id">
-              <xsl:with-param name="root" select="generate-id()"/>
+              <xsl:with-param name="base" select="generate-id()"/>
             </xsl:call-template>
           </xsl:variable>          
           <xsl:attribute name="href">
@@ -478,7 +481,7 @@
     <xsl:if test="not( @xml:id ) and not( ancestor::eg:egXML )">
       <xsl:attribute name="id">
         <xsl:call-template name="generate-unique-id">
-          <xsl:with-param name="root" select="generate-id()"/>
+          <xsl:with-param name="base" select="generate-id()"/>
         </xsl:call-template>
       </xsl:attribute>
     </xsl:if>
@@ -614,13 +617,13 @@
     detected.</xd:param>
   </xd:doc>
   <xsl:template name="generate-unique-id">
-    <xsl:param name="root"/>
+    <xsl:param name="base"/>
     <xsl:param name="suffix"/>
-    <xsl:variable name="id" select="concat($root,$suffix)"/>
+    <xsl:variable name="id" select="concat($base,$suffix)"/>
     <xsl:choose>
       <xsl:when test="key('IDs',$id)">
         <xsl:call-template name="generate-unique-id">
-          <xsl:with-param name="root" select="$root"/>
+          <xsl:with-param name="base" select="$base"/>
           <xsl:with-param name="suffix" select="concat($suffix,'f')"/>
         </xsl:call-template>
       </xsl:when>
@@ -855,9 +858,9 @@
   <xd:doc>
     <xd:desc>Generate an entry for the separate "contextual information" block</xd:desc>
   </xd:doc>
-  <xsl:template name="generateContextItem">
-    <xsl:param name="ref"/>
-    <xsl:variable name="uri" select="normalize-space($ref)"/>
+  <xsl:template match="name|orgName|persName|placeName|rs" mode="generateContextItem">
+    <xsl:comment> debug 0: referer is a <xsl:value-of select="local-name(.)"/>; ref=<xsl:value-of select="@ref"/>. </xsl:comment>
+    <xsl:variable name="uri" select="normalize-space(@ref)"/>
     <xsl:variable name="scheme" select="substring-before($uri,':')"/>
     <xsl:variable name="fragID" select="substring-after($uri,'#')"/>
     <xsl:variable name="non-NCName-chars" select="concat(';?~ !@$%^&amp;*()+=[]&lt;&gt;,/\',$lcub,$rcub,$quot,$apos)"/>
@@ -869,15 +872,15 @@
         <xsl:comment> uri=<xsl:value-of select="$uri"/> </xsl:comment>
         <xsl:comment> scheme=<xsl:value-of select="$scheme"/> </xsl:comment>
         <xsl:comment> fragID=<xsl:value-of select="$fragID"/> </xsl:comment>
-        <xsl:variable name="IDentified">
+        <xsl:variable name="IDentified" as="element()?">
           <xsl:for-each select="$root">
             <xsl:copy-of select="id( $uri )"/>
           </xsl:for-each>
         </xsl:variable>
-        <xsl:comment> IDentified, which is <xsl:value-of select="exists($IDentified)"/>=<xsl:value-of select="$IDentified"/>.</xsl:comment>
+        <xsl:comment> IDentified, which is a <xsl:value-of select="local-name($IDentified)"/>=<xsl:value-of select="$IDentified"/>.</xsl:comment>
         <xsl:if test="$IDentified">
           <xsl:apply-templates select="$IDentified" mode="genCon">
-            <xsl:with-param name="ref" select="$ref"/>
+            <xsl:with-param name="ref" select="@ref"/>
           </xsl:apply-templates>
         </xsl:if>
       </xsl:when>
@@ -887,15 +890,15 @@
         <xsl:comment> scheme=<xsl:value-of select="$scheme"/> </xsl:comment>
         <xsl:comment> fragID=<xsl:value-of select="$fragID"/> </xsl:comment>
         <!-- just a bare name identifier, i.e. local -->
-        <xsl:variable name="IDentified">
+        <xsl:variable name="IDentified" as="element()?">
           <xsl:for-each select="$root">
             <xsl:copy-of select="id( $fragID )"/>
           </xsl:for-each>
         </xsl:variable>
-        <xsl:comment> IDentified, which is <xsl:value-of select="exists($IDentified)"/>=<xsl:value-of select="$IDentified"/>.</xsl:comment>
+        <xsl:comment> IDentified, which is a <xsl:value-of select="local-name($IDentified)"/>=<xsl:value-of select="$IDentified"/>.</xsl:comment>
         <xsl:if test="$IDentified">
           <xsl:apply-templates select="$IDentified" mode="genCon">
-            <xsl:with-param name="ref" select="$ref"/>
+            <xsl:with-param name="ref" select="@ref"/>
           </xsl:apply-templates>
         </xsl:if>
       </xsl:when>
@@ -912,7 +915,7 @@
         <xsl:comment> fragID=<xsl:value-of select="$fragID"/> </xsl:comment>
         <xsl:if test="document( $uri, $input )">
           <xsl:apply-templates select="document( $uri, $input )" mode="genCon">
-            <xsl:with-param name="ref" select="$ref"/>
+            <xsl:with-param name="ref" select="@ref"/>
           </xsl:apply-templates>
         </xsl:if>
       </xsl:otherwise>
