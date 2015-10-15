@@ -88,8 +88,10 @@
         itself.</xd:p>
     </xd:desc>
   </xd:doc>
-  <xsl:template match="/" name="htmlShell" priority="42">
-    <xsl:variable name="tg">
+  <xsl:template match="/" name="htmlShell" priority="42" mode="#default">
+    <!-- pass 1, "work" = most of the heavy lifting: -->
+    <!-- input is TEI, output is XHTML -->
+    <xsl:variable name="pass1">
       <div class="tapas-generic">
         <xsl:call-template name="toolbox"/>
         <xsl:call-template name="dialog"/>
@@ -98,12 +100,17 @@
         <!-- commented out 2014-09-28 by Syd xsl:copy-of select="$htmlFooter"/ -->
       </div>
     </xsl:variable>
+    <!-- pass 2, "TOCer" insert a TOC -->
+    <!-- input and output are both XHTML (so XPaths may need have prefixes) -->
+    <xsl:variable name="pass2">
+      <xsl:apply-templates mode="TOCer" select="$pass1"/>
+    </xsl:variable>
     <xsl:choose>
       <xsl:when test="$fullHTML eq 'true'">
         <html>
           <xsl:call-template name="htmlHead"/>
           <body>
-            <xsl:copy-of select="$tg"/>
+            <xsl:copy-of select="$pass2"/>
           </body>
         </html>
       </xsl:when>
@@ -111,7 +118,7 @@
         <xsl:if test="$fullHTML ne 'false'">
           <xsl:message>WARNING: unrecognized value of 'fullHTML' parameter; presuming false</xsl:message>
         </xsl:if>
-        <xsl:copy-of select="$tg"/>
+        <xsl:copy-of select="$pass2"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -124,14 +131,14 @@
     <xd:desc>Copy all attribute nodes from source XML tree to
         output document.</xd:desc>
   </xd:doc>
-  <xsl:template match="@*">
+  <xsl:template match="@*" mode="#all">
     <xsl:copy/>
   </xsl:template>
 
   <xd:doc>
     <xd:desc>Except @xml:id, which becomes @id</xd:desc>
   </xd:doc>
-  <xsl:template match="@xml:id">
+  <xsl:template match="@xml:id" mode="work">
     <!-- copy @xml:id to @id, which browsers use for internal links. -->
     <xsl:attribute name="id">
       <xsl:value-of select="."/>
@@ -139,7 +146,7 @@
   </xsl:template>
   
   <xd:doc>
-    <xd:desc>Template for elements.
+    <xd:desc>Template for elements, main "work" mode
         <xd:ul>
           <xd:li>ensure there is an <xd:i>id</xd:i> to every element (copy existing <xd:i>xml:id</xd:i> or add new)</xd:li>
           <xd:li>process rendition attributes</xd:li>
@@ -149,7 +156,7 @@
         </xd:ul>
     </xd:desc>
   </xd:doc>
-  <xsl:template match="*">
+  <xsl:template match="*" mode="work">
     <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
       <xsl:call-template name="addID"/>
       <xsl:call-template name="addRend"/>
@@ -159,11 +166,18 @@
   </xsl:template>
   
   <xd:doc>
-    <xd:desc>
-      <xd:p>Template to omit processing instructions and comments from output.</xd:p>
-    </xd:desc>
+    <xd:desc>For other modes, copy nodes over</xd:desc>
   </xd:doc>
-  <xsl:template match="processing-instruction()|comment()"/>
+  <xsl:template match="node()" mode="TOCer">
+    <xsl:copy>
+      <xsl:apply-templates select="@*|node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xd:doc>
+    <xd:desc>Template to omit processing instructions and comments from output.</xd:desc>
+  </xd:doc>
+  <xsl:template match="processing-instruction()|comment()" mode="work"/>
   
   <!-- ********************************************* -->
   <!-- Subroutines of the root "htmlShell" and its   -->
@@ -625,7 +639,7 @@
     <xsl:param name="suffix"/>
     <xsl:variable name="id" select="concat($base,$suffix)"/>
     <xsl:choose>
-      <xsl:when test="key('IDs', $id, $root)">
+      <xsl:when test="key('IDs', $id, $input)">
         <xsl:call-template name="generate-unique-id">
           <xsl:with-param name="base" select="$base"/>
           <xsl:with-param name="suffix" select="concat($suffix,'f')"/>
@@ -877,7 +891,7 @@
         <xsl:comment> scheme=<xsl:value-of select="$scheme"/> </xsl:comment>
         <xsl:comment> fragID=<xsl:value-of select="$fragID"/> </xsl:comment>
         <xsl:variable name="IDentified" as="element()?">
-          <xsl:for-each select="$root">
+          <xsl:for-each select="$input">
             <xsl:copy-of select="id( $uri )"/>
           </xsl:for-each>
         </xsl:variable>
@@ -895,7 +909,7 @@
         <xsl:comment> fragID=<xsl:value-of select="$fragID"/> </xsl:comment>
         <!-- just a bare name identifier, i.e. local -->
         <xsl:variable name="IDentified" as="element()?">
-          <xsl:for-each select="$root">
+          <xsl:for-each select="$input">
             <xsl:copy-of select="id( $fragID )"/>
           </xsl:for-each>
         </xsl:variable>
@@ -1186,7 +1200,7 @@
   </xsl:template>
   
   <xsl:template name="getSex">
-    <xsl:param name="sexCode" select="translate( .,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')"/>
+    <xsl:param name="sexCode" select="lower-case(.)"/>
     <xsl:choose>
       <xsl:when test="$sexCode = '0'">unknown</xsl:when>
       <xsl:when test="$sexCode = 'u'">unknown</xsl:when>
