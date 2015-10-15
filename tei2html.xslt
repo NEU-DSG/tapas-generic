@@ -89,6 +89,7 @@
     </xd:desc>
   </xd:doc>
   <xsl:template match="/" name="htmlShell" priority="42" mode="#default">
+    <xsl:message> tei2html( <xsl:value-of select="tokenize( document-uri(/),'/')[last()]"/> ) at <xsl:value-of select="current-dateTime()"/> </xsl:message>
     <!-- pass 1, "work" = most of the heavy lifting: -->
     <!-- input is TEI, output is XHTML -->
     <xsl:variable name="pass1">
@@ -131,7 +132,7 @@
     <xd:desc>Copy all attribute nodes from source XML tree to
         output document.</xd:desc>
   </xd:doc>
-  <xsl:template match="@*" mode="#all">
+  <xsl:template match="@*" mode="TOCer work">
     <xsl:copy/>
   </xsl:template>
 
@@ -160,13 +161,13 @@
     <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
       <xsl:call-template name="addID"/>
       <xsl:call-template name="addRend"/>
-      <xsl:apply-templates select="@* except ( @rend, @rendition, @style )"/>
-      <xsl:apply-templates select="node()"/>
+      <xsl:apply-templates select="@* except ( @rend, @rendition, @style )" mode="#current"/>
+      <xsl:apply-templates select="node()" mode="#current"/>
     </xsl:element>
   </xsl:template>
   
   <xd:doc>
-    <xd:desc>For other modes, copy nodes over</xd:desc>
+    <xd:desc>For other modes (currently only pass2=TOCer), copy nodes over</xd:desc>
   </xd:doc>
   <xsl:template match="node()" mode="TOCer">
     <xsl:copy>
@@ -229,7 +230,7 @@
 
   <xsl:template name="wrapper">
     <div id="tei_wrapper">
-      <xsl:apply-templates/>
+      <xsl:apply-templates mode="work"/>
     </div>
   </xsl:template>
 
@@ -242,11 +243,8 @@
           | //persName/@ref
           | //placeName/@ref
           | //rs/@ref,' '),'\s+')"/>
-      <xsl:message>debug1: <xsl:value-of select="$list_of_refs"/></xsl:message>
-      <xsl:message>debug2: <xsl:value-of select="distinct-values($list_of_refs)"/></xsl:message>
       <xsl:for-each select="distinct-values( $list_of_refs )">
         <xsl:variable name="thisRef" select="."/>
-        <xsl:message>debug3: generateContextItem( <xsl:value-of select="."/> )</xsl:message>
         <xsl:call-template name="generateContextItem">
           <xsl:with-param name="ref" select="$thisRef"/>
         </xsl:call-template>
@@ -267,10 +265,10 @@
       the Header.</xd:p>
     </xd:desc>
   </xd:doc>
-  <xsl:template match="teiHeader//title">
+  <xsl:template match="teiHeader//title" mode="work">
     <tei-title>
       <xsl:call-template name="addID"/>
-      <xsl:apply-templates select="@*|node()"/>
+      <xsl:apply-templates select="@*|node()" mode="#current"/>
     </tei-title>
   </xsl:template>
 
@@ -278,7 +276,7 @@
     <xd:desc>Transforms each TEI <tt>&lt;ref></tt> or <tt>&lt;ptr></tt>
       to an HTML <tt>&lt;a></tt> (link) element.</xd:desc>
   </xd:doc>
-  <xsl:template match="ref[@target]|ptr[@target]" priority="99">
+  <xsl:template match="ref[@target]|ptr[@target]" mode="work" priority="99">
     <xsl:variable name="gi">
       <xsl:choose>
         <xsl:when test="normalize-space(.) = ''">ptr</xsl:when>
@@ -314,8 +312,8 @@
       </xsl:choose>
     </xsl:variable>
     <a href="{$target}" class="{$class}">
-      <xsl:apply-templates select="@* except @target"/>
-      <xsl:apply-templates select="node()"/>
+      <xsl:apply-templates select="@* except @target" mode="#current"/>
+      <xsl:apply-templates select="node()" mode="#current"/>
       <xsl:if test="$gi = 'ptr'">
         <xsl:value-of select="$target"/>
       </xsl:if>
@@ -325,10 +323,10 @@
   <xd:doc>
     <xd:desc>Add an attribute explaining list layout to the CSS</xd:desc>
   </xd:doc>
-  <xsl:template match="list">
+  <xsl:template match="list" mode="work">
     <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
       <xsl:call-template name="addID"/>
-      <xsl:apply-templates select="@*"/>
+      <xsl:apply-templates select="@*" mode="#current"/>
       <!-- special-case to handle P5 used to use rend= for type= of <list> -->
       <xsl:variable name="rend" select="normalize-space( @rend )"/>
       <xsl:choose>
@@ -379,7 +377,7 @@
     <xd:desc>Try to tease out which <gi>quote</gi>s are block-level and which are inline</xd:desc>
   </xd:doc>
   <xsl:template match="q[not(@style|@rend|@rendition)]
-                 | quote[not(@style|@rend|@rendition)]">
+                 | quote[not(@style|@rend|@rendition)]" mode="work">
     <!-- BUG: should also be checking for a default <rendition> that applies -->
     <xsl:variable name="gi" select="local-name(.)"/>
     <!-- If preceding (non-whitespace only) text ends in whitespace, then -->
@@ -397,44 +395,44 @@
       </xsl:choose>
     </xsl:variable>
     <xsl:element name="{$gi}">
-      <xsl:apply-templates select="@* except @style"/>
+      <xsl:apply-templates select="@* except @style" mode="#current"/>
       <xsl:attribute name="style" select="concat( replace( @style,';\s*$',''), $style )"/>
-      <xsl:apply-templates select="node()"/>
+      <xsl:apply-templates select="node()" mode="#current"/>
     </xsl:element>
   </xsl:template>
 
   <xd:doc>
     <xd:desc>Indicate which <xd:i>div</xd:i>s should be in TOC</xd:desc>
   </xd:doc>
-  <xsl:template match="div">
+  <xsl:template match="div" mode="work">
     <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
-      <xsl:call-template name="addID"/>
-      <xsl:call-template name="addRend"/>
-      <xsl:apply-templates select="@* except ( @rend, @rendition, @style )"/>
       <xsl:variable name="sibdivs" select="parent::*/div"/>
       <xsl:if test="$sibdivs/p[ count(preceding-sibling::p) > 5 ]">
         <xsl:attribute name="data-tapas-tocme">
           <xsl:value-of select="true()"/>
         </xsl:attribute>
       </xsl:if>
-      <xsl:apply-templates select="node()"/>
+      <xsl:call-template name="addID"/>
+      <xsl:call-template name="addRend"/>
+      <xsl:apply-templates select="@* except ( @rend, @rendition, @style )" mode="#current"/>
+      <xsl:apply-templates select="node()" mode="#current"/>
     </xsl:element>
   </xsl:template>
   <xd:doc>
     <xd:desc>Indicate which <xd:i>lg</xd:i>s should be in TOC</xd:desc>
   </xd:doc>
-  <xsl:template match="lg">
+  <xsl:template match="lg" mode="work">
     <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
       <xsl:call-template name="addID"/>
       <xsl:call-template name="addRend"/>
-      <xsl:apply-templates select="@* except ( @rend, @rendition, @style )"/>
+      <xsl:apply-templates select="@* except ( @rend, @rendition, @style )" mode="#current"/>
       <xsl:variable name="siblgs" select="parent::*/lg"/>
       <xsl:if test="$siblgs[ count( descendant::l[ not(@prev) and not(@part='M') and not(@part='F') ] ) > 40 ]">
         <xsl:attribute name="data-tapas-tocme">
           <xsl:value-of select="true()"/>
         </xsl:attribute>
       </xsl:if>
-      <xsl:apply-templates select="node()"/>
+      <xsl:apply-templates select="node()" mode="#current"/>
     </xsl:element>
   </xsl:template>
   
@@ -442,7 +440,7 @@
     <xd:desc>Insert an HTML note-anchor before each <tt>&lt;note></tt>, except those
     that already have something pointing at them</xd:desc>
   </xd:doc>
-  <xsl:template match="text//note" priority="99">
+  <xsl:template match="text//note" priority="99" mode="work">
     <xsl:variable name="noteNum">
       <xsl:number value="count( preceding::note[ancestor::text] )+1" format="{$numNoteFmt}"/>
     </xsl:variable>
@@ -468,8 +466,8 @@
       </xsl:attribute>
       <xsl:call-template name="addID"/>
       <xsl:call-template name="addRend"/>
-      <xsl:apply-templates select="@* except ( @rend, @rendition, @style )"/>
-      <xsl:apply-templates select="node()"/>
+      <xsl:apply-templates select="@* except ( @rend, @rendition, @style )" mode="#current"/>
+      <xsl:apply-templates select="node()" mode="#current"/>
     </xsl:element>
   </xsl:template>
   
@@ -481,17 +479,17 @@
       <xd:p>Transforms TEI figure element to html img element.</xd:p>
     </xd:desc>
   </xd:doc>
-  <xsl:template match="figure[graphic[@url]]" priority="99">
+  <xsl:template match="figure[graphic[@url]]" priority="99" mode="work">
     <!-- Checking all data as of 2015-08-29, there are no <figure>s -->
     <!-- that use <media>, <formula>, or <binaryObject>, nor any that -->
     <!-- have multiple <head>s. However, there are 2 cases (in 7 files -->
     <!-- due to version duplication, I think) that have multiple -->
     <!-- <figDesc> children. -->
     <xsl:element name="{local-name(.)}">
-      <xsl:apply-templates select="@*"/>
+      <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:call-template name="addID"/>
       <img alt="{wfn:mult_to_1(figDesc)}" src="{graphic/@url}"/>
-      <xsl:apply-templates select="* except ( self::graphic, self::figDesc )"/>
+      <xsl:apply-templates select="* except ( self::graphic, self::figDesc )" mode="#current"/>
     </xsl:element>
   </xsl:template>
 
@@ -506,7 +504,7 @@
   </xsl:template>
 
   <xsl:template name="addRend">
-    <xsl:apply-templates select="@rendition"/>
+    <xsl:apply-templates select="@rendition" mode="#current"/>
     <xsl:if test="@rend | @html:style | @style">
       <xsl:attribute name="style">
         <xsl:variable name="rend">
@@ -516,12 +514,12 @@
         <xsl:if test="$rend and not( substring($rend,string-length($rend),1) = ';')">
           <xsl:text>; </xsl:text>
         </xsl:if>
-        <xsl:apply-templates select="@style"/>
-        <xsl:apply-templates select="@html:style"/>
+        <xsl:apply-templates select="@style" mode="#current"/>
+        <xsl:apply-templates select="@html:style" mode="#current"/>
       </xsl:attribute>
     </xsl:if>
   </xsl:template>
-  <xsl:template match="@style | @html:style">
+  <xsl:template match="@style | @html:style" mode="work">
     <xsl:variable name="result" select="normalize-space(.)"/>
     <xsl:value-of select="$result"/>
     <xsl:if test="not( substring($result,string-length($result),1) = ';')">
@@ -691,7 +689,7 @@
     <xsl:value-of select="concat('{ ',normalize-space(.),'}&#x000A;')"/>
   </xsl:template>
 
-  <xsl:template match="pb">
+  <xsl:template match="pb" mode="work">
     <xsl:variable name="pn">
       <xsl:number count="//pb" level="any"/>
     </xsl:variable>
@@ -732,9 +730,9 @@
     </span>
   </xsl:template>
 
-  <xsl:template match="eg:egXML">
+  <xsl:template match="eg:egXML" mode="work">
     <xsl:element name="{local-name()}">
-      <xsl:apply-templates select="@*"/>
+      <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:call-template name="addID"/>
       <xsl:call-template name="xml-to-string">
         <xsl:with-param name="node-set">
@@ -744,7 +742,7 @@
     </xsl:element>
   </xsl:template>
 
-  <xsl:template match="eg:egXML//comment()">
+  <xsl:template match="eg:egXML//comment()" mode="work">
     <xsl:comment><xsl:value-of select="."/></xsl:comment>
   </xsl:template>
 
@@ -842,7 +840,7 @@
   <xd:doc>
     <xd:desc>add line numbers to poetry</xd:desc>
   </xd:doc>
-  <xsl:template match="lg/l[ not(@prev) and not( @part = ('M','F') )]">
+  <xsl:template match="lg/l[ not(@prev) and not( @part = ('M','F') )]" mode="work">
     <xsl:variable name="cnt" select="count(
       preceding::l
         [ not(@prev) and not( @part = ('M','F') ) ]
@@ -850,8 +848,8 @@
       ) +1"/>
     <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
       <xsl:call-template name="addRend"/>
-      <xsl:apply-templates select="@* except ( @rend, @rendition, @style )"/>
-      <xsl:apply-templates select="node()"/>
+      <xsl:apply-templates select="@* except ( @rend, @rendition, @style )" mode="#current"/>
+      <xsl:apply-templates select="node()" mode="#current"/>
       <xsl:if test="( $cnt mod 5 ) eq 0">
         <xsl:text>&#xA0;</xsl:text>
         <span class="poem-line-count">
@@ -864,14 +862,14 @@
   <xd:doc>
     <xd:desc>Template to drop insigificant whitespace nodes</xd:desc>
   </xd:doc>
-  <xsl:template match="choice/text()[normalize-space(.)='']"/>
+  <xsl:template match="choice/text()[normalize-space(.)='']" mode="work"/>
 
   <!-- ***************************** -->
   <!-- handle contextual information -->
   <!-- ***************************** -->
 
   <!-- ignore lists of contextual info when they occur in normal processing -->
-  <xsl:template match="nymList|listOrg|listPerson|placeList|nym|org|person|place"/>
+  <xsl:template match="nymList|listOrg|listPerson|placeList|nym|org|person|place" mode="work"/>
 
   <xd:doc>
     <xd:desc>Generate an entry for the separate "contextual information" block</xd:desc>
@@ -948,7 +946,7 @@
       <xsl:apply-templates select="*|@*|text()" mode="genCon"/>
     </xsl:element>
   </xsl:template>
-  <xsl:template match="@*" mode="genCon">
+  <xsl:template match="@*" mode="genCon" priority="2">
     <xsl:copy/>
   </xsl:template>
   <xsl:template match="@xml:id" mode="genCon"/>
@@ -1108,7 +1106,7 @@
       </xsl:choose>
     </xsl:param>
     <xsl:variable name="label" select="concat( local-name(.), $labelAdd )"/>
-    <span data-tapas-label="{$label}"><xsl:apply-templates/></span>
+    <span data-tapas-label="{$label}"><xsl:apply-templates mode="#current"/></span>
   </xsl:template>
   <xsl:template match="node()" mode="string">
     <!-- regularize the whitespace, but leave leading or trailing iff present -->
@@ -1128,7 +1126,7 @@
           <xsl:text>)</xsl:text>
         </xsl:variable>
         <p data-tapas-label="{$sesLabel}">
-          <span><xsl:apply-templates select="node()"/></span>
+          <span><xsl:apply-templates select="node()" mode="#current"/></span>
         </p>
       </xsl:when>
       <xsl:when test="not( preceding-sibling::*[ local-name(.) eq $me ] )">
@@ -1168,7 +1166,7 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="sex|@sex" mode="genCon">
+  <xsl:template match="sex|@sex" mode="genCon" priority="3">
     <p data-tapas-label="sex">
       <span>
         <xsl:choose>
@@ -1241,7 +1239,7 @@
                 <xsl:message>unable to determine normalized date of <xsl:value-of
                   select="concat( local-name(.),' with ' )"
                 /><xsl:for-each select="@*"><xsl:value-of select="concat( name(.),' ')"/></xsl:for-each>.</xsl:message>
-                <xsl:apply-templates select="./node()"/>
+                <xsl:apply-templates select="./node()" mode="#current"/>
               </xsl:when>
               <xsl:when test="@notAfter">
                 <xsl:text>sometime before </xsl:text>
@@ -1260,7 +1258,7 @@
             </xsl:choose>
           </span>
         </xsl:if>
-        <xsl:apply-templates select="./node()"/>
+        <xsl:apply-templates select="./node()" mode="#current"/>
       </span>
     </xsl:for-each>
   </xsl:template>
