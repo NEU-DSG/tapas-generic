@@ -107,7 +107,7 @@ Tapas.displayRefNoteData = function(e) {
         $("#tapas-ref-dialog").dialog('close');
         $("#tapas-ref-dialog").html(html);
         //placing the dialog for data display in the big white space currently there. Adjust position via jQueryUI rules for different behavior
-        $("#tapas-ref-dialog").dialog( "option", "position", { my: "right", at: "right", of: window });
+        $("#tapas-ref-dialog").dialog( "option", "position", { my: "right top+"+coords[0]/2, at: "right top+"+coords[0]/2, of: window });
         $("#tapas-ref-dialog").dialog( "option", "title", dialogTitle);
         $("#tapas-ref-dialog").dialog('open');
 
