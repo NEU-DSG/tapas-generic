@@ -28,6 +28,7 @@ Tapas.displayRefData = function(e) {
         var target = target.parentNode;
         ref = $(target).attr('ref');
     }
+    var coords = [e.clientX, e.clientY];
 
     var aTarget = Tapas.findATarget(ref);
 
@@ -45,7 +46,7 @@ Tapas.displayRefData = function(e) {
 
             //send the parentTarget (the ography element to the dialog so it can
             //dig up the identifier text
-            Tapas.refreshDialog(html, parentTarget);
+            Tapas.refreshDialog(html, parentTarget, coords);
         } else {
             console.log('failed finding target');
         }
@@ -54,11 +55,11 @@ Tapas.displayRefData = function(e) {
     }
 }
 
-Tapas.refreshDialog = function(html, target) {
+Tapas.refreshDialog = function(html, target, coords) {
     $("#tapas-ref-dialog").dialog('close');
     $("#tapas-ref-dialog").html(html);
     //placing the dialog for data display in the big white space currently there. Adjust position via jQueryUI rules for different behavior
-    $("#tapas-ref-dialog").dialog( "option", "position", { my: "right", at: "right", of: window });
+    $("#tapas-ref-dialog").dialog( "option", "position", { my: "right top+"+coords[0]/2, at: "right top+"+coords[0]/2, of: window });
 
     var identifierEl = target.children('p.identifier');
     if(identifierEl.length == 0) {
@@ -74,10 +75,11 @@ Tapas.refreshDialog = function(html, target) {
 Tapas.displayNoteData = function(e) {
     var html = '';
     var target = $(e.target);
+    var coords = [e.pageX, e.pageY];
     var tapasNoteNum = target.text();
     var note = $(".tapas-generic note[data-tapas-note-num = '" + tapasNoteNum + "']");
     html = note.html();
-    Tapas.refreshDialog(html, target);
+    Tapas.refreshDialog(html, target, coords);
 }
 
 Tapas.displayRefNoteData = function(e) {
