@@ -1,0 +1,328 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <meta charset="UTF-8"></meta>
+      <link id="maincss" rel="stylesheet" type="text/css" href="../css/tapasGdiplo.css"></link><script type="text/javascript" src="../js/jquery/jquery.min.js"></script><script type="text/javascript" src="../js/jquery-ui/ui/minified/jquery-ui.min.js"></script><script type="text/javascript" src="../js/contextualItems.js"></script><link rel="stylesheet" href="../css/jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css"></link><script type="text/javascript" src="../js/tapas-generic.js"></script><style type="text/css">
+      #tapas-ref-dialog{
+      z-index:1000;
+      }
+      align(center)case(allcaps)slant(italic)break(yes)break(no)</style><style type="text/css" id="tagusage-css">
+emph { slant(italic)}
+
+head { align(center)case(allcaps)}
+
+mw { break(yes)}
+
+label { break(no)}
+
+mcr { slant(italic)}
+</style>align(center)case(allcaps)slant(italic)break(yes)break(no)<title>TAPAS: Listing to Three Sides</title>
+   </head>
+   <body>
+      <div class="tapas-generic">
+         <div id="tapasToolbox">
+            <div id="tapasToolbox-pb"><label for="pbToggle">Hide page breaks</label><input type="checkbox" id="pbToggle"></input></div>
+            <div id="tapasToolbox-views"><label for="viewBox">Views</label><select id="viewBox">
+                  <option value="diplomatic" selected="selected">diplomatic</option>
+                  <option value="normal">normalized</option></select></div>
+         </div>
+         <div id="tapas-ref-dialog"></div>
+         <div id="tei_wrapper">
+            <TEI id="d22e2" xml:lang="en">
+               
+               <teiHeader id="d22e4">
+                  
+                  <fileDesc id="d22e6">
+                     
+                     <titleStmt id="d22e8">
+                        
+                        <tei-title id="d22e10">Listing to Three Sides</tei-title>
+                        
+                        <author id="d22e13">
+                           
+                           <name id="d22e15">Syd</name>
+                           
+                        </author>
+                        
+                     </titleStmt>
+                     
+                     <publicationStmt id="d22e20">
+                        
+                        <p id="d22e22">unpublished work used for testing</p>
+                        
+                     </publicationStmt>
+                     
+                     <sourceDesc id="d22e26">
+                        	
+                        <p id="d22e28">Born digital.</p>
+                        
+                     </sourceDesc>
+                     
+                  </fileDesc>
+                  
+                  <encodingDesc id="d22e33">
+                     
+                     <tagsDecl id="d22e35">
+                        
+                        <rendition id="r.head">align(center)case(allcaps)</rendition>
+                        
+                        <rendition id="r.it">slant(italic)</rendition>
+                        
+                        <rendition id="r.brk">break(yes)</rendition>
+                        
+                        <rendition id="r.nobrk">break(no)</rendition>
+                        
+                        <namespace id="d22e49" name="http://www.tei-c.org/ns/1.0">
+                           
+                           <tagUsage id="d22e51" gi="emph" render="#r.it"></tagUsage>
+                           
+                           <tagUsage id="d22e53" gi="head" render="#r.head"></tagUsage>
+                           
+                           <tagUsage id="d22e55" gi="mw" render="#r.brk"></tagUsage>
+                           
+                           <tagUsage id="d22e57" gi="label" render="#r.nobrk"></tagUsage>
+                           
+                           <tagUsage id="d22e59" gi="mcr" render="#r.it"></tagUsage>
+                           
+                        </namespace>
+                        
+                     </tagsDecl>
+                     
+                  </encodingDesc>
+                  
+               </teiHeader>
+               
+               <text id="d22e65">
+                  
+                  <front id="d22e67">
+                     
+                     <div id="d22e69" style="align(right)slant(italics); " type="acknowledgement">
+                        
+                        <p id="d22e71">Information gleefully obtained from <a href="http://listverse.com/" class="ref-external">listverse.com</a> as well as
+                           several other sources.
+                        </p>
+                        
+                     </div>
+                     
+                  </front>
+                  
+                  <body id="d22e79">
+                     
+                     <div id="d22e81" style="; background-color: #FED;" data-tapas-tocme="true">
+                        	
+                        <head id="d22e83">untyped soup</head>
+                        	
+                        <p id="d22e86">I.e., lists that do not have 
+                           <att id="d22e88">type</att> floating in
+                           	the soup on their own, outside of 
+                           <gi id="d22e91">p</gi>.
+                        </p>
+                        	
+                        <p id="d22e95">First, a simple list of short 
+                           <gi id="d22e97">item</gi>s:
+                        </p>
+                        	
+                        <list id="d22e101" data-tapas-list-type="idunno"></list>
+                        	
+                        <p id="d22e141">Second, a simple list of mostly long items</p>
+                        	
+                        <list id="d22e145" data-tapas-list-type="idunno"></list>
+                        	
+                        <p id="d22e208">label-item pairs, short</p>
+                        	
+                        <list id="d22e211" data-tapas-list-type="LIP"></list>
+                        	
+                        <p id="d22e280">label-item pairs, long</p>
+                        
+                        <list id="d22e283" data-tapas-list-type="LIP"></list>
+                        	
+                        <p id="d22e528">labels inside items, short. Note that the default rendition
+                           	for 
+                           <gi id="d22e530">label</gi> is 
+                           <val id="d22e533">break(no)</val>.
+                        </p>
+                        	
+                        <list id="d22e538" data-tapas-list-type="LII"></list>
+                        	
+                        <p id="d22e602">labels inside items, long</p>
+                        
+                        <list id="d22e605" data-tapas-list-type="LII"></list>
+                        
+                     </div>
+                     
+                     <div id="d22e637" style="; background-color: #EDF;" data-tapas-tocme="true">
+                        	
+                        <head id="d22e639">typed soup</head>
+                        	
+                        <p id="d22e642">I.e., lists that DO have a 
+                           <att id="d22e644">type</att> or
+                           	
+                           <att id="d22e647">rend</att>, floating in the soup on their own, outside of
+                           	
+                           <gi id="d22e650">p</gi>.
+                        </p>
+                        	
+                        <p id="d22e654">Note: we should treat the values 
+                           <val id="d22e656">ordered</val>,
+                           	
+                           <val id="d22e659">bulleted</val>, and 
+                           <val id="d22e662">simple</val> the same whether
+                           	they are on 
+                           <att id="d22e665">type</att> (the old system) or
+                           	
+                           <att id="d22e668">rend</att> (the new system). If both attrs occur with one
+                           	of those values, 
+                           <att id="d22e672">rend</att> should win.
+                        </p>
+                        	
+                        <p id="d22e676">First, a simple list of
+                           	short 
+                           <gi id="d22e678">item</gi>s:
+                        </p>
+                        	
+                        <list id="d22e682" rend="ordered" type="ordered" data-tapas-list-type="idunno"></list>
+                        	
+                        <p id="d22e723">Second, a simple list of mostly long items</p>
+                        	
+                        <list id="d22e726" type="bulleted" data-tapas-list-type="idunno"></list>
+                        	
+                        <p id="d22e789">label-item pairs, short</p>
+                        	
+                        <list id="d22e792" type="gloss" data-tapas-list-type="LIP"></list>
+                        	
+                        <p id="d22e861">label-item pairs, long</p>
+                        
+                        <list id="d22e864" type="gloss" data-tapas-list-type="LIP"></list>
+                        	
+                        <p id="d22e1110">labels inside items, short. Note that the default rendition
+                           	for 
+                           <gi id="d22e1112">label</gi> is 
+                           <val id="d22e1115">break(no)</val>.
+                        </p>
+                        	
+                        <list id="d22e1119" type="toc" data-tapas-list-type="LII"></list>
+                        	
+                        <p id="d22e1183">labels inside items, long</p>
+                        
+                        <list id="d22e1186" rend="simple" type="simple" data-tapas-list-type="LII"></list>
+                        
+                     </div>
+                     
+                     
+                     <div id="d22e1220" style="; background-color: #DFE;" data-tapas-tocme="true">
+                        	
+                        <head id="d22e1222">untyped chunk</head>
+                        	
+                        <p id="d22e1225">I.e., lists that do not have 
+                           <att id="d22e1227">type</att> inside a
+                           	
+                           <gi id="d22e1230">p</gi>.
+                        </p>
+                        	
+                        <p id="d22e1234">First, a simple list of short 
+                           <gi id="d22e1236">item</gi>s:
+                           	
+                           <list id="d22e1239" data-tapas-list-type="idunno"></list>
+                           	
+                        </p>
+                        	
+                        <p id="d22e1280">Second, a simple list of mostly long items
+                           	
+                           <list id="d22e1282" data-tapas-list-type="idunno"></list>
+                        </p>
+                        	
+                        <p id="d22e1345">label-item pairs, short
+                           	
+                           <list id="d22e1347" data-tapas-list-type="LIP"></list>
+                        </p>
+                        	
+                        <p id="d22e1417">label-item pairs, long
+                           
+                           <list id="d22e1419" data-tapas-list-type="LIP"></list>
+                        </p>
+                        	
+                        <p id="d22e1664">labels inside items, short. Note that the default rendition
+                           	for 
+                           <gi id="d22e1666">label</gi> is 
+                           <val id="d22e1669">break(no)</val>.
+                           	
+                           <list id="d22e1672" data-tapas-list-type="LII"></list>
+                        </p>
+                        	
+                        <p id="d22e1736">labels inside items, long
+                           
+                           <list id="d22e1738" data-tapas-list-type="LII"></list>
+                        </p>
+                        
+                     </div>
+                     
+                     <div id="d22e1770" style="; background-color: #DEF;" data-tapas-tocme="true">
+                        	
+                        <head id="d22e1772">typed chunks</head>
+                        	
+                        <p id="d22e1775">I.e., lists that DO have a 
+                           <att id="d22e1777">type</att> or
+                           	
+                           <att id="d22e1780">rend</att>, inside 
+                           <gi id="d22e1783">p</gi>.
+                        </p>
+                        	
+                        <p id="d22e1787">Note: we should treat the values 
+                           <val id="d22e1789">ordered</val>,
+                           	
+                           <val id="d22e1792">bulleted</val>, and 
+                           <val id="d22e1795">simple</val> the same whether
+                           	they are on 
+                           <att id="d22e1798">type</att> (the old system) or
+                           	
+                           <att id="d22e1801">rend</att> (the new system). If both attrs occur with one
+                           	of those values, 
+                           <att id="d22e1805">rend</att> should win.
+                        </p>
+                        	
+                        <p id="d22e1809">First, a simple list of
+                           	short 
+                           <gi id="d22e1811">item</gi>s:
+                           	
+                           <list id="d22e1814" rend="ordered" type="ordered" data-tapas-list-type="idunno"></list>
+                        </p>
+                        	
+                        <p id="d22e1854">Second, a simple list of mostly long items
+                           	
+                           <list id="d22e1856" type="bulleted" data-tapas-list-type="idunno"></list>
+                        </p>
+                        	
+                        <p id="d22e1920">label-item pairs, short
+                           	
+                           <list id="d22e1922" type="gloss" data-tapas-list-type="LIP"></list>
+                        </p>
+                        	
+                        <p id="d22e1991">label-item pairs, long
+                           
+                           <list id="d22e1993" type="gloss" data-tapas-list-type="LIP"></list>
+                        </p>
+                        	
+                        <p id="d22e2238">labels inside items, short. Note that the default rendition
+                           	for 
+                           <gi id="d22e2240">label</gi> is 
+                           <val id="d22e2243">break(no)</val>.
+                           	
+                           <list id="d22e2246" type="toc" data-tapas-list-type="LII"></list>
+                        </p>
+                        	
+                        <p id="d22e2310">labels inside items, long
+                           
+                           <list id="d22e2312" rend="simple" type="simple" data-tapas-list-type="LII"></list>
+                        </p>
+                        
+                     </div>
+                     
+                  </body>
+                  
+               </text>
+               
+            </TEI>
+         </div>
+         <div id="tei_contextual"></div>
+      </div>
+   </body>
+</html>
