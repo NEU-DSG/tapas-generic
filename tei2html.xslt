@@ -144,7 +144,7 @@
     <xd:desc>Copy all attribute nodes from source XML tree to
         output document.</xd:desc>
   </xd:doc>
-  <xsl:template match="@*" mode="TOCer work">
+  <xsl:template match="@*" mode="TOCer work makeTOCentry">
     <xsl:copy/>
   </xsl:template>
 
@@ -179,9 +179,9 @@
   </xsl:template>
   
   <xd:doc>
-    <xd:desc>For other modes (currently only pass2=TOCer), copy nodes over</xd:desc>
+    <xd:desc>For other modes, copy nodes over</xd:desc>
   </xd:doc>
-  <xsl:template match="node()" mode="TOCer">
+  <xsl:template match="node()" mode="TOCer makeTOCentry">
     <xsl:copy>
       <xsl:apply-templates select="@*|node()" mode="#current"/>
     </xsl:copy>
@@ -382,6 +382,7 @@
           </xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
+      <xsl:apply-templates select="node()" mode="#current"/>
     </xsl:element>
   </xsl:template>
   
@@ -625,7 +626,7 @@
         <xsl:when test="$rend = 'align(center)case(upper)'"      >text-align:center; text-transform:uppercase;</xsl:when>
         <xsl:when test="$rend = 'case(upper)align(center)'"      >text-align:center; text-transform:uppercase;</xsl:when>
         <xsl:otherwise>
-          <xsl:message>WARNING: I don't know what to do with rend="<xsl:value-of select="."/>"</xsl:message>
+          <!-- xsl:message>WARNING: I don't know what to do with rend="<xsl:value-of select="."/>"</xsl:message -->
           <xsl:value-of select="."/>
         </xsl:otherwise>
       </xsl:choose>
@@ -1120,11 +1121,17 @@
     <xsl:variable name="label" select="concat( local-name(.), $labelAdd )"/>
     <span data-tapas-label="{$label}"><xsl:apply-templates mode="#current"/></span>
   </xsl:template>
-  <xsl:template match="node()" mode="string">
+  <xsl:template match="text()" mode="string">
     <!-- regularize the whitespace, but leave leading or trailing iff present -->
     <xsl:variable name="mePlus" select="normalize-space( concat('␀',.,'␀') )"/>
     <xsl:variable name="regularized" select="substring( $mePlus, 2, string-length( $mePlus ) -2 )"/>
     <xsl:value-of select="$regularized"/>
+  </xsl:template>
+  <xsl:template match="*" mode="string">
+    <xsl:apply-templates select="node()" mode="#current"/>
+  </xsl:template>
+  <xsl:template match="cb|gb|lb|pb|milestone|html:cb|html:gb|html:lb|html:pb|html:milestone" mode="string">
+    <xsl:text>&#x20;</xsl:text>
   </xsl:template>
   
   <xsl:template match="*[normalize-space(.) eq '' and not( descendant-or-self::*/@* )]" mode="genCon"/>
@@ -1301,13 +1308,27 @@
   <xsl:template match="*[@data-tapas-tocme]" mode="makeTOCentry">
     <xsl:variable name="gi" select="local-name(.)"/>
     <li>
-      <span class="TOC-entry-label">
-        <xsl:number level="multiple" format="I. 1. A. 1. a. 1. i. "
-          count="html:lg[@data-tapas-tocme] | html:div[@data-tapas-tocme]"/>
-      </span>
-      <span class="TOC-entry-heading">
-        <xsl:apply-templates select="html:head[1]" mode="string"/>
-      </span>
+      <xsl:variable name="id">
+        <xsl:choose>
+          <xsl:when test="@id">
+            <xsl:value-of select="normalize-space(@id)"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:call-template name="generate-unique-id">
+              <xsl:with-param name="base" select="generate-id()"/>
+            </xsl:call-template>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+      <a href="#{$id}">
+        <span class="TOC-entry-label">
+          <xsl:number level="multiple" format="I. 1. A. 1. a. 1. i. "
+            count="html:lg[@data-tapas-tocme] | html:div[@data-tapas-tocme]"/>
+        </span>
+        <span class="TOC-entry-heading">
+          <xsl:apply-templates select="html:head[1]" mode="string"/>
+        </span>
+      </a>
     </li>
   </xsl:template>
   
