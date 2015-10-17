@@ -89,7 +89,9 @@
     </xd:desc>
   </xd:doc>
   <xsl:template match="/" name="htmlShell" priority="42" mode="#default">
-    <xsl:message> tei2html( <xsl:value-of select="tokenize( document-uri(/),'/')[last()]"/> ) at <xsl:value-of select="current-dateTime()"/> </xsl:message>
+    <xsl:message> tei2html( <xsl:value-of
+      select="tokenize( document-uri(/),'/')[last()]"/> ) at <xsl:value-of
+        select="replace( current-dateTime() cast as xs:string,'-[0-9][0-9]:[0-9][0-9]$','')"/> </xsl:message>
     <!-- pass 1, "work" = most of the heavy lifting: -->
     <!-- input is TEI, output is XHTML -->
     <xsl:variable name="pass1">
@@ -104,8 +106,18 @@
     <!-- pass 2, "TOCer" insert a TOC -->
     <!-- input and output are both XHTML (so XPaths may need have prefixes) -->
     <xsl:variable name="pass2">
-      <xsl:apply-templates mode="TOCer" select="$pass1"/>
+      <xsl:choose>
+        <xsl:when test="count( $pass1//@data-tapas-tocme ) gt 2">
+          <xsl:message>debug: <xsl:value-of select="count( $pass1//@data-tapas-tocme )"/> tocme, so do it!</xsl:message>
+          <xsl:apply-templates mode="TOCer" select="$pass1"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:message>debug: <xsl:value-of select="count( $pass1//@data-tapas-tocme )"/> tocme, so relax.</xsl:message>
+          <xsl:copy-of select="$pass1"/>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:variable>
+    <!-- now output: -->
     <xsl:choose>
       <xsl:when test="$fullHTML eq 'true'">
         <html>
@@ -929,7 +941,7 @@
         <xsl:comment> uri=<xsl:value-of select="$uri"/> </xsl:comment>
         <xsl:comment> scheme=<xsl:value-of select="$scheme"/> </xsl:comment>
         <xsl:comment> fragID=<xsl:value-of select="$fragID"/> </xsl:comment>
-        <xsl:if test="document( $uri, $input )">
+        <xsl:if test="doc-available( $uri )">
           <xsl:apply-templates select="document( $uri, $input )" mode="genCon">
             <xsl:with-param name="ref" select="$ref"/>
           </xsl:apply-templates>
@@ -1037,11 +1049,11 @@
   <!-- In all our test data there is only 1 <org> that has > 1 <orgName>, and -->
   <!-- it looks like an error. So for <org>s, we just presume the identifier  -->
   <!-- above is sufficient. -->
-  <xsl:template match="orgName" mode="genCon"/>
+  <xsl:template match="orgName" mode="genCon" priority="3"/>
   
   <!-- We have no test gazeteers, so for the moment presume that the identifier -->
   <!-- above is sufficient for <place>s, too. -->
-  <xsl:template match="placeName" mode="genCon"/>
+  <xsl:template match="placeName" mode="genCon" priority="3"/>
   
   <!-- <persName>s, however, are a pain -->
   <xsl:template match="persName" mode="genCon" priority="3">
@@ -1263,6 +1275,42 @@
     </xsl:for-each>
   </xsl:template>
 
+  <xd:doc>
+    <xd:desc>Generate a table of contents, if needed</xd:desc>
+  </xd:doc>
+  <xsl:template match="html:div[ @class eq 'tapas-generic']" mode="TOCer">
+    <xsl:copy>
+      <xsl:apply-templates mode="TOCer" select="@*"/>
+      <xsl:attribute name="data-tapas-debug"
+        select="concat( count(html:div), ',', count( div) )"></xsl:attribute>
+      <xsl:apply-templates mode="TOCer"
+                           select="html:div[ @id = ('tapasToolbox','tapas-ref-dialog') ]"/>
+        <div id="TOC">
+          <ol>
+            <xsl:apply-templates mode="makeTOCentry" select=".//*[@data-tapas-tocme]"/>
+          </ol>
+        </div>
+      <xsl:apply-templates mode="TOCer"
+                           select="html:div[ @id = ('tei_wrapper','tei_contextual') ]"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xd:doc>
+    <xd:desc>Create TOC entry</xd:desc>
+  </xd:doc>
+  <xsl:template match="*[@data-tapas-tocme]" mode="makeTOCentry">
+    <xsl:variable name="gi" select="local-name(.)"/>
+    <li>
+      <span class="TOC-entry-label">
+        <xsl:number level="multiple" format="I. 1. A. 1. a. 1. i. "
+          count="html:lg[@data-tapas-tocme] | html:div[@data-tapas-tocme]"/>
+      </span>
+      <span class="TOC-entry-heading">
+        <xsl:apply-templates select="html:head[1]" mode="string"/>
+      </span>
+    </li>
+  </xsl:template>
+  
   <xd:doc>
     <xd:desc>Take one or more nodes (most likely child elements),
     and convert to a single string</xd:desc>
