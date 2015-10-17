@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <meta charset="UTF-8" />
+      <link id="maincss" rel="stylesheet" type="text/css" href="../css/tapasGdiplo.css" /><script type="text/javascript" src="../js/jquery/jquery.min.js"></script><script type="text/javascript" src="../js/jquery-ui/ui/minified/jquery-ui.min.js"></script><script type="text/javascript" src="../js/contextualItems.js"></script><link rel="stylesheet" href="../css/jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css" /><script type="text/javascript" src="../js/tapas-generic.js"></script><style type="text/css">
+      #tapas-ref-dialog{
+      z-index:1000;
+      }
+      </style><title>TAPAS: Some choices</title>
+   </head>
+   <body>
+      <div class="tapas-generic">
+         <div id="tapasToolbox">
+            <div id="tapasToolbox-pb"><label for="pbToggle">Hide page breaks</label><input type="checkbox" id="pbToggle" /></div>
+            <div id="tapasToolbox-views"><label for="viewBox">Views</label><select id="viewBox">
+                  <option value="diplomatic" selected="selected">diplomatic</option>
+                  <option value="normal">normalized</option></select></div>
+         </div>
+         <div id="tapas-ref-dialog"></div>
+         <div id="tei_wrapper">
+            <TEI id="d56e2" xml:lang="en">
+               
+               <teiHeader id="d56e4">
+                  
+                  <fileDesc id="d56e6">
+                     
+                     <titleStmt id="d56e8">
+                        	
+                        <tei-title id="d56e10">Some 
+                           <gi id="d56e12">choice</gi>s
+                        </tei-title>
+                        	
+                        <author id="d56e16">Syd</author>
+                        
+                     </titleStmt>
+                     
+                     <publicationStmt id="d56e20">
+                        	
+                        <ab id="d56e22">unpublished work used for testing</ab>
+                        
+                     </publicationStmt>
+                     
+                     <sourceDesc id="d56e26">
+                        	
+                        <ab id="d56e28">Born digital; some examples stolen from TEI Guidelines</ab>
+                        
+                     </sourceDesc>
+                     
+                  </fileDesc>
+                  
+               </teiHeader>
+               
+               <text id="d56e34">
+                  
+                  <body id="d56e36">
+                     
+                     <p id="d56e38"><q style=" display: inline; ">Diplomatic</q> should show <q style=" display: inline; ">1724</q>, <q style=" display: inline; ">favour</q>,
+                        <q style=" display: inline; ">SPQR</q>, and <q style=" display: inline; ">SGML</q>.
+                     </p>
+                     
+                     <p id="d56e55"><q style=" display: inline; ">Normalized</q> should show <q style=" display: inline; ">1728</q>, <q style=" display: inline; ">favor</q>,
+                        <q style=" display: inline; ">Sebastian Rahtz</q>, and <q style=" display: inline; ">Standard Generalized Markup
+                           Language</q>.
+                     </p>
+                     
+                     <div id="d56e72">
+                        	
+                        <head id="d56e74">choice</head>
+                        	
+                        <p id="d56e77">Lastly, That, upon his solemn oath to observe all the above
+                           	articles, the said man-mountain shall have a daily allowance of
+                           	meat and drink sufficient for the support of 
+                           <choice id="d56e79">
+                              <sic id="d56e81">1724</sic>
+                              <corr id="d56e84">1728</corr>
+                           </choice> of our subjects,
+                           	with free access to our royal person, and other marks of our
+                           	
+                           <choice id="d56e88">
+                              <orig id="d56e90">favour</orig>
+                              <reg id="d56e93">favor</reg>
+                           </choice>.
+                        </p>
+                        	
+                        <p id="d56e98">Turns out that
+                           	
+                           <persName id="d56e100">
+                              	  
+                              <choice id="d56e102"><abbr id="d56e104">SPQR</abbr><expan id="d56e107">Sebastian Rahtz</expan>
+                              </choice>
+                              	
+                           </persName>
+                           	does not like 
+                           	
+                           <choice id="d56e112">
+                              <expan id="d56e114">Standard Generalized Markup Language</expan><abbr id="d56e117">SGML</abbr></choice>.
+                        </p>
+                        
+                     </div>
+                     
+                     <div id="d56e123">
+                        	
+                        <head id="d56e125">no choice, diplo</head>
+                        	
+                        <p id="d56e128">Lastly, That, upon his solemn oath to observe all the above
+                           	articles, the said man-mountain shall have a daily allowance
+                           	of meat and drink sufficient for the support of
+                           	
+                           <sic id="d56e130">1724</sic> of our subjects, with free access to our royal
+                           	person, and other marks of our 
+                           <orig id="d56e133">favour</orig>.
+                        </p>
+                        	
+                        <p id="d56e137">Turns out that
+                           	
+                           <persName id="d56e139">
+                              	  <abbr id="d56e141">SPQR</abbr>
+                              	
+                           </persName>
+                           	does not like <abbr id="d56e145">SGML</abbr>.
+                        </p>
+                        
+                     </div>
+                     
+                     <div id="d56e150">
+                        	
+                        <head id="d56e152">no choice, normo</head>
+                        	
+                        <p id="d56e155">Lastly, That, upon his solemn oath to observe all the above
+                           	articles, the said man-mountain shall have a daily allowance
+                           	of meat and drink sufficient for the support of
+                           	
+                           <corr id="d56e157">1728</corr> of our subjects, with free access to our
+                           	royal person, and other marks of our 
+                           <reg id="d56e160">favor</reg>.
+                        </p>
+                        	
+                        <p id="d56e164">Turns out that
+                           	
+                           <persName id="d56e166">
+                              	    
+                              <expan id="d56e168">Sebastian Rahtz</expan>
+                              	
+                           </persName>
+                           	does not like 
+                           <expan id="d56e172">Standard Generalized Markup
+                              	Language
+                           </expan>.
+                        </p>
+                        
+                     </div>
+                     
+                  </body>
+                  
+               </text>
+               
+            </TEI>
+         </div>
+         <div id="tei_contextual"></div>
+      </div>
+   </body>
+</html>
