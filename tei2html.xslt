@@ -29,7 +29,7 @@
 
   <xsl:include href="xml-to-string.xsl"/>
 
-  <xsl:output method="html"/>
+  <xsl:output method="xhtml"/>
 
   <xsl:param name="teibpHome"  select="'http://dcl.slis.indiana.edu/teibp/'"/>
   <xsl:param name="tapasHome"  select="'http://tapasproject.org/'"/>
@@ -1321,9 +1321,13 @@
         </xsl:choose>
       </xsl:variable>
       <a href="#{$id}">
-        <span class="TOC-entry-label">
+        <xsl:variable name="label">
           <xsl:number level="multiple" format="I. 1. A. 1. a. 1. i. "
             count="html:lg[@data-tapas-tocme] | html:div[@data-tapas-tocme]"/>
+        </xsl:variable>
+        <xsl:attribute name="data-tapas-toc-depth" select="count( tokenize( normalize-space( $label ),' '))"/>
+        <span class="TOC-entry-label">
+          <xsl:value-of select="$label"/>
         </span>
         <span class="TOC-entry-heading">
           <xsl:apply-templates select="html:head[1]" mode="string"/>
