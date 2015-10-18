@@ -65,6 +65,12 @@
   <xsl:key name="REFs" match="//persName" use="@ref"/>
   <xsl:key name="REFs" match="//placeName" use="@ref"/>
   <xsl:key name="REFs" match="//rs" use="@ref"/>
+  <xsl:key name="DIVs-and-LGs-by-depth" match="//div|//lg"
+           use="count(ancestor-or-self::div|ancestor-or-self::lg)"/>
+  <xsl:key name="DIV-has-lotsa-paras" match="//div" use="count( child::p | child::ab ) gt 5"/>
+  <xsl:key name="LG-has-lotsa-lines" match="//lg" use="count( child::l ) gt 39"/>
+  <xsl:key name="TOCables" match="//div" use="count( child::p | child::ab ) gt 5"/>
+  <xsl:key name="TOCables" match="//lg[ not( ancestor::lg ) ]"  use="true()"/>
   
   <!-- special characters -->
   <xsl:variable name="quot"><text>"</text></xsl:variable>
@@ -415,36 +421,17 @@
   </xsl:template>
 
   <xd:doc>
-    <xd:desc>Indicate which <xd:i>div</xd:i>s should be in TOC</xd:desc>
+    <xd:desc>Indicate which <xd:i>div</xd:i>s and <xd:i>lg</xd:i>s should be in TOC</xd:desc>
   </xd:doc>
-  <xsl:template match="div" mode="work">
+  <xsl:template match="div|lg[ not( ancestor::lg )]" mode="work">
     <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
-      <xsl:variable name="sibdivs" select="parent::*/div"/>
-      <xsl:if test="$sibdivs/p[ count(preceding-sibling::p) > 5 ]">
-        <xsl:attribute name="data-tapas-tocme">
-          <xsl:value-of select="true()"/>
-        </xsl:attribute>
+      <xsl:variable name="myDepth" select="count(ancestor-or-self::div|ancestor-or-self::lg)"/>
+      <xsl:if test="key('DIVs-and-LGs-by-depth',$myDepth ) = key('TOCables',true() )">
+        <xsl:attribute name="data-tapas-tocme" select="true()"/>
       </xsl:if>
       <xsl:call-template name="addID"/>
       <xsl:call-template name="addRend"/>
       <xsl:apply-templates select="@* except ( @rend, @rendition, @style )" mode="#current"/>
-      <xsl:apply-templates select="node()" mode="#current"/>
-    </xsl:element>
-  </xsl:template>
-  <xd:doc>
-    <xd:desc>Indicate which <xd:i>lg</xd:i>s should be in TOC</xd:desc>
-  </xd:doc>
-  <xsl:template match="lg" mode="work">
-    <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
-      <xsl:call-template name="addID"/>
-      <xsl:call-template name="addRend"/>
-      <xsl:apply-templates select="@* except ( @rend, @rendition, @style )" mode="#current"/>
-      <xsl:variable name="siblgs" select="parent::*/lg"/>
-      <xsl:if test="$siblgs[ count( descendant::l[ not(@prev) and not(@part='M') and not(@part='F') ] ) > 40 ]">
-        <xsl:attribute name="data-tapas-tocme">
-          <xsl:value-of select="true()"/>
-        </xsl:attribute>
-      </xsl:if>
       <xsl:apply-templates select="node()" mode="#current"/>
     </xsl:element>
   </xsl:template>
@@ -1288,8 +1275,6 @@
   <xsl:template match="html:div[ @class eq 'tapas-generic']" mode="TOCer">
     <xsl:copy>
       <xsl:apply-templates mode="TOCer" select="@*"/>
-      <xsl:attribute name="data-tapas-debug"
-        select="concat( count(html:div), ',', count( div) )"></xsl:attribute>
       <xsl:apply-templates mode="TOCer"
                            select="html:div[ @id = ('tapasToolbox','tapas-ref-dialog') ]"/>
         <div id="TOC">
@@ -1308,6 +1293,11 @@
   <xsl:template match="*[@data-tapas-tocme]" mode="makeTOCentry">
     <xsl:variable name="gi" select="local-name(.)"/>
     <li>
+      <xsl:variable name="label">
+        <xsl:number level="multiple" format="I. 1. A. 1. a. 1. i. "
+          count="html:lg[@data-tapas-tocme] | html:div[@data-tapas-tocme]"/>
+      </xsl:variable>
+      <xsl:attribute name="data-tapas-toc-depth" select="count( tokenize( normalize-space( $label ),' '))"/>
       <xsl:variable name="id">
         <xsl:choose>
           <xsl:when test="@id">
@@ -1321,16 +1311,14 @@
         </xsl:choose>
       </xsl:variable>
       <a href="#{$id}">
-        <xsl:variable name="label">
-          <xsl:number level="multiple" format="I. 1. A. 1. a. 1. i. "
-            count="html:lg[@data-tapas-tocme] | html:div[@data-tapas-tocme]"/>
-        </xsl:variable>
-        <xsl:attribute name="data-tapas-toc-depth" select="count( tokenize( normalize-space( $label ),' '))"/>
         <span class="TOC-entry-label">
           <xsl:value-of select="$label"/>
         </span>
         <span class="TOC-entry-heading">
-          <xsl:apply-templates select="html:head[1]" mode="string"/>
+          <xsl:message>debug: heads: <xsl:for-each select="html:head/@type">
+            <xsl:value-of select="concat(.,', ')"/>
+          </xsl:for-each>.</xsl:message>
+          <xsl:apply-templates select="html:head[1]" mode="#current"/>
         </span>
       </a>
     </li>
