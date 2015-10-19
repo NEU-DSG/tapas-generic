@@ -88,7 +88,8 @@
   <xsl:key name="TOCables" match="//div5" use="count( p | ab ) gt 5  or  lg  or  div6"/>
   <xsl:key name="TOCables" match="//div6" use="count( p | ab ) gt 5  or  lg  or  div7"/>
   <xsl:key name="TOCables" match="//div7" use="count( p | ab ) gt 5  or  lg"/>
-  <xsl:key name="TOCables" match="//lg[ not( ancestor::lg ) ]" use="count( ../lg | ../p | ../ab ) gt 1"/>
+  <xsl:key name="TOCables" match="//lg[ not( ancestor::lg | ancestor::sp ) ]"
+    use="count( ../lg | ../p | ../ab ) gt 1"/>
     
   <!-- special characters -->
   <xsl:variable name="quot"><text>"</text></xsl:variable>
@@ -1137,7 +1138,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  <xsl:template match="persName|placeName|orgName" mode="string">
+  <xsl:template mode="string" match="persName|placeName|orgName">
     <xsl:choose>
       <xsl:when test="not(*)">
         <!-- only text, no child elements -->
@@ -1168,18 +1169,28 @@
     <xsl:variable name="label" select="concat( local-name(.), $labelAdd )"/>
     <span data-tapas-label="{$label}"><xsl:apply-templates mode="#current"/></span>
   </xsl:template>
-  <xsl:template match="text()" mode="string">
+  <xsl:template mode="string" match="text()">
     <!-- regularize the whitespace, but leave leading or trailing iff present -->
     <xsl:variable name="mePlus" select="normalize-space( concat('␀',.,'␀') )"/>
     <xsl:variable name="regularized" select="substring( $mePlus, 2, string-length( $mePlus ) -2 )"/>
     <xsl:value-of select="$regularized"/>
   </xsl:template>
-  <xsl:template match="*" mode="string">
+  <xsl:template mode="string" match="*">
     <xsl:apply-templates select="node()" mode="#current"/>
   </xsl:template>
-  <xsl:template match="cb|gb|lb|pb|milestone|html:cb|html:gb|html:lb|html:pb|html:milestone" mode="string">
+  <xd:doc>
+    <xd:desc>Some of the mode "string" templates have to match in both namespaces,
+    as I'm overloading use of this mode for both ogrophy processing (which happens
+    in pass 1 on TEI data) and TOC processing (which happens in pass 2 on XHTML
+    data).</xd:desc>
+  </xd:doc>
+  <xsl:template mode="string" match="choice|html:choice">
+    <xsl:copy-of select="."/>
+  </xsl:template>
+  <xsl:template mode="string" match="cb|gb|lb|pb|milestone|html:cb|html:gb|html:lb|html:pb|html:milestone">
     <xsl:text>&#x20;</xsl:text>
   </xsl:template>
+  <xsl:template mode="string" match="fw|html:fw"/>
   
   <xsl:template match="*[normalize-space(.) eq '' and not( descendant-or-self::*/@* )]" mode="genCon"/>
   <xsl:template match="person/* | place/* | org/*" mode="genCon">
@@ -1355,8 +1366,8 @@
     <xsl:variable name="maxlen" select="34"/>
     <li>
       <xsl:variable name="label">
-        <xsl:number level="multiple" format="I. 1. A. 1. a. 1. i. "
-          count="html:lg[@data-tapas-tocme] | html:div[@data-tapas-tocme]"/>
+        <xsl:number level="multiple" count="html:div[@data-tapas-tocme]|html:lg[@data-tapas-tocme]"
+          format="I. 1. A. 1. a. 1. i. "/>
       </xsl:variable>
       <xsl:attribute name="data-tapas-toc-depth" select="count( tokenize( normalize-space( $label ),' '))"/>
       <xsl:variable name="id">
@@ -1406,21 +1417,25 @@
                    | preceding-sibling::html:table
                    ) ][1]"/>
             </xsl:when>
-            <xsl:when test="@type">
-              <xsl:attribute name="class" select="'TOC-entry-heading-generated'"/>
-              <xsl:value-of select="normalize-space(@type)"/>
-                <xsl:if test="@n">
-                  <xsl:value-of select="concat(' #',normalize-space(@n))"/>
-                </xsl:if>
-            </xsl:when>
             <xsl:when test="@n">
               <xsl:attribute name="class" select="'TOC-entry-heading-generated'"/>
+              <xsl:if test="@type">
+                <xsl:value-of select="concat( @type,' #')"/>
+              </xsl:if>
               <xsl:value-of select="@n"/>
             </xsl:when>
-            <xsl:when test="p | ab | lg | l">
+            <xsl:when test="@type">
+              <xsl:variable name="mytype" select="@type"/>
+              <xsl:attribute name="class" select="'TOC-entry-heading-generated'"/>
+              <xsl:value-of select="@type"/>
+              <xsl:if test="count( ../*[ local-name(.) eq $gi ][ @type eq $mytype ] ) gt 1">
+                <xsl:value-of select="concat(' #',count( preceding-sibling::*[ local-name(.) eq $gi ][ @type eq $mytype ] ) + 1)"/>
+              </xsl:if>
+            </xsl:when>
+            <xsl:when test="html:p | html:ab | html:lg | html:l">
               <xsl:attribute name="class" select="'TOC-entry-heading-1stline'"/>
               <xsl:variable name="me">
-                <xsl:apply-templates mode="string" select="( p | ab | lg | l )[1]"/>
+                <xsl:apply-templates mode="string" select="( html:p | html:ab | html:lg | html:l )[1]"/>
               </xsl:variable>
               <xsl:variable name="mylen" select="string-length( $me )"/>
               <xsl:value-of select="if ( $mylen lt $maxlen )
