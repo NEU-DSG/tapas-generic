@@ -65,13 +65,32 @@
   <xsl:key name="REFs" match="//persName" use="@ref"/>
   <xsl:key name="REFs" match="//placeName" use="@ref"/>
   <xsl:key name="REFs" match="//rs" use="@ref"/>
-  <xsl:key name="DIVs-and-LGs-by-depth" match="//div|//lg"
-           use="count(ancestor-or-self::div|ancestor-or-self::lg)"/>
-  <xsl:key name="DIV-has-lotsa-paras" match="//div" use="count( child::p | child::ab ) gt 5"/>
-  <xsl:key name="LG-has-lotsa-lines" match="//lg" use="count( child::l ) gt 39"/>
-  <xsl:key name="TOCables" match="//div" use="count( child::p | child::ab ) gt 5"/>
-  <xsl:key name="TOCables" match="//lg[ not( ancestor::lg ) ]"  use="true()"/>
-  
+  <!-- algorithm for DIV and LG depth here should match that for $myDepth in the -->
+  <!-- template that matches <div>s and <lg>s in mode "work" -->
+  <xsl:key name="DIVs-and-LGs-by-depth"
+           match="//lg|//div|//div1|//div2|//div3|//div4|//div5|//div6|//div7"
+           use="count(
+                       ancestor-or-self::div
+                     | ancestor-or-self::div1
+                     | ancestor-or-self::div2
+                     | ancestor-or-self::div3
+                     | ancestor-or-self::div4
+                     | ancestor-or-self::div5
+                     | ancestor-or-self::div6
+                     | ancestor-or-self::div7
+                     | ancestor-or-self::lg
+                     )"/>
+  <xsl:key name="TOCables" match="//div"  use="count( p | ab ) gt 5  or  lg  or  div"/>
+  <xsl:key name="TOCables" match="//div1" use="count( p | ab ) gt 5  or  lg  or  div2"/>
+  <xsl:key name="TOCables" match="//div2" use="count( p | ab ) gt 5  or  lg  or  div3"/>
+  <xsl:key name="TOCables" match="//div3" use="count( p | ab ) gt 5  or  lg  or  div4"/>
+  <xsl:key name="TOCables" match="//div4" use="count( p | ab ) gt 5  or  lg  or  div5"/>
+  <xsl:key name="TOCables" match="//div5" use="count( p | ab ) gt 5  or  lg  or  div6"/>
+  <xsl:key name="TOCables" match="//div6" use="count( p | ab ) gt 5  or  lg  or  div7"/>
+  <xsl:key name="TOCables" match="//div7" use="count( p | ab ) gt 5  or  lg"/>
+  <xsl:key name="TOCables" match="//lg[ not( ancestor::lg | ancestor::sp ) ]"
+    use="count( ../lg | ../p | ../ab ) gt 1"/>
+    
   <!-- special characters -->
   <xsl:variable name="quot"><text>"</text></xsl:variable>
   <xsl:variable name="apos"><text>'</text></xsl:variable>
@@ -94,6 +113,22 @@
         itself.</xd:p>
     </xd:desc>
   </xd:doc>
+  <xsl:template match="/" priority="-3">
+    <DEBUG>
+      <xsl:for-each select="key('TOCables',true())">
+        <xsl:value-of select="concat(
+          if (@xml:id) then @xml:id
+          else concat(
+            local-name(.),
+            '#',
+            count(preceding::*[local-name(.) eq local-name(current())])),
+            ': ',
+            substring( normalize-space(.), 1, 23 ),
+          '&#x0A;'
+          )"/>
+      </xsl:for-each>
+    </DEBUG>
+  </xsl:template>
   <xsl:template match="/" name="htmlShell" priority="42" mode="#default">
     <xsl:message> tei2html( <xsl:value-of
       select="tokenize( document-uri(/),'/')[last()]"/> ) at <xsl:value-of
@@ -297,32 +332,32 @@
   <xsl:template match="ref[@target]|ptr[@target]" mode="work" priority="99">
     <xsl:variable name="gi">
       <xsl:choose>
-        <xsl:when test="normalize-space(.) = ''">ptr</xsl:when>
+        <xsl:when test="normalize-space(.) eq ''">ptr</xsl:when>
         <xsl:otherwise>ref</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
     <xsl:variable name="target" select="normalize-space(@target)"/>
     <xsl:variable name="class">
-      <xsl:variable name="count">
+      <xsl:variable name="count" as="xs:integer">
         <xsl:choose>
           <xsl:when test="starts-with($target,'#')">
-            <xsl:value-of select="count(//*[@xml:id = substring-after($target,'#')])"/>
+            <xsl:value-of select="count(//*[@xml:id eq substring-after($target,'#')])"/>
           </xsl:when>
           <xsl:otherwise>0</xsl:otherwise>
         </xsl:choose>
       </xsl:variable>
       <xsl:choose>
-        <xsl:when test="@data-tapas-target-warning = 'target not found'">
+        <xsl:when test="@data-tapas-target-warning eq 'target not found'">
           <xsl:value-of select="concat($gi,'-not-found')"/>
         </xsl:when>
-        <xsl:when test="$count = 0  and  starts-with($target,'#')">
+        <xsl:when test="$count eq 0  and  starts-with($target,'#')">
           <xsl:value-of select="concat($gi,'-not-found')"/>
         </xsl:when>
-        <xsl:when test="$count = 0">
+        <xsl:when test="$count eq 0">
           <xsl:value-of select="concat($gi,'-external')"/>
         </xsl:when>
-        <xsl:when test="$count = 1">
-          <xsl:value-of select="concat($gi,'-', local-name(//*[@xml:id = substring-after($target,'#')]) )"/>
+        <xsl:when test="$count eq 1">
+          <xsl:value-of select="concat($gi,'-', local-name(//*[@xml:id eq substring-after($target,'#')]) )"/>
         </xsl:when>
         <xsl:otherwise>
           <xsl:value-of select="concat($gi,'-internals')"/>
@@ -332,7 +367,7 @@
     <a href="{$target}" class="{$class}">
       <xsl:apply-templates select="@* except @target" mode="#current"/>
       <xsl:apply-templates select="node()" mode="#current"/>
-      <xsl:if test="$gi = 'ptr'">
+      <xsl:if test="$gi eq 'ptr'">
         <xsl:value-of select="$target"/>
       </xsl:if>
     </a>
@@ -421,13 +456,39 @@
   </xsl:template>
 
   <xd:doc>
-    <xd:desc>Indicate which <xd:i>div</xd:i>s and <xd:i>lg</xd:i>s should be in TOC</xd:desc>
+    <xd:desc>
+      <xd:p>Indicate which <xd:i>div</xd:i>s and <xd:i>lg</xd:i>s should be in TOC</xd:p>
+      <xd:p>Note that we are also putting out <tt>html:div</tt> even if the input
+      was a TEI numbered division.</xd:p>
+    </xd:desc>
   </xd:doc>
-  <xsl:template match="div|lg[ not( ancestor::lg )]" mode="work">
-    <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
-      <xsl:variable name="myDepth" select="count(ancestor-or-self::div|ancestor-or-self::lg)"/>
+  <xsl:template match="lg[ not( ancestor::lg )]|div|div1|div2|div3|div4|div5|div6|div7" mode="work">
+    <xsl:variable name="gi" select="replace( local-name(.),'[1-7]$','')"/>
+    <xsl:element name="{$gi}" namespace="http://www.w3.org/1999/xhtml">
+      <!-- algorithm for calculating $myDepth should match that for the use= of -->
+      <!-- the DIVs-and-LGs-by-depth key. -->
+      <xsl:variable name="myDepth"
+        select="count(
+          ancestor-or-self::div
+        | ancestor-or-self::div1
+        | ancestor-or-self::div2
+        | ancestor-or-self::div3
+        | ancestor-or-self::div4
+        | ancestor-or-self::div5
+        | ancestor-or-self::div6
+        | ancestor-or-self::div7
+        | ancestor-or-self::lg
+        )"/>
+      <xsl:attribute name="data-tapas-debug-consider-tocme" select="true()"/>
+      <!-- does my parent have an entry in the TOC? -->
+      <xsl:variable name="parent-TOCable" select="key('DIVs-and-LGs-by-depth',$myDepth -1) = key('TOCables',true())"/>
+      <!-- if anything at my DIV level is TOCable, then I am ... -->
       <xsl:if test="key('DIVs-and-LGs-by-depth',$myDepth ) = key('TOCables',true() )">
-        <xsl:attribute name="data-tapas-tocme" select="true()"/>
+        <xsl:attribute name="data-tapas-debug-maybe-tocme" select="true()"/>
+        <!-- unless my parent is already in the TOC and I am pretty much the only thing in my parent -->
+        <xsl:if test="not( count( ../lg | ../p | ../ab ) eq 1  and   $parent-TOCable )">
+          <xsl:attribute name="data-tapas-tocme" select="true()"/>
+        </xsl:if>
       </xsl:if>
       <xsl:call-template name="addID"/>
       <xsl:call-template name="addRend"/>
@@ -511,7 +572,7 @@
           <xsl:apply-templates select="@rend" mode="rendition2style"/>
         </xsl:variable>
         <xsl:value-of select="$rend"/>
-        <xsl:if test="$rend and not( substring($rend,string-length($rend),1) = ';')">
+        <xsl:if test="$rend  and  substring($rend,string-length($rend),1) ne ';'">
           <xsl:text>; </xsl:text>
         </xsl:if>
         <xsl:apply-templates select="@style" mode="#current"/>
@@ -522,7 +583,7 @@
   <xsl:template match="@style | @html:style" mode="work">
     <xsl:variable name="result" select="normalize-space(.)"/>
     <xsl:value-of select="$result"/>
-    <xsl:if test="not( substring($result,string-length($result),1) = ';')">
+    <xsl:if test="substring($result,string-length($result),1) ne ';'">
       <xsl:text>; </xsl:text>
     </xsl:if>
   </xsl:template>
@@ -531,87 +592,87 @@
     <xsl:variable name="css">
       <xsl:choose>
         <xsl:when test="contains( $rend, ':' )"><xsl:value-of select="."/></xsl:when>   <!-- 30937 -->
-        <xsl:when test="$rend = 'italic'"           >font-style: italic;</xsl:when>     <!-- 24857 -->
-        <xsl:when test="$rend = 'italics'"          >font-style: italic;</xsl:when>     <!--     0 -->
-        <xsl:when test="$rend = 'visible'"          ></xsl:when>                        <!--  1673 -->
-        <xsl:when test="$rend = 'superscript'"      >vertical-align: super;</xsl:when>  <!--  1175 -->
-        <xsl:when test="$rend = 'bold'"             >font-weight: bold;</xsl:when>      <!--   920 -->
-        <xsl:when test="$rend = 'ti-1'"             ></xsl:when>                        <!--   741 -->
-        <xsl:when test="$rend = 'center'"           >text-align: center;</xsl:when>     <!--   657 -->
-        <xsl:when test="$rend = 'rectangle'"        ></xsl:when>                        <!--   639 -->
-        <xsl:when test="$rend = 'right'"            >text-align: right;</xsl:when>      <!--   617 -->
-        <xsl:when test="$rend = 'i'"                >font-style: italic;</xsl:when>     <!--   449 -->
-        <xsl:when test="$rend = 'ul'"               >text-decoration: underline;</xsl:when> <!--   381 -->
-        <xsl:when test="$rend = 'align(center)'"    >text-align: center;</xsl:when>     <!--   301 -->
-        <xsl:when test="$rend = ''"                 ></xsl:when>                        <!--   207 -->
-        <xsl:when test="$rend = 'align(CENTER)'"    >text-align: center;</xsl:when>     <!--   202 -->
-        <xsl:when test="$rend = 'headerlike'"       ></xsl:when>                        <!--   189 -->
-        <xsl:when test="$rend = 'super'"            >vertical-align: super;</xsl:when>  <!--   161 -->
-        <xsl:when test="$rend = 'align(RIGHT)'"     >text-align: right;</xsl:when>      <!--   111 -->
-        <xsl:when test="$rend = 'valign(bottom)'"   >vertical-align: bottom;</xsl:when> <!--   104 -->
-        <xsl:when test="$rend = 'align(right)'"     >text-align: right;</xsl:when>      <!--   101 -->
-        <xsl:when test="$rend = 'blockquote'"       >display: block; padding: 0em 1em;</xsl:when>                        <!--    85 -->
-        <xsl:when test="$rend = 'ti-3'"             ></xsl:when>                        <!--    84 -->
-        <xsl:when test="$rend = 'run-in'"           >display: run-in;</xsl:when>        <!--    80 -->
-        <xsl:when test="$rend = 'valign(TOP)'"      >vertical-align: top;</xsl:when>    <!--    78 -->
-        <xsl:when test="$rend = 'distinct'"         ></xsl:when>                        <!--    78 -->
-        <xsl:when test="$rend = 'valign(top)'"      >vertical-align: top;</xsl:when>    <!--    77 -->
-        <xsl:when test="$rend = 'ti-2'"             ></xsl:when>                        <!--    73 -->
-        <xsl:when test="$rend = '+'"                ></xsl:when>                        <!--    63 -->
-        <xsl:when test="$rend = 'valign(BOTTOM)'"   >vertical-align: bottom;</xsl:when> <!--    55 -->
-        <xsl:when test="$rend = 'large b'"          >font-size: larger;font-weight: bold;</xsl:when> <!--    55 -->
-        <xsl:when test="$rend = 'frame'"            ></xsl:when>                        <!--    44 -->
-        <xsl:when test="$rend = 'ti-4'"             ></xsl:when>                        <!--    29 -->
-        <xsl:when test="$rend = 'sup'"              >vertical-align: super;</xsl:when>  <!--    27 -->
-        <xsl:when test="$rend = 'b'"                >font-weight: bold;</xsl:when>      <!--    27 -->
-        <xsl:when test="$rend = 'vertical'"         ></xsl:when>                        <!--    21 -->
-        <xsl:when test="$rend = 'LHLineStart'"      ></xsl:when>                        <!--    15 -->
-        <xsl:when test="$rend = 'indent'"           ></xsl:when>                        <!--    15 -->
-        <xsl:when test="$rend = 'sc'"               >font-variant: small-caps;</xsl:when> <!--    10 -->
-        <xsl:when test="$rend = 'overstrike'"       >text-decoration: overline;</xsl:when> <!--    10 -->
-        <xsl:when test="$rend = 'spaced'"           >font-stretch: wider;</xsl:when>    <!--     8 -->
-        <xsl:when test="$rend = 'left'"             >text-align: left;</xsl:when>       <!--     8 -->
-        <xsl:when test="$rend = 'AboveCenter'"      ></xsl:when>                        <!--     7 -->
-        <xsl:when test="$rend = 'subscript'"        >vertical-align: sub;</xsl:when>    <!--     6 -->
-        <xsl:when test="$rend = 'sc center'"        >font-variant: small-caps;text-align: center;</xsl:when> <!--     6 -->
-        <xsl:when test="$rend = 'underline'"        >text-decoration: underline;</xsl:when> <!--     5 -->
-        <xsl:when test="$rend = 'printed'"          ></xsl:when>                        <!--     5 -->
-        <xsl:when test="$rend = 'hidden'"           >display: none;</xsl:when>          <!--     5 -->
-        <xsl:when test="$rend = 'continued'"        ></xsl:when>                        <!--     5 -->
-        <xsl:when test="$rend = 'c'"                ></xsl:when>                        <!--     5 -->
-        <xsl:when test="$rend = 'inline'"           ></xsl:when>                        <!--     4 -->
-        <xsl:when test="$rend = 'typescript'"       ></xsl:when>                        <!--     3 -->
-        <xsl:when test="$rend = 'sc right'"         >font-variant: small-caps;text-align: right;</xsl:when> <!--     3 -->
-        <xsl:when test="$rend = 'LHMargin'"         ></xsl:when>                        <!--     3 -->
-        <xsl:when test="$rend = 'foot'"             ></xsl:when>                        <!--     3 -->
-        <xsl:when test="$rend = 'strikethrough'"    >text-decoration: line-through;</xsl:when> <!--     2 -->
-        <xsl:when test="$rend = 'small caps'"       >font-variant: small-caps;</xsl:when> <!--     2 -->
-        <xsl:when test="$rend = 'gothic'"           ></xsl:when>                        <!--     2 -->
-        <xsl:when test="$rend = 'font-size; 225%'"  ></xsl:when>                        <!--     2 -->
-        <xsl:when test="$rend = 'font-size; 200%'"  ></xsl:when>                        <!--     2 -->
-        <xsl:when test="$rend = 'chapter'"          ></xsl:when>                        <!--     2 -->
-        <xsl:when test="$rend = 'center i'"         >text-align: center;font-style: italic;</xsl:when> <!--     2 -->
-        <xsl:when test="$rend = 'uc'"               >text-transform: uppercase;</xsl:when> <!--     1 -->
-        <xsl:when test="$rend = 'ti-5'"             ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend = 'ti=3'"             ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend = 'ti=2'"             ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend = 'text-align-left;'" ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend = 'noborder center'"  ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend = 'margin-bottom;'"   ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend = 'italic bold'"      ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend = 'i distinct'"       ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend = 'font-size;225%'"   ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend = 'font-size;150%'"   ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend = 'font-size; 150%'"  ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend = 'center ti-8'"      ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend = 'center b'"         ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend = 'Center'"           ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend = 'above'"            ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend = '20'"               ></xsl:when>                        <!--     1 -->
+        <xsl:when test="$rend eq 'italic'"           >font-style: italic;</xsl:when>     <!-- 24857 -->
+        <xsl:when test="$rend eq 'italics'"          >font-style: italic;</xsl:when>     <!--     0 -->
+        <xsl:when test="$rend eq 'visible'"          ></xsl:when>                        <!--  1673 -->
+        <xsl:when test="$rend eq 'superscript'"      >vertical-align: super;</xsl:when>  <!--  1175 -->
+        <xsl:when test="$rend eq 'bold'"             >font-weight: bold;</xsl:when>      <!--   920 -->
+        <xsl:when test="$rend eq 'ti-1'"             ></xsl:when>                        <!--   741 -->
+        <xsl:when test="$rend eq 'center'"           >text-align: center;</xsl:when>     <!--   657 -->
+        <xsl:when test="$rend eq 'rectangle'"        ></xsl:when>                        <!--   639 -->
+        <xsl:when test="$rend eq 'right'"            >text-align: right;</xsl:when>      <!--   617 -->
+        <xsl:when test="$rend eq 'i'"                >font-style: italic;</xsl:when>     <!--   449 -->
+        <xsl:when test="$rend eq 'ul'"               >text-decoration: underline;</xsl:when> <!--   381 -->
+        <xsl:when test="$rend eq 'align(center)'"    >text-align: center;</xsl:when>     <!--   301 -->
+        <xsl:when test="$rend eq ''"                 ></xsl:when>                        <!--   207 -->
+        <xsl:when test="$rend eq 'align(CENTER)'"    >text-align: center;</xsl:when>     <!--   202 -->
+        <xsl:when test="$rend eq 'headerlike'"       ></xsl:when>                        <!--   189 -->
+        <xsl:when test="$rend eq 'super'"            >vertical-align: super;</xsl:when>  <!--   161 -->
+        <xsl:when test="$rend eq 'align(RIGHT)'"     >text-align: right;</xsl:when>      <!--   111 -->
+        <xsl:when test="$rend eq 'valign(bottom)'"   >vertical-align: bottom;</xsl:when> <!--   104 -->
+        <xsl:when test="$rend eq 'align(right)'"     >text-align: right;</xsl:when>      <!--   101 -->
+        <xsl:when test="$rend eq 'blockquote'"       >display: block; padding: 0em 1em;</xsl:when>                        <!--    85 -->
+        <xsl:when test="$rend eq 'ti-3'"             ></xsl:when>                        <!--    84 -->
+        <xsl:when test="$rend eq 'run-in'"           >display: run-in;</xsl:when>        <!--    80 -->
+        <xsl:when test="$rend eq 'valign(TOP)'"      >vertical-align: top;</xsl:when>    <!--    78 -->
+        <xsl:when test="$rend eq 'distinct'"         ></xsl:when>                        <!--    78 -->
+        <xsl:when test="$rend eq 'valign(top)'"      >vertical-align: top;</xsl:when>    <!--    77 -->
+        <xsl:when test="$rend eq 'ti-2'"             ></xsl:when>                        <!--    73 -->
+        <xsl:when test="$rend eq '+'"                ></xsl:when>                        <!--    63 -->
+        <xsl:when test="$rend eq 'valign(BOTTOM)'"   >vertical-align: bottom;</xsl:when> <!--    55 -->
+        <xsl:when test="$rend eq 'large b'"          >font-size: larger;font-weight: bold;</xsl:when> <!--    55 -->
+        <xsl:when test="$rend eq 'frame'"            ></xsl:when>                        <!--    44 -->
+        <xsl:when test="$rend eq 'ti-4'"             ></xsl:when>                        <!--    29 -->
+        <xsl:when test="$rend eq 'sup'"              >vertical-align: super;</xsl:when>  <!--    27 -->
+        <xsl:when test="$rend eq 'b'"                >font-weight: bold;</xsl:when>      <!--    27 -->
+        <xsl:when test="$rend eq 'vertical'"         ></xsl:when>                        <!--    21 -->
+        <xsl:when test="$rend eq 'LHLineStart'"      ></xsl:when>                        <!--    15 -->
+        <xsl:when test="$rend eq 'indent'"           ></xsl:when>                        <!--    15 -->
+        <xsl:when test="$rend eq 'sc'"               >font-variant: small-caps;</xsl:when> <!--    10 -->
+        <xsl:when test="$rend eq 'overstrike'"       >text-decoration: overline;</xsl:when> <!--    10 -->
+        <xsl:when test="$rend eq 'spaced'"           >font-stretch: wider;</xsl:when>    <!--     8 -->
+        <xsl:when test="$rend eq 'left'"             >text-align: left;</xsl:when>       <!--     8 -->
+        <xsl:when test="$rend eq 'AboveCenter'"      ></xsl:when>                        <!--     7 -->
+        <xsl:when test="$rend eq 'subscript'"        >vertical-align: sub;</xsl:when>    <!--     6 -->
+        <xsl:when test="$rend eq 'sc center'"        >font-variant: small-caps;text-align: center;</xsl:when> <!--     6 -->
+        <xsl:when test="$rend eq 'underline'"        >text-decoration: underline;</xsl:when> <!--     5 -->
+        <xsl:when test="$rend eq 'printed'"          ></xsl:when>                        <!--     5 -->
+        <xsl:when test="$rend eq 'hidden'"           >display: none;</xsl:when>          <!--     5 -->
+        <xsl:when test="$rend eq 'continued'"        ></xsl:when>                        <!--     5 -->
+        <xsl:when test="$rend eq 'c'"                ></xsl:when>                        <!--     5 -->
+        <xsl:when test="$rend eq 'inline'"           ></xsl:when>                        <!--     4 -->
+        <xsl:when test="$rend eq 'typescript'"       ></xsl:when>                        <!--     3 -->
+        <xsl:when test="$rend eq 'sc right'"         >font-variant: small-caps;text-align: right;</xsl:when> <!--     3 -->
+        <xsl:when test="$rend eq 'LHMargin'"         ></xsl:when>                        <!--     3 -->
+        <xsl:when test="$rend eq 'foot'"             ></xsl:when>                        <!--     3 -->
+        <xsl:when test="$rend eq 'strikethrough'"    >text-decoration: line-through;</xsl:when> <!--     2 -->
+        <xsl:when test="$rend eq 'small caps'"       >font-variant: small-caps;</xsl:when> <!--     2 -->
+        <xsl:when test="$rend eq 'gothic'"           ></xsl:when>                        <!--     2 -->
+        <xsl:when test="$rend eq 'font-size; 225%'"  ></xsl:when>                        <!--     2 -->
+        <xsl:when test="$rend eq 'font-size; 200%'"  ></xsl:when>                        <!--     2 -->
+        <xsl:when test="$rend eq 'chapter'"          ></xsl:when>                        <!--     2 -->
+        <xsl:when test="$rend eq 'center i'"         >text-align: center;font-style: italic;</xsl:when> <!--     2 -->
+        <xsl:when test="$rend eq 'uc'"               >text-transform: uppercase;</xsl:when> <!--     1 -->
+        <xsl:when test="$rend eq 'ti-5'"             ></xsl:when>                        <!--     1 -->
+        <xsl:when test="$rend eq 'ti=3'"             ></xsl:when>                        <!--     1 -->
+        <xsl:when test="$rend eq 'ti=2'"             ></xsl:when>                        <!--     1 -->
+        <xsl:when test="$rend eq 'text-align-left;'" ></xsl:when>                        <!--     1 -->
+        <xsl:when test="$rend eq 'noborder center'"  ></xsl:when>                        <!--     1 -->
+        <xsl:when test="$rend eq 'margin-bottom;'"   ></xsl:when>                        <!--     1 -->
+        <xsl:when test="$rend eq 'italic bold'"      ></xsl:when>                        <!--     1 -->
+        <xsl:when test="$rend eq 'i distinct'"       ></xsl:when>                        <!--     1 -->
+        <xsl:when test="$rend eq 'font-size;225%'"   ></xsl:when>                        <!--     1 -->
+        <xsl:when test="$rend eq 'font-size;150%'"   ></xsl:when>                        <!--     1 -->
+        <xsl:when test="$rend eq 'font-size; 150%'"  ></xsl:when>                        <!--     1 -->
+        <xsl:when test="$rend eq 'center ti-8'"      ></xsl:when>                        <!--     1 -->
+        <xsl:when test="$rend eq 'center b'"         ></xsl:when>                        <!--     1 -->
+        <xsl:when test="$rend eq 'Center'"           ></xsl:when>                        <!--     1 -->
+        <xsl:when test="$rend eq 'above'"            ></xsl:when>                        <!--     1 -->
+        <xsl:when test="$rend eq '20'"               ></xsl:when>                        <!--     1 -->
         <!-- above from profiling data; below from elsewhere or my head -->
-        <xsl:when test="$rend = 'case(upper)'"      >text-transform: uppercase;</xsl:when>
-        <xsl:when test="$rend = 'align(center)case(upper)'"      >text-align:center; text-transform:uppercase;</xsl:when>
-        <xsl:when test="$rend = 'case(upper)align(center)'"      >text-align:center; text-transform:uppercase;</xsl:when>
+        <xsl:when test="$rend eq 'case(upper)'"      >text-transform: uppercase;</xsl:when>
+        <xsl:when test="$rend eq 'align(center)case(upper)'"      >text-align:center; text-transform:uppercase;</xsl:when>
+        <xsl:when test="$rend eq 'case(upper)align(center)'"      >text-align:center; text-transform:uppercase;</xsl:when>
         <xsl:otherwise>
           <!-- xsl:message>WARNING: I don't know what to do with rend="<xsl:value-of select="."/>"</xsl:message -->
           <xsl:value-of select="."/>
@@ -795,36 +856,36 @@
     <title>
       <xsl:value-of select="$tapasTitle"/>
       <xsl:choose>
-        <xsl:when test="count( /TEI/teiHeader/fileDesc/titleStmt/title ) = 1">
+        <xsl:when test="count( /TEI/teiHeader/fileDesc/titleStmt/title ) eq 1">
           <xsl:value-of select="/TEI/teiHeader/fileDesc/titleStmt/title"/>
         </xsl:when>
-        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@type='short']">
-          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@type='short']">
+        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'short']">
+          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'short']">
             <xsl:value-of select="concat(.,' ')"/>
           </xsl:for-each>
         </xsl:when>
-        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@type='filing']">
-          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@type='filing']">
+        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'filing']">
+          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'filing']">
             <xsl:value-of select="concat(.,' ')"/>
           </xsl:for-each>
         </xsl:when>
-        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@type='uniform']">
-          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@type='uniform']">
+        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'uniform']">
+          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'uniform']">
             <xsl:value-of select="concat(.,' ')"/>
           </xsl:for-each>
         </xsl:when>
-        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@type='main']">
-          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@type='main']">
+        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'main']">
+          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'main']">
             <xsl:value-of select="concat(.,' ')"/>
           </xsl:for-each>
         </xsl:when>
-        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@type='marc245a']">
-          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@type='marc245a']">
+        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'marc245a']">
+          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'marc245a']">
             <xsl:value-of select="concat(.,' ')"/>
           </xsl:for-each>
         </xsl:when>
-        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@level='a']">
-          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@level='a']">
+        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@level eq 'a']">
+          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@level eq 'a']">
             <xsl:value-of select="concat(.,' ')"/>
           </xsl:for-each>
         </xsl:when>
@@ -862,7 +923,7 @@
   <xd:doc>
     <xd:desc>Template to drop insigificant whitespace nodes</xd:desc>
   </xd:doc>
-  <xsl:template match="choice/text()[normalize-space(.)='']" mode="work"/>
+  <xsl:template match="choice/text()[normalize-space(.) eq '']" mode="work"/>
 
   <!-- ***************************** -->
   <!-- handle contextual information -->
@@ -995,7 +1056,7 @@
           <xsl:otherwise>
             <xsl:message>WARNING: not doing a good job of identifing <xsl:value-of
               select="local-name(.)"/> #<xsl:value-of
-                select="count(preceding::*[local-name(.)=local-name(current())])+1"/>, “<xsl:value-of
+                select="count(preceding::*[local-name(.) eq local-name(current())])+1"/>, “<xsl:value-of
                   select="normalize-space(.)"/>”</xsl:message>
             <xsl:apply-templates select="( orgName | persName | placeName )[1]" mode="string"/>
           </xsl:otherwise>
@@ -1050,7 +1111,7 @@
         <xsl:comment>debug A</xsl:comment>
         <!-- No siblings, I was used for the identifier, ignore me -->
       </xsl:when>
-      <xsl:when test="not(*) and @type='main'">
+      <xsl:when test="not(*) and @type eq 'main'">
         <xsl:comment>debug B</xsl:comment>
         <!-- there are sibling <persName>s, but this one was already used -->
         <!-- for the identifier, so ignore it -->
@@ -1077,7 +1138,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  <xsl:template match="persName|placeName|orgName" mode="string">
+  <xsl:template mode="string" match="persName|placeName|orgName">
     <xsl:choose>
       <xsl:when test="not(*)">
         <!-- only text, no child elements -->
@@ -1108,18 +1169,28 @@
     <xsl:variable name="label" select="concat( local-name(.), $labelAdd )"/>
     <span data-tapas-label="{$label}"><xsl:apply-templates mode="#current"/></span>
   </xsl:template>
-  <xsl:template match="text()" mode="string">
+  <xsl:template mode="string" match="text()">
     <!-- regularize the whitespace, but leave leading or trailing iff present -->
     <xsl:variable name="mePlus" select="normalize-space( concat('␀',.,'␀') )"/>
     <xsl:variable name="regularized" select="substring( $mePlus, 2, string-length( $mePlus ) -2 )"/>
     <xsl:value-of select="$regularized"/>
   </xsl:template>
-  <xsl:template match="*" mode="string">
+  <xsl:template mode="string" match="*">
     <xsl:apply-templates select="node()" mode="#current"/>
   </xsl:template>
-  <xsl:template match="cb|gb|lb|pb|milestone|html:cb|html:gb|html:lb|html:pb|html:milestone" mode="string">
+  <xd:doc>
+    <xd:desc>Some of the mode "string" templates have to match in both namespaces,
+    as I'm overloading use of this mode for both ogrophy processing (which happens
+    in pass 1 on TEI data) and TOC processing (which happens in pass 2 on XHTML
+    data).</xd:desc>
+  </xd:doc>
+  <xsl:template mode="string" match="choice|html:choice">
+    <xsl:copy-of select="."/>
+  </xsl:template>
+  <xsl:template mode="string" match="cb|gb|lb|pb|milestone|html:cb|html:gb|html:lb|html:pb|html:milestone">
     <xsl:text>&#x20;</xsl:text>
   </xsl:template>
+  <xsl:template mode="string" match="fw|html:fw"/>
   
   <xsl:template match="*[normalize-space(.) eq '' and not( descendant-or-self::*/@* )]" mode="genCon"/>
   <xsl:template match="person/* | place/* | org/*" mode="genCon">
@@ -1206,15 +1277,15 @@
   <xsl:template name="getSex">
     <xsl:param name="sexCode" select="lower-case(.)"/>
     <xsl:choose>
-      <xsl:when test="$sexCode = '0'">unknown</xsl:when>
-      <xsl:when test="$sexCode = 'u'">unknown</xsl:when>
-      <xsl:when test="$sexCode = '1'">male</xsl:when>
-      <xsl:when test="$sexCode = 'm'">male</xsl:when>
-      <xsl:when test="$sexCode = '2'">female</xsl:when>
-      <xsl:when test="$sexCode = 'f'">female</xsl:when>
-      <xsl:when test="$sexCode = 'O'">other</xsl:when>
-      <xsl:when test="$sexCode = '9'">not applicable</xsl:when>
-      <xsl:when test="$sexCode = 'n'">none or not applicable</xsl:when>
+      <xsl:when test="$sexCode eq '0'">unknown</xsl:when>
+      <xsl:when test="$sexCode eq 'u'">unknown</xsl:when>
+      <xsl:when test="$sexCode eq '1'">male</xsl:when>
+      <xsl:when test="$sexCode eq 'm'">male</xsl:when>
+      <xsl:when test="$sexCode eq '2'">female</xsl:when>
+      <xsl:when test="$sexCode eq 'f'">female</xsl:when>
+      <xsl:when test="$sexCode eq 'O'">other</xsl:when>
+      <xsl:when test="$sexCode eq '9'">not applicable</xsl:when>
+      <xsl:when test="$sexCode eq 'n'">none or not applicable</xsl:when>
       <xsl:otherwise><xsl:value-of select="$sexCode"/></xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -1292,10 +1363,11 @@
   </xd:doc>
   <xsl:template match="*[@data-tapas-tocme]" mode="makeTOCentry">
     <xsl:variable name="gi" select="local-name(.)"/>
+    <xsl:variable name="maxlen" select="34"/>
     <li>
       <xsl:variable name="label">
-        <xsl:number level="multiple" format="I. 1. A. 1. a. 1. i. "
-          count="html:lg[@data-tapas-tocme] | html:div[@data-tapas-tocme]"/>
+        <xsl:number level="multiple" count="html:div[@data-tapas-tocme]|html:lg[@data-tapas-tocme]"
+          format="I. 1. A. 1. a. 1. i. "/>
       </xsl:variable>
       <xsl:attribute name="data-tapas-toc-depth" select="count( tokenize( normalize-space( $label ),' '))"/>
       <xsl:variable name="id">
@@ -1314,11 +1386,73 @@
         <span class="TOC-entry-label">
           <xsl:value-of select="$label"/>
         </span>
-        <span class="TOC-entry-heading">
-          <xsl:message>debug: heads: <xsl:for-each select="html:head/@type">
-            <xsl:value-of select="concat(.,', ')"/>
-          </xsl:for-each>.</xsl:message>
-          <xsl:apply-templates select="html:head[1]" mode="#current"/>
+        <span class="">
+          <xsl:choose>
+            <xsl:when test="count( html:head ) eq 1">
+              <xsl:attribute name="class" select="'TOC-entry-heading'"/>
+              <xsl:apply-templates mode="string" select="html:head[1]"/>
+            </xsl:when>
+            <xsl:when test="html:head">
+              <xsl:attribute name="class" select="'TOC-entry-heading'"/>
+              <xsl:apply-templates mode="string" select="(
+                html:head[ @type eq 'main'],
+                html:head[ @type eq 'supplied'],
+                html:head[ not( @type ) ],
+                html:head[ @type ne 'sub']
+                )[1]"/>
+            </xsl:when>
+            <xsl:when test="html:label[
+              not(
+                   preceding-sibling::html:p
+                 | preceding-sibling::html:ab
+                 | preceding-sibling::html:figure
+                 | preceding-sibling::html:table
+                 ) ]">
+              <xsl:attribute name="class" select="'TOC-entry-heading'"/>
+              <xsl:apply-templates mode="string" select="html:label[
+                not(
+                     preceding-sibling::html:p
+                   | preceding-sibling::html:ab
+                   | preceding-sibling::html:figure
+                   | preceding-sibling::html:table
+                   ) ][1]"/>
+            </xsl:when>
+            <xsl:when test="@n">
+              <xsl:attribute name="class" select="'TOC-entry-heading-generated'"/>
+              <xsl:if test="@type">
+                <xsl:value-of select="concat( @type,' #')"/>
+              </xsl:if>
+              <xsl:value-of select="@n"/>
+            </xsl:when>
+            <xsl:when test="@type">
+              <xsl:variable name="mytype" select="@type"/>
+              <xsl:attribute name="class" select="'TOC-entry-heading-generated'"/>
+              <xsl:value-of select="@type"/>
+              <xsl:if test="count( ../*[ local-name(.) eq $gi ][ @type eq $mytype ] ) gt 1">
+                <xsl:value-of select="concat(' #',count( preceding-sibling::*[ local-name(.) eq $gi ][ @type eq $mytype ] ) + 1)"/>
+              </xsl:if>
+            </xsl:when>
+            <xsl:when test="html:p | html:ab | html:lg | html:l">
+              <xsl:attribute name="class" select="'TOC-entry-heading-1stline'"/>
+              <xsl:variable name="me">
+                <xsl:apply-templates mode="string" select="( html:p | html:ab | html:lg | html:l )[1]"/>
+              </xsl:variable>
+              <xsl:variable name="mylen" select="string-length( $me )"/>
+              <xsl:value-of select="if ( $mylen lt $maxlen )
+                then $me
+                else concat( substring( $me, 1, $maxlen - 1 ),'…')"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:attribute name="class" select="'TOC-entry-heading-content'"/>
+              <xsl:variable name="me">
+                <xsl:apply-templates mode="string"/>
+              </xsl:variable>
+              <xsl:variable name="mylen" select="string-length( $me )"/>
+              <xsl:value-of select="if ( $mylen lt $maxlen )
+                then $me
+                else concat( substring( $me, 1, $maxlen - 1 ),'…')"/>
+            </xsl:otherwise>
+          </xsl:choose>
         </span>
       </a>
     </li>
