@@ -1911,9 +1911,9 @@ margin: 0;
 	/* t */
 
 	#tapasToolbox {
-	position: fixed;
+	position: relative;
 	top: 20px;
-	left: 720px;
+	left: 80%;
 	background: #FFF;
 	padding: 5px 10px 8px;
 	border: 1px solid #7681CE;
@@ -1923,6 +1923,7 @@ margin: 0;
 	border-radius: 3px;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
+	width:180px;
 	}
 
 	#tapasToolbox h1 {
@@ -2237,18 +2238,19 @@ margin: 0;
 }
 
 	/* styles for html shell and html elements in TEI (e.g.,<a> and <img>) */
-	html > body {
-	margin:0;
-	padding:0;
-	}
-
-	html {
-	margin:0;
-	padding:0;
-	.tapas-generic .page-setup;
-	}
+	// html > body {
+	// margin:0;
+	// padding:0;
+	// }
+	//
+	// html {
+	// margin:0;
+	// padding:0;
+	// .tapas-generic .page-setup;
+	// }
 
 .tapas-generic {
+	.tapas-generic .page-setup;
 	img {
 	border:1px solid @border-color;
 	}
@@ -2271,9 +2273,9 @@ margin: 0;
 	}
 
 	#teibpToolbox {
-	left: 56em;
-	top: 25px;
-	position: fixed;
+	left: 90%;
+	top: 0;
+	position: relative;
 	font-size: 70%;
 	margin-right:1em;
 	padding:1em;
