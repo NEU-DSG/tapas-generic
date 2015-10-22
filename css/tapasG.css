@@ -136,15 +136,15 @@ body {
   display: none;
 }
 .tapas-generic .page-setup {
-  margin-left: 2em;
-  margin-right: 4em;
-  padding: 2.5em;
   font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
   font-size: 13pt;
   line-height: 1.5;
   background-color: #edf3fa;
   color: #232936;
-  width: 33em;
+  width: 100%;
+  padding-left: 2em;
+  padding-right: 2em;
+  margin: 0;
 }
 .tapas-generic .table-border {
   border: 1px dotted #333333;
@@ -1308,7 +1308,6 @@ body {
 .tapas-generic #tapas-ref-dialog {
   padding: 0.5em 1.25em 0.5em 0.5em;
   background: none;
-  background-color: white;
   color: black;
   font-size: 13px;
 }
@@ -1446,15 +1445,15 @@ body {
 }
 /* styles for html shell and html elements in TEI (e.g.,<a> and <img>) */
 .tapas-generic {
-  margin-left: 2em;
-  margin-right: 4em;
-  padding: 2.5em;
   font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
   font-size: 13pt;
   line-height: 1.5;
   background-color: #edf3fa;
   color: #232936;
-  width: 33em;
+  width: 100%;
+  padding-left: 2em;
+  padding-right: 2em;
+  margin: 0;
   /* xml-serialization */
   /* loading animation */
   /* facsViewer */

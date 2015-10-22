@@ -14,8 +14,8 @@ function addPageBreaks(){
     }
 }
 
-function init(){
-	jQuery('#pbToggle').click( function(){
+function initialize_tapas_g(){
+	jQuery('.tapas-gneric #pbToggle').click( function(){
 		if(jQuery(this).is(':checked')){
 			clearPageBreaks();
 			Tapas.showPbs = false;
@@ -29,10 +29,10 @@ function init(){
 }
 
 jQuery(document).ready(function(){
-	init();
+	initialize_tapas_g();
 });
 
-function switchThemes(event) {
+function switchTapasThemes(event) {
 	jQuery(".tapas-generic").removeClass('diplomatic').removeClass('normal').addClass(jQuery(event.target).val());
 	Tapas.currentTheme = jQuery(event.target).val();
 }
