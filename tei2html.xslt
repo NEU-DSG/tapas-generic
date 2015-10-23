@@ -1192,7 +1192,8 @@
   </xsl:template>
   <xsl:template mode="string" match="fw|html:fw"/>
   
-  <xsl:template match="*[normalize-space(.) eq '' and not( descendant-or-self::*/@* )]" mode="genCon"/>
+  <!-- If an element has no descendants, don't transform it. -->
+  <xsl:template match="*[normalize-space(.) eq '' and not( descendant-or-self::*/@* )]" priority="50" mode="genCon"/>
   <xsl:template match="person/* | place/* | org/*" mode="genCon">
     <xsl:variable name="me" select="local-name(.)"/>
     <xsl:choose>
