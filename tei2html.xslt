@@ -36,14 +36,16 @@
   <xsl:param name="tapasTitle" select="'TAPAS: '"/>
   <xsl:param name="less"       select="'styles.less'"/>
   <xsl:param name="lessJS"     select="'less.js'"/>
-  <!-- set filePrefix parameter to "../" to use locally; path below is for within-TAPAS use -->
-  <xsl:param name="filePrefix" select="'../'"/>
-  <xsl:param name="view.diplo" select="concat($filePrefix,'css/tapasGdiplo.css')"/>
-  <xsl:param name="view.norma" select="concat($filePrefix,'css/tapasGnormal.css')"/>
-  <!-- JQuery is not being used at the moment, but we may be putting it back -->
-  <xsl:param name="jqueryJS"   select="concat($filePrefix,'js/jquery/jquery.min.js')"/>
-  <xsl:param name="jqueryBlockUIJS" select="concat($filePrefix,'js/jquery/plugins/jquery.blockUI.js')"/>
-  <xsl:param name="teibpJS"    select="concat($filePrefix,'js/tapas-generic.js')"/>
+  <!-- set assetsPrefix parameter to "../" to use locally; path below is for within-TAPAS use -->
+  <xsl:param name="assetsPrefix" select="'../'"/>
+  <xsl:param name="view.diplo" select="concat($assetsPrefix,'css/tapasGdiplo.css')"/>
+  <xsl:param name="view.norma" select="concat($assetsPrefix,'css/tapasGnormal.css')"/>
+  <xsl:param name="jqueryUIcss"    select="concat($assetsPrefix,'css/jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css')"/>
+  <xsl:param name="jqueryJS"   select="concat($assetsPrefix,'js/jquery/jquery.min.js')"/>
+  <xsl:param name="jqueryUIJS" select="concat($assetsPrefix,'js/jquery-ui/ui/minified/jquery-ui.min.js')"/>
+  <xsl:param name="jqueryBlockUIJS" select="concat($assetsPrefix,'js/jquery/plugins/jquery.blockUI.js')"/>
+  <xsl:param name="contextualJS" select="concat($assetsPrefix,'js/contextualItems.js')"/>
+  <xsl:param name="teibpJS"    select="concat($assetsPrefix,'js/tapas-generic.js')"/>
   <xsl:param name="fullHTML"   select="'false'"/> <!-- set to 'true' to get browsable output for debugging -->
   <xsl:variable name="root" select="/" as="node()"/>
   <xsl:variable name="htmlFooter">
@@ -711,10 +713,11 @@
   </xsl:template>
 
   <xsl:template name="javascript">
-    <script type="text/javascript" src="{$filePrefix}js/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="{$filePrefix}js/jquery-ui/ui/minified/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="{$filePrefix}js/contextualItems.js"></script>
-    <link rel="stylesheet" href="{$filePrefix}css/jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css"></link>
+    <script type="text/javascript" src="{$jqueryJS}"></script>
+    <script type="text/javascript" src="{$jqueryUIJS}"></script>
+    <script type="text/javascript" src="{$jqueryBlockUIJS}"></script>
+    <script type="text/javascript" src="{$contextualJS}"></script>
+    <link rel="stylesheet" href="{$jqueryUIcss}"></link>
     <script type="text/javascript" src="{$teibpJS}"></script>
   </xsl:template>
 
@@ -1192,7 +1195,8 @@
   </xsl:template>
   <xsl:template mode="string" match="fw|html:fw"/>
   
-  <xsl:template match="*[normalize-space(.) eq '' and not( descendant-or-self::*/@* )]" mode="genCon"/>
+  <!-- If an element has no descendants, don't transform it. -->
+  <xsl:template match="*[normalize-space(.) eq '' and not( descendant-or-self::*/@* )]" priority="50" mode="genCon"/>
   <xsl:template match="person/* | place/* | org/*" mode="genCon">
     <xsl:variable name="me" select="local-name(.)"/>
     <xsl:choose>
