@@ -52,6 +52,7 @@
     <div id="footer"> This is the <a href="{$tapasHome}">TAPAS</a> generic view.</div>
   </xsl:variable>
   <xsl:param name="lessSide" select="'server'"/><!-- 'server' or 'client' -->
+  <xsl:param name="idPrefix" select="'tg-'"/> <!-- Ensures unique identifiers when other reading interfaces are present. -->
 
   <xsl:variable name="numNoteFmt">
     <xsl:variable name="numNotes" select="count( /TEI/text//note ) cast as xs:string"/>
@@ -197,6 +198,9 @@
   <xsl:template match="@xml:id" mode="work">
     <!-- copy @xml:id to @id, which browsers use for internal links. -->
     <xsl:attribute name="id">
+      <xsl:value-of select="concat($idPrefix,.)"/>
+    </xsl:attribute>
+    <xsl:attribute name="data-tapas-xmlid">
       <xsl:value-of select="."/>
     </xsl:attribute>
   </xsl:template>
@@ -698,7 +702,7 @@
   <xsl:template name="generate-unique-id">
     <xsl:param name="base"/>
     <xsl:param name="suffix"/>
-    <xsl:variable name="id" select="concat($base,$suffix)"/>
+    <xsl:variable name="id" select="concat($idPrefix,$base,$suffix)"/>
     <xsl:choose>
       <xsl:when test="key('IDs', $id, $input)">
         <xsl:call-template name="generate-unique-id">
