@@ -15,7 +15,7 @@ function addPageBreaks(){
 }
 
 function initialize_tapas_g(){
-	jQuery('.tapas-gneric #pbToggle').click( function(){
+	jQuery('.tapas-generic #pbToggle').click( function(){
 		if(jQuery(this).is(':checked')){
 			clearPageBreaks();
 			Tapas.showPbs = false;
