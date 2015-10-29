@@ -934,7 +934,6 @@
       <xsl:apply-templates select="@* except ( @rend, @rendition, @style )" mode="#current"/>
       <xsl:apply-templates select="node()" mode="#current"/>
       <xsl:choose>
-        <xsl:when test="false()"/>
         <!-- don't number lines that are not multiples of 5 -->
         <xsl:when test="( $cnt mod 5 ) ne 0"/>
         <!-- don't number small first-counted stanzas -->
