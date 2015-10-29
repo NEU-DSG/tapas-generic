@@ -909,21 +909,44 @@
     <xd:desc>add line numbers to poetry</xd:desc>
   </xd:doc>
   <xsl:template match="lg/l[ not(@prev) and not( @part = ('M','F') )]" mode="work">
-    <xsl:variable name="cnt" select="count(
-      preceding::l
-        [ not(@prev) and not( @part = ('M','F') ) ]
-        [ ancestor::lg[ not( ancestor::lg ) ] is current()/ancestor::lg[ not( ancestor::lg ) ] ]
-      ) +1"/>
+    <xsl:variable name="me" select="."/>
+    <xsl:variable name="cnt">
+      <xsl:choose>
+        <xsl:when test="ancestor::note">
+          <xsl:variable name="myNote" select="ancestor::note[1]"/>
+          <xsl:variable name="thisLG" select="$myNote/descendant::lg[ $me/ancestor::lg = . ][1]"/>
+          <xsl:value-of select="count( preceding::l
+            [ not(@prev) and not( @part = ('M','F') ) ]
+            [ ancestor::lg = $thisLG ]
+            ) +1"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="count( preceding::l
+            [ not(@prev) and not( @part = ('M','F') ) ]
+            [ ancestor::lg[ not( ancestor::lg ) ] is current()/ancestor::lg[ not( ancestor::lg ) ] ]
+            [ not( ancestor::note ) ]
+            ) +1"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
     <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
       <xsl:call-template name="addRend"/>
       <xsl:apply-templates select="@* except ( @rend, @rendition, @style )" mode="#current"/>
       <xsl:apply-templates select="node()" mode="#current"/>
-      <xsl:if test="( $cnt mod 5 ) eq 0">
-        <xsl:text>&#xA0;</xsl:text>
-        <span class="poem-line-count">
-          <xsl:value-of select="$cnt"/>
-        </span>
-      </xsl:if>
+      <xsl:choose>
+        <xsl:when test="false()"/>
+        <!-- don't number lines that are not multiples of 5 -->
+        <xsl:when test="( $cnt mod 5 ) ne 0"/>
+        <!-- don't number small first-counted stanzas -->
+        <xsl:when test="( 12 > $cnt )  and  12 > count( ../l )"/>
+        <!-- number multiples of 5 in subsequent stanzas or large stanzas -->
+        <xsl:otherwise>
+          <xsl:text>&#xA0;</xsl:text>
+          <span class="poem-line-count">
+            <xsl:value-of select="$cnt"/>
+          </span>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:element>
   </xsl:template>
   
