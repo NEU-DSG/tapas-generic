@@ -1563,6 +1563,7 @@ body {
   height: 500px;
   overflow: hidden;
   padding: 0 1em .25em 0;
+  border: none;
 }
 .tapas-generic div.facsImage {
   width: 100%;
