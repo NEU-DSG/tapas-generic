@@ -90,37 +90,37 @@ Tapas.displayNoteData = function(e) {
     console.log("note data is " + html);
 }
 
-Tapas.displayRefNoteData = function(e) {
-    var html = '';
-    var target = jQuery(e.target);
-    var href = target.attr('href');
-    if (typeof href != 'undefined' && href.charAt(0) == '#') {
-        var noteId = href.substring(1);
-        var note = jQuery(".tapas-generic note#" + noteId);
-        html = note.html();
-        var noteType = note.attr('type');
-        var noteNumber = note.data('tapas-note-num');
-        if (typeof noteType == 'undefined') {
-            noteType = '';
-        } else {
-            noteType = noteType.charAt(0).toUpperCase() + noteType.slice(1);
-        }
-        var dialogTitle = noteType + " Note " + noteNumber;
-        var notePlace = note.attr('place');
-        if (typeof notePlace != 'undefined') {
-            html += "<p>Original Location: " + notePlace + "</p>";
-        }
-
-        //works slightly differently from the other notes, so sad duplication of Tapas.refreshDialog here
-        jQuery("#tapas-ref-dialog").dialog('close');
-        jQuery("#tapas-ref-dialog").html(html);
-        //placing the dialog for data display in the big white space currently there. Adjust position via jQueryUI rules for different behavior
-        jQuery("#tapas-ref-dialog").dialog( "option", "position", { my: "right top+"+coords[0]/2, at: "right top+"+coords[0]/2, of: window });
-        jQuery("#tapas-ref-dialog").dialog( "option", "title", dialogTitle);
-        jQuery("#tapas-ref-dialog").dialog('open');
-        console.log("ref note data is " + html);
-    }
-}
+// Tapas.displayRefNoteData = function(e) {
+//     var html = '';
+//     var target = jQuery(e.target);
+//     var href = target.attr('href');
+//     if (typeof href != 'undefined' && href.charAt(0) == '#') {
+//         var noteId = href.substring(1);
+//         var note = jQuery(".tapas-generic note#" + noteId);
+//         html = note.html();
+//         var noteType = note.attr('type');
+//         var noteNumber = note.data('tapas-note-num');
+//         if (typeof noteType == 'undefined') {
+//             noteType = '';
+//         } else {
+//             noteType = noteType.charAt(0).toUpperCase() + noteType.slice(1);
+//         }
+//         var dialogTitle = noteType + " Note " + noteNumber;
+//         var notePlace = note.attr('place');
+//         if (typeof notePlace != 'undefined') {
+//             html += "<p>Original Location: " + notePlace + "</p>";
+//         }
+//
+//         //works slightly differently from the other notes, so sad duplication of Tapas.refreshDialog here
+//         jQuery("#tapas-ref-dialog").dialog('close');
+//         jQuery("#tapas-ref-dialog").html(html);
+//         //placing the dialog for data display in the big white space currently there. Adjust position via jQueryUI rules for different behavior
+//         jQuery("#tapas-ref-dialog").dialog( "option", "position", { my: "right top+"+coords[0]/2, at: "right top+"+coords[0]/2, of: window });
+//         jQuery("#tapas-ref-dialog").dialog( "option", "title", dialogTitle);
+//         jQuery("#tapas-ref-dialog").dialog('open');
+//         console.log("ref note data is " + html);
+//     }
+// }
 
 Tapas.rewriteExternalRefs = function() {
     var externalRefNodes = jQuery(".tapas-generic [ref*='http']");
@@ -187,8 +187,8 @@ function initialize_tapas_generic(){
   refs.mouseover(Tapas.displayRefData);
   var notes = jQuery(".tapas-generic [class='note-marker']");
   notes.mouseover(Tapas.displayNoteData);
-  var refNotes = jQuery(".tapas-generic a.ref-note");
-  refNotes.mouseover(Tapas.displayRefNoteData);
+  // var refNotes = jQuery(".tapas-generic a.ref-note");
+  // refNotes.mouseover(Tapas.displayRefNoteData);
   //Tapas.rewriteExternalRefs();
   Tapas.notes = notes;
   Tapas.refs = refs; // not sure yet if we'll need this data on the Tapas object
