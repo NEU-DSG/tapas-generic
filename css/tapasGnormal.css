@@ -937,6 +937,7 @@ body {
 .tapas-generic persName[ref] {
   border-bottom: 1px dotted #000000;
   background: rgba(110, 168, 229, 0.3);
+  cursor: pointer;
 }
 .tapas-generic person {
   display: block;
@@ -947,6 +948,10 @@ body {
   display: block;
   margin-top: 1em;
   margin-bottom: 1em;
+}
+.tapas-generic placeName {
+  background: rgba(110, 168, 229, 0.3);
+  cursor: pointer;
 }
 .tapas-generic div[type="poem"] {
   display: block;
