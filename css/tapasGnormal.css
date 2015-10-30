@@ -140,9 +140,6 @@ body {
 .tapas-generic .-teibp-thumbnail {
   max-height: 60px;
 }
-.tapas-generic .-teibp-pbFacs {
-  display: none;
-}
 .tapas-generic .page-setup {
   font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
   font-size: 13pt;
