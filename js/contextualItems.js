@@ -184,9 +184,9 @@ Tapas.findOgraphyType = function(ography) {
 
 function initialize_tapas_generic(){
   var refs = jQuery(".tapas-generic [ref]");
-  refs.mouseover(Tapas.displayRefData);
+  refs.click(Tapas.displayRefData);
   var notes = jQuery(".tapas-generic [class='note-marker']");
-  notes.mouseover(Tapas.displayNoteData);
+  notes.click(Tapas.displayNoteData);
   // var refNotes = jQuery(".tapas-generic a.ref-note");
   // refNotes.mouseover(Tapas.displayRefNoteData);
   //Tapas.rewriteExternalRefs();
