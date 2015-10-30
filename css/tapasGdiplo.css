@@ -913,6 +913,10 @@ body {
   content: "\00000a";
   white-space: pre;
 }
+.tapas-generic orgName[ref] {
+  background: rgba(110, 168, 229, 0.3);
+  cursor: pointer;
+}
 .tapas-generic origPlace {
   font-weight: bold;
 }
