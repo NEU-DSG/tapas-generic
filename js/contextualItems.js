@@ -23,7 +23,9 @@ Tapas.findATarget = function(ref) {
 Tapas.displayRefData = function(e) {
     var html = '';
     var target = e.target;
+    console.log("target is " + target);
     var ref = jQuery(target).attr('ref');
+    console.log("ref is "+ref);
     while (typeof ref == "undefined") {
         var target = target.parentNode;
         ref = jQuery(target).attr('ref');
