@@ -1559,8 +1559,8 @@ body {
 }
 .tapas-generic .img-resizable {
   background-color: transparent;
-  width: 550px;
-  height: 700px;
+  width: 350px;
+  height: 500px;
   overflow: hidden;
   padding: 0 1em .25em 0;
 }
