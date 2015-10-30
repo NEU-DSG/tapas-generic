@@ -62,7 +62,7 @@ Tapas.refreshDialog = function(html, target, coords) {
     console.log("tapas ref dialog html is "+html);
     //placing the dialog for data display in the big white space currently there. Adjust position via jQueryUI rules for different behavior
     // jQuery("#tapas-ref-dialog").dialog( "option", "position", { my: "right top+"+coords[0]/2, at: "right top+"+coords[0]/2, of: window });
-    jQuery("#tapas-ref-dialog").dialog( "option", "position", { my: "right top", at: "right top+", of: window });
+    jQuery("#tapas-ref-dialog").dialog( "option", "position", { my: "left top+200", at: "left top+200", of: window });
     var identifierEl = target.children('p.identifier');
     if(identifierEl.length == 0) {
         //dialog title by mouseovered text, where the mouseovered element is passed as target, usually a note
