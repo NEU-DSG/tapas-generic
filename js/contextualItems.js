@@ -43,6 +43,7 @@ Tapas.displayRefData = function(e) {
             //html += "<p class='tei-element'>TEI element: " + e.target.nodeName + "</p>";
             //desperate effort to produce a consistent, non-code duplicating way to build HTML for the info dialog
             html += Tapas.ographyToHtml(parentTarget);
+            console.log("ref data is " + html);
 
             //send the parentTarget (the ography element to the dialog so it can
             //dig up the identifier text
@@ -80,6 +81,7 @@ Tapas.displayNoteData = function(e) {
     var note = jQuery(".tapas-generic note[data-tapas-note-num = '" + tapasNoteNum + "']");
     html = note.html();
     Tapas.refreshDialog(html, target, coords);
+    console.log("note data is " + html);
 }
 
 Tapas.displayRefNoteData = function(e) {
@@ -110,7 +112,7 @@ Tapas.displayRefNoteData = function(e) {
         jQuery(".tapas-generic #tapas-ref-dialog").dialog( "option", "position", { my: "right top+"+coords[0]/2, at: "right top+"+coords[0]/2, of: window });
         jQuery(".tapas-generic #tapas-ref-dialog").dialog( "option", "title", dialogTitle);
         jQuery(".tapas-generic #tapas-ref-dialog").dialog('open');
-
+        console.log("ref note data is " + html);
     }
 }
 

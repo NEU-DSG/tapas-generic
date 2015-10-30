@@ -5,6 +5,7 @@ function clearPageBreaks(){
 }
 
 function addPageBreaks(){
+	console.log("in add page breaks");
     if (Tapas.currentTheme == 'diplomatic') {
     	jQuery(".tapas-generic pb").css("display","block");
     	jQuery(".tapas-generic .-teibp-pb").css("display","block");
@@ -38,6 +39,7 @@ function switchTapasThemes(event) {
 }
 
 function showFacs(num, url, id) {
+	console.log("showing facs for num:"+num+" , url:"+url+", id:"+id);
 	facsWindow = window.open ("about:blank")
 	facsWindow.document.write("<html>")
 	facsWindow.document.write("<head>")
