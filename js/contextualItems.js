@@ -1,21 +1,21 @@
 var Tapas = {};
 
 Tapas.findATarget = function(ref) {
-    var aTarget = jQuery(".tapas-generic a[id='" + ref + "']");
+    var aTarget = jQuery("a[id='" + ref + "']");
 
     if(aTarget.length !=0 ) {
         return aTarget;
     }
-    ref = ref.replace('#', '');
-    aTarget = jQuery(".tapas-generic a[id='" + ref + "']");
+    // ref = ref.replace('#', '');
+    aTarget = jQuery("a[id='" + ref + "']");
 
     if(aTarget.length !=0 ) {
         return aTarget;
     }
 
     //try using the fancy character
-    aTarget = jQuery(".tapas-generic a[id='Ћ." + ref + "']");
-    console.log(".tapas-generic a[id='Ћ." + ref + "']");
+    aTarget = jQuery("a[id='Ћ." + ref + "']");
+    console.log("a[id='Ћ." + ref + "']");
     return aTarget;
 }
 
@@ -32,7 +32,7 @@ Tapas.displayRefData = function(e) {
 
     var aTarget = Tapas.findATarget(ref);
 
-    console.log(aTarget);
+    console.log("aTarget is " . aTarget);
     if(aTarget.length != 0  ) {
         //bop back up to the enclosing p@class='contextualItem'. it looks like that's the most reliable container
         //var parentTarget = aTarget.parent("[class='contextualItem']");
