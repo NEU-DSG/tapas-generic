@@ -160,7 +160,7 @@ Tapas.ographyToHtml = function(ography) {
         switch(jQuery(child).data('tapasLabel')) {
 
             default:
-                var childHtml = jQuery(child).text();
+                var childHtml = jQuery(child).html();
                 if(childHtml) {
                     html += "<p>" + "<span class='ography-data'>" + jQuery(child).data('tapasLabel') + ": </span> " + childHtml + "</p>";
                 }
