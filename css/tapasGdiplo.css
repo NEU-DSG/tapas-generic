@@ -1557,7 +1557,7 @@ body {
   height: 100%;
   background-image: url("../images/transparentbg.png");
 }
-.tapas-generic #resizable {
+.tapas-generic .img-resizable {
   background-color: transparent;
   width: 550px;
   height: 700px;
