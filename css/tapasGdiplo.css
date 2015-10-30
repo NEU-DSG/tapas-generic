@@ -75,6 +75,14 @@ body {
 .tapas-generic .block {
   display: block;
 }
+.tapas-generic .clearfix:before,
+.tapas-generic .clearfix:after {
+  content: " ";
+  display: table;
+}
+.tapas-generic .clearfix:after {
+  clear: both;
+}
 .tapas-generic .block-margins {
   display: block;
   margin-top: 1em;
@@ -873,15 +881,30 @@ body {
   font-style: italic;
 }
 .tapas-generic opener {
-  display: block;
-  margin-top: 0;
-  margin-bottom: 0;
+  display: inline;
+}
+.tapas-generic opener:before,
+.tapas-generic opener:after {
+  content: " ";
+  display: table;
+}
+.tapas-generic opener:after {
+  clear: both;
 }
 .tapas-generic opener placeName,
 .tapas-generic opener date {
-  display: block;
-  margin-top: 0;
-  margin-bottom: 0;
+  display: inline;
+}
+.tapas-generic opener placeName:before,
+.tapas-generic opener date:before,
+.tapas-generic opener placeName:after,
+.tapas-generic opener date:after {
+  content: " ";
+  display: table;
+}
+.tapas-generic opener placeName:after,
+.tapas-generic opener date:after {
+  clear: both;
 }
 .tapas-generic opener tapas_metadata {
   display: inline;

@@ -17,6 +17,16 @@ margin: 0;
 	.block {
 	display:block;
 	}
+	.clearfix{
+	  &:before,
+	  &:after {
+	    content: " ";
+	    display: table;
+	  }
+	  &:after {
+	    clear: both;
+	  }
+	}
 
 	.block(@margins: 0) {
 	display:block;
@@ -1386,12 +1396,14 @@ margin: 0;
 	offset {}
 
 	opener {
-	.block;
+	.inline;
+	.clearfix;
 	}
 
 	opener placeName,
 	opener date {
-	.block;
+	.inline;
+	.clearfix;
 	}
 
 	opener tapas_metadata {
