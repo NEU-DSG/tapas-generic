@@ -7,6 +7,8 @@ Tapas.findATarget = function(ref) {
         return aTarget;
     }
     // ref = ref.replace('#', '');
+    ref = ref.split('#');
+    ref = ref[1];
     aTarget = jQuery("a[id='" + ref + "']");
 
     if(aTarget.length !=0 ) {
@@ -34,7 +36,7 @@ Tapas.displayRefData = function(e) {
 
     var aTarget = Tapas.findATarget(ref);
 
-    console.log("aTarget is " + aTarget);
+    console.log(aTarget);
     console.log("aTarget length is "+ aTarget.length);
     if(aTarget.length != 0  ) {
         //bop back up to the enclosing p@class='contextualItem'. it looks like that's the most reliable container
