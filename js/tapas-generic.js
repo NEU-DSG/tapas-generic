@@ -40,7 +40,7 @@ function switchTapasThemes(event) {
 
 function showFacs(num, url, id) {
 	console.log("showing facs for num:"+num+" , url:"+url+", id:"+id);
-	jQuery("body").append('<div class="modal fade" id="modal_'+id+'"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body"><img src="'+url+'" id="resizable_'+id+'" style="width:300px;height:auto;margin-left:auto;margin-right:auto;"/></div></div><!-- /.modal-content --></div><!-- /.modal-dialog --></div><!-- /.modal -->');
+	jQuery("body").append('<div class="modal fade" id="modal_'+id+'"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body"><img src="'+url+'" id="resizable_'+id+'" class="img-responsive"/></div></div><!-- /.modal-content --></div><!-- /.modal-dialog --></div><!-- /.modal -->');
 	jQuery("#modal_"+id).modal('show');
 	jQuery("#resizable_"+id).resizable();
 	// facsWindow = window.open ("about:blank")
