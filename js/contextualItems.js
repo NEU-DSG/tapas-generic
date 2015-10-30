@@ -34,7 +34,8 @@ Tapas.displayRefData = function(e) {
 
     var aTarget = Tapas.findATarget(ref);
 
-    console.log("aTarget is " . aTarget);
+    console.log("aTarget is " + aTarget);
+    console.log("aTarget length is "+ aTarget.length);
     if(aTarget.length != 0  ) {
         //bop back up to the enclosing p@class='contextualItem'. it looks like that's the most reliable container
         //var parentTarget = aTarget.parent("[class='contextualItem']");
