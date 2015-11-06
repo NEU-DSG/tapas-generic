@@ -151,6 +151,12 @@ body {
   padding-right: 2em;
   margin: 0;
 }
+@media (max-width: 767px) {
+  .tapas-generic .page-setup {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
 .tapas-generic .table-border {
   border: 1px dotted #333333;
 }
@@ -1496,6 +1502,12 @@ body {
   /* xml-serialization */
   /* loading animation */
   /* facsViewer */
+}
+@media (max-width: 767px) {
+  .tapas-generic {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 .tapas-generic img {
   border: 1px solid #4d88cd;
