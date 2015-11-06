@@ -1274,6 +1274,15 @@ body {
   -webkit-border-radius: 3px;
   width: 180px;
 }
+@media (max-width: 767px) {
+  .tapas-generic #tapasToolbox {
+    clear: both;
+    display: block;
+    width: 100%;
+    top: 0;
+    left: 0;
+  }
+}
 .tapas-generic #tapasToolbox h1 {
   display: none;
 }
