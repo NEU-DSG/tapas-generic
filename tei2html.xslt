@@ -1214,6 +1214,11 @@
           <span><xsl:apply-templates select="node()" mode="#current"/></span>
         </p>
       </xsl:when>
+      <xsl:when test="self::note"> <!-- Notes can contain problematic child elements, so flatten for now. -->
+        <p data-tapas-label="note">
+          <span><xsl:apply-templates select="node()" mode="string"/></span>
+        </p>
+      </xsl:when>
       <xsl:when test="not( preceding-sibling::*[ local-name(.) eq $me ] )">
         <xsl:variable name="mylabel">
           <xsl:choose>
