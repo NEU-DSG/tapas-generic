@@ -318,13 +318,12 @@
       no TEI namespace in the TEI Boilerplate output because
       JavaScript, or at least JQuery, cannot manipulate the TEI
       elements/attributes if they are in the TEI namespace, so the TEI
-      namespace is stripped from the output. As far as I know,
-      &lt;title> elsewhere does not cause any problems, but we may
-      need to extend this to other occurrences of &lt;title> outside
-      the Header.</xd:p>
+      namespace is stripped from the output.</xd:p>
+      <xd:p>2015-09-18: Changed the match expression to affect all TEI titles.
+      ~Ashley</xd:p>
     </xd:desc>
   </xd:doc>
-  <xsl:template match="teiHeader//title" mode="work">
+  <xsl:template match="title" mode="work">
     <tei-title>
       <xsl:call-template name="addID"/>
       <xsl:apply-templates select="@*|node()" mode="#current"/>
