@@ -28,12 +28,25 @@
     font-family: @body-font-family;
     font-weight: normal;
   }
-  #TOC ol {
+  #TOC{
+    width:25%;
+    float:left;
+    position:static;
+    overflow:scroll;
+    ol {
       list-style-type: none;
+      -webkit-margin-before: 0px;
+      -webkit-padding-start: 0;
       .toc-entry-label {
         font-size: 17px;
         margin-right: 5px;
       }
+    }
+    @media(max-width: 1000px){
+      width:100%;
+      float:none;
+      position:static;
+    }
   }
 }
 

@@ -27,6 +27,40 @@ function initialize_tapas_g(){
 	});
 	addPageBreaks();
 	jQuery(this).checked = false;
+	var toc = jQuery('#TOC').offset().top;
+	fixTOC(toc);
+	jQuery(window).scroll(function() {
+	    fixTOC(toc);
+	});
+	jQuery(window).resize(function(){
+			fixTOC(toc);
+	})
+
+}
+
+function fixTOC(toc){
+	if (jQuery(window).width() > 1000){
+		var currentScroll = jQuery(window).scrollTop();
+		if (currentScroll >= toc) {
+				jQuery('#TOC').css({
+						position: 'fixed',
+						top: jQuery("#navbar").height() + 40,
+						width: jQuery(".reader_tapas_generic").width() * .25 - 15,
+						height: jQuery(window).height() - jQuery("#navbar").height() - 40
+				});
+		} else {
+				jQuery('#TOC').css({
+						position: 'static'
+				});
+		}
+	} else {
+		jQuery('#TOC').css({
+				position: 'static',
+				top: 'auto',
+				width: '100%',
+				height: 'auto'
+		});
+	}
 }
 
 jQuery(document).ready(function(){

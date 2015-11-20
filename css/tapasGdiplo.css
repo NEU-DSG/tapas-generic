@@ -1528,6 +1528,16 @@ body {
   color: #337dd3;
   text-decoration: underline;
 }
+.tapas-generic #tei_wrapper {
+  width: 73%;
+  float: right;
+}
+@media (max-width: 1000px) {
+  .tapas-generic #tei_wrapper {
+    width: 100%;
+    float: none;
+  }
+}
 .tapas-generic #teibpToolbox {
   left: 90%;
   top: 0;
@@ -1613,12 +1623,27 @@ body {
   font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
   font-weight: normal;
 }
+.tapas-generic #TOC {
+  width: 25%;
+  float: left;
+  position: static;
+  overflow: scroll;
+}
 .tapas-generic #TOC ol {
   list-style-type: none;
+  -webkit-margin-before: 0px;
+  -webkit-padding-start: 0;
 }
 .tapas-generic #TOC ol .toc-entry-label {
   font-size: 17px;
   margin-right: 5px;
+}
+@media (max-width: 1000px) {
+  .tapas-generic #TOC {
+    width: 100%;
+    float: none;
+    position: static;
+  }
 }
 .tapas-generic.diplomatic add {
   background: #ffff66;
