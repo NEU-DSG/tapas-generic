@@ -27,15 +27,16 @@ function initialize_tapas_g(){
 	});
 	addPageBreaks();
 	jQuery(this).checked = false;
-	var toc = jQuery('#TOC').offset().top;
-	fixTOC(toc);
-	jQuery(window).scroll(function() {
-	    fixTOC(toc);
-	});
-	jQuery(window).resize(function(){
-			fixTOC(toc);
-	})
-
+	if (jQuery("#TOC").length > 0){
+		var toc = jQuery('#TOC').offset().top;
+		fixTOC(toc);
+		jQuery(window).scroll(function() {
+		    fixTOC(toc);
+		});
+		jQuery(window).resize(function(){
+				fixTOC(toc);
+		})
+	}
 }
 
 function fixTOC(toc){
