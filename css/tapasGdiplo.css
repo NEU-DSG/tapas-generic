@@ -1648,7 +1648,7 @@ body {
 .tapas-generic.diplomatic add {
   background: #ffff66;
 }
-.tapas-generic.diplomatic add:hover:before {
+.tapas-generic.diplomatic add[hand]:hover:before {
   font-style: italic;
   content: "(Added by: " attr(hand) " ) ";
 }
