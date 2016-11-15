@@ -1060,7 +1060,7 @@
             <xsl:apply-templates select="( orgName | persName | placeName )[ @type eq 'main'][1]" mode="string"/>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:message>WARNING: not doing a good job of identifing <xsl:value-of
+            <xsl:message>WARNING: not doing a good job of identifying <xsl:value-of
               select="local-name(.)"/> #<xsl:value-of
                 select="count(preceding::*[local-name(.) eq local-name(current())])+1"/>, “<xsl:value-of
                   select="normalize-space(.)"/>”</xsl:message>
