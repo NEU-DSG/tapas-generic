@@ -18,13 +18,13 @@
   <xsl:param name="assetsPrefix" select="'../'"/>
   
   <!-- KEYS -->
-  <xsl:key name="OGs" match="//*[self::name | self::orgName | self::persName | self::placeName | self::rs ][@ref]" 
+  <xsl:key name="OGs" match="//*[self::name | self::orgName | self::persName | self::placeName | self::rs | self::title ][@ref]" 
     use="substring-before(@ref,'#')"/>
   
   <!-- GLOBAL VARIABLES -->
   <xsl:variable name="ogMap" as="item()*">
     <xsl:variable name="uris" select="/TEI/text
-                                      //*[self::name | self::orgName | self::persName | self::placeName | self::rs ][@ref]
+                                      //*[self::name | self::orgName | self::persName | self::placeName | self::rs | self::title ][@ref]
                                       /@ref/substring-before(normalize-space(.),'#')"/>
     <xsl:variable name="distinctURIs" select="for $uri in distinct-values($uris) return $uri"/>
     <!-- 'ography entries located in the local TEI document are always identified with the prefix 'og0'. -->
@@ -44,9 +44,12 @@
   
   <xsl:variable name="ogEntries" as="item()*">
     <xsl:variable name="distinctURIs" select="$ogMap/@key"/>
-    <xsl:call-template name="get-entries">
-      <xsl:with-param name="docs" select="$distinctURIs"/>
-    </xsl:call-template>
+    <xsl:variable name="pass1" as="item()*">
+      <xsl:call-template name="get-entries">
+        <xsl:with-param name="docs" select="$distinctURIs"/>
+      </xsl:call-template>
+    </xsl:variable>
+    <xsl:copy-of select="$pass1"/>
   </xsl:variable>
   
   
@@ -56,7 +59,7 @@
     <xsl:value-of select="$ogMap[@key eq $filename]"/>
   </xsl:function>
   
-  <xsl:function name="tps:make-ography-ref" as="xs:string?">
+  <xsl:function name="tps:generate-og-id" as="xs:string?">
     <xsl:param name="idref" as="xs:string"/>
     <xsl:variable name="refSeq" select="tokenize($idref,'#')"/>
     <xsl:variable name="prefix" select="tps:get-og-prefix($refSeq[1])"/>
@@ -66,7 +69,7 @@
                             if ( $prefix eq 'og0' ) then $refSeq[2]
                             else concat($prefix,'-',$refSeq[2])
                           else ()"/>
-</xsl:function>
+  </xsl:function>
   
   <!-- TEMPLATES -->
   <xsl:template match="/TEI">
@@ -168,16 +171,20 @@
   </xsl:template>
   
   <xsl:template match="@ref" mode="og-gen og-entry">
+    <xsl:param name="doc-uri" as="xs:string" tunnel="yes"/>
     <!-- Make a standard data attribute for the @ref. -->
     <xsl:call-template name="make-data-attr"/>
-    <!-- If there's an 'ography mapped to the base URI, add @data-tapas-ogref. -->
-    <xsl:variable name="ogRef" select="tps:make-ography-ref(.)">
-    </xsl:variable>
-    <xsl:if test="$ogRef">
-      <xsl:attribute name="data-tapas-ogref">
-        <xsl:text>#</xsl:text>
-        <xsl:value-of select="$ogRef"/>
-      </xsl:attribute>
+    <!-- As a temporary (?) measure, don't resolve any nested 'ography references 
+      unless the current entry occurs within the input TEI document. -->
+    <xsl:if test="$doc-uri eq ''">
+      <!-- If there's an 'ography mapped to the base URI, add @data-tapas-ogref. -->
+      <xsl:variable name="ogRef" select="tps:generate-og-id(.)">
+      </xsl:variable>
+      <xsl:if test="$ogRef">
+        <xsl:attribute name="data-tapas-ogref">
+          <xsl:value-of select="concat('#',$ogRef)"/>
+        </xsl:attribute>
+      </xsl:if>
     </xsl:if>
   </xsl:template>
   
