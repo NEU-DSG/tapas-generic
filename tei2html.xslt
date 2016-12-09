@@ -6,6 +6,7 @@
   xmlns:eg="http://www.tei-c.org/ns/Examples"
   xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl"
   xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:tei="http://www.tei-c.org/ns/1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:wfn="http://www.wwp.northeastern.edu/ns/functions"
   exclude-result-prefixes="#all">
@@ -28,8 +29,10 @@
   </xd:doc>
 
   <xsl:include href="xml-to-string.xsl"/>
+  <xsl:include href="ography.xsl"/>
 
   <xsl:output method="xhtml"/>
+  <xsl:namespace-alias stylesheet-prefix="tei" result-prefix="html"/>
 
   <xsl:param name="teibpHome"  select="'http://dcl.slis.indiana.edu/teibp/'"/>
   <xsl:param name="tapasHome"  select="'http://tapasproject.org/'"/>
@@ -295,7 +298,7 @@
 
   <xsl:template name="contextual">
     <div id="tei_contextual">
-      <xsl:variable name="list_of_refs"
+      <!--<xsl:variable name="list_of_refs"
         select="tokenize( string-join(
             //name/@ref
           | //orgName/@ref
@@ -307,7 +310,8 @@
         <xsl:call-template name="generateContextItem">
           <xsl:with-param name="ref" select="$thisRef"/>
         </xsl:call-template>
-      </xsl:for-each>
+      </xsl:for-each>-->
+      <xsl:copy-of select="$ogEntries"/>
     </div>
   </xsl:template>
 
@@ -936,7 +940,21 @@
   <!-- ***************************** -->
 
   <!-- ignore lists of contextual info when they occur in normal processing -->
-  <xsl:template match="nymList|listOrg|listPerson|placeList|nym|org|person|place" mode="work"/>
+  <!--<xsl:template match="nymList|listOrg|listPerson|placeList|nym|org|person|place" mode="work"/>-->
+  
+  <xsl:template match="castList|listBibl|listEvent|listNym|listOrg|listPerson|listPlace" mode="work">
+    <xsl:element name="{local-name()}">
+      <!--<xsl:apply-templates select="@*"/>-->
+      <xsl:if test="not(head)">
+        <head><xsl:value-of select="local-name()"/></head>
+      </xsl:if>
+      <xsl:apply-templates mode="og-entry">
+        <xsl:with-param name="doc-uri" select="''" tunnel="yes"/>
+      </xsl:apply-templates>
+    </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="listRef|listRelation" mode="work"/>
 
   <xd:doc>
     <xd:desc>Generate an entry for the separate "contextual information" block</xd:desc>

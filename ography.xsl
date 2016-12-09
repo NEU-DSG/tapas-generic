@@ -15,7 +15,7 @@
   <xsl:output method="xhtml"/>
   
   <!-- PARAMETERS -->
-  <xsl:param name="assetsPrefix" select="'../'"/>
+  <!--<xsl:param name="assetsPrefix" select="'../'"/>-->
   
   <!-- KEYS -->
   <xsl:key name="OGs" match="//*[self::name | self::orgName | self::persName | self::placeName | self::rs | self::title ][@ref]" 
@@ -115,13 +115,13 @@
     <xsl:variable name="doc" select="$docs[1]"/>
     <xsl:variable name="refs" select="key('OGs',$doc)"/>
     <xsl:variable name="distinctTargets" select="distinct-values($refs/@ref/substring-after(.,'#'))"/>
-    <xsl:variable name="entries" select="if ( $doc eq '' ) then //*[@xml:id] else doc($doc)"/>
+    <xsl:variable name="entries" select="if ( $doc eq '' ) then () else doc($doc)"/>
     <xsl:apply-templates select="$entries" mode="og-gen">
       <xsl:with-param name="doc-uri" select="$doc" tunnel="yes"/>
       <xsl:with-param name="idrefs" select="$distinctTargets" tunnel="yes"/>
     </xsl:apply-templates>
-    <!-- If $docs has more than one URI in it, strip out $doc (just resolved) and 
-      run this template again with the subset. -->
+    <!-- If $docs has more than one URI in it, strip out $doc (which this template 
+      just resolved) and run this template again on the subset. -->
     <xsl:if test="count($docs) gt 1">
       <xsl:text> </xsl:text>
       <xsl:call-template name="get-entries">
@@ -152,10 +152,10 @@
   </xsl:template>
   
   <xsl:template match="*" mode="og-entry" priority="-20">
-    <xsl:copy>
+    <xsl:element name="{local-name()}">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:apply-templates mode="#current"/>
-    </xsl:copy>
+    </xsl:element>
   </xsl:template>
   
   <xsl:template match="@*" mode="og-gen og-entry" name="make-data-attr" priority="-20">

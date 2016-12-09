@@ -1,9 +1,9 @@
-@import url('http://fonts.googleapis.com/css?family=Arvo:400,700,400italic,700italic|Gentium+Book+Basic:400,400italic,700,700italic');
 /* imports */
 /* @import url("shell.css"); */
+@import url('http://fonts.googleapis.com/css?family=Arvo:400,700,400italic,700italic|Gentium+Book+Basic:400,400italic,700,700italic');
 /* namespaces */
 /* @namespace "http://www.tei-c.org/ns/1.0"; */
-/* @namespace with prefix, as below, throws and error in less. */
+/* @namespace with prefix, as below, throws an error in less. */
 /* @namespace html "http://www.w3.org/1999/xhtml"; */
 body {
   margin: 0;
@@ -75,6 +75,14 @@ body {
 .tapas-generic .block {
   display: block;
 }
+.tapas-generic .clearfix:before,
+.tapas-generic .clearfix:after {
+  content: " ";
+  display: table;
+}
+.tapas-generic .clearfix:after {
+  clear: both;
+}
 .tapas-generic .block-margins {
   display: block;
   margin-top: 1em;
@@ -132,19 +140,22 @@ body {
 .tapas-generic .-teibp-thumbnail {
   max-height: 60px;
 }
-.tapas-generic .-teibp-pbFacs {
-  display: none;
-}
 .tapas-generic .page-setup {
   font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
   font-size: 13pt;
   line-height: 1.5;
-  background-color: #edf3fa;
+  background-color: transparent;
   color: #232936;
   width: 100%;
   padding-left: 2em;
   padding-right: 2em;
   margin: 0;
+}
+@media (max-width: 767px) {
+  .tapas-generic .page-setup {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 .tapas-generic .table-border {
   border: 1px dotted #333333;
@@ -765,7 +776,7 @@ body {
 .tapas-generic text list[type=toc] label,
 .tapas-generic text list[type=toc] rs {
   display: inline-block;
-  background: #edf3fa;
+  background: transparent;
   position: relative;
   bottom: -4px;
 }
@@ -779,7 +790,7 @@ body {
   text-decoration: none;
 }
 .tapas-generic text list[type=toc] label {
-  background-color: #edf3fa;
+  background-color: transparent;
   float: left;
   padding: 0 2px 3px 0;
 }
@@ -873,15 +884,30 @@ body {
   font-style: italic;
 }
 .tapas-generic opener {
-  display: block;
-  margin-top: 0;
-  margin-bottom: 0;
+  display: inline;
+}
+.tapas-generic opener:before,
+.tapas-generic opener:after {
+  content: " ";
+  display: table;
+}
+.tapas-generic opener:after {
+  clear: both;
 }
 .tapas-generic opener placeName,
 .tapas-generic opener date {
-  display: block;
-  margin-top: 0;
-  margin-bottom: 0;
+  display: inline;
+}
+.tapas-generic opener placeName:before,
+.tapas-generic opener date:before,
+.tapas-generic opener placeName:after,
+.tapas-generic opener date:after {
+  content: " ";
+  display: table;
+}
+.tapas-generic opener placeName:after,
+.tapas-generic opener date:after {
+  clear: both;
 }
 .tapas-generic opener tapas_metadata {
   display: inline;
@@ -889,6 +915,10 @@ body {
 .tapas-generic opener tapas_metadata:before {
   content: "\00000a";
   white-space: pre;
+}
+.tapas-generic orgName[ref] {
+  background: #d3e5f7;
+  cursor: pointer;
 }
 .tapas-generic origPlace {
   font-weight: bold;
@@ -936,6 +966,8 @@ body {
 }
 .tapas-generic persName[ref] {
   border-bottom: 1px dotted #000000;
+  background: #d3e5f7;
+  cursor: pointer;
 }
 .tapas-generic person {
   display: block;
@@ -1244,6 +1276,15 @@ body {
   -webkit-border-radius: 3px;
   width: 180px;
 }
+@media (max-width: 767px) {
+  .tapas-generic #tapasToolbox {
+    clear: both;
+    display: block;
+    width: 100%;
+    top: 0;
+    left: 0;
+  }
+}
 .tapas-generic #tapasToolbox h1 {
   display: none;
 }
@@ -1254,7 +1295,7 @@ body {
 .tapas-generic .toolboxinput {
   border: 1px solid #4d88cd;
   border-radius: 0px;
-  background: #edf3fa;
+  background: transparent;
   -webkit-appearance: none;
   -webkit-box-shadow: none;
   -webkit-border-radius: 0em;
@@ -1263,7 +1304,7 @@ body {
 .tapas-generic #tapasToolbox input[type=checkbox] {
   border: 1px solid #4d88cd;
   border-radius: 0px;
-  background: #edf3fa;
+  background: transparent;
   -webkit-appearance: none;
   -webkit-box-shadow: none;
   -webkit-border-radius: 0em;
@@ -1280,7 +1321,7 @@ body {
 .tapas-generic #tapasToolbox input[type=select] {
   border: 1px solid #4d88cd;
   border-radius: 0px;
-  background: #edf3fa;
+  background: transparent;
   -webkit-appearance: none;
   -webkit-box-shadow: none;
   -webkit-border-radius: 0em;
@@ -1448,7 +1489,7 @@ body {
   font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
   font-size: 13pt;
   line-height: 1.5;
-  background-color: #edf3fa;
+  background-color: transparent;
   color: #232936;
   width: 100%;
   padding-left: 2em;
@@ -1457,6 +1498,12 @@ body {
   /* xml-serialization */
   /* loading animation */
   /* facsViewer */
+}
+@media (max-width: 767px) {
+  .tapas-generic {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 .tapas-generic img {
   border: 1px solid #4d88cd;
@@ -1476,6 +1523,16 @@ body {
 .tapas-generic a:hover {
   color: #337dd3;
   text-decoration: underline;
+}
+.tapas-generic #TOC + #tei_wrapper {
+  width: 73%;
+  float: right;
+}
+@media (max-width: 1000px) {
+  .tapas-generic #TOC + #tei_wrapper {
+    width: 100%;
+    float: none;
+  }
 }
 .tapas-generic #teibpToolbox {
   left: 90%;
@@ -1527,12 +1584,13 @@ body {
   height: 100%;
   background-image: url("../images/transparentbg.png");
 }
-.tapas-generic #resizable {
-  background-color: #edf3fa;
-  width: 550px;
-  height: 700px;
+.tapas-generic .img-resizable {
+  background-color: transparent;
+  width: 350px;
+  height: 500px;
   overflow: hidden;
   padding: 0 1em .25em 0;
+  border: none;
 }
 .tapas-generic div.facsImage {
   width: 100%;
@@ -1552,7 +1610,7 @@ body {
   text-align: center;
   border: dashed thin black;
   padding: 1ex 1ex 1ex 1ex;
-  background-color: #d4dae0;
+  background-color: rgba(0, 0, 0, 0);
 }
 .tapas-generic div#footer > p {
   text-align: center;
@@ -1560,4 +1618,26 @@ body {
 .tapas-generic .head-font {
   font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
   font-weight: normal;
+}
+.tapas-generic #TOC {
+  width: 25%;
+  float: left;
+  position: static;
+  overflow: scroll;
+}
+.tapas-generic #TOC ol {
+  list-style-type: none;
+  -webkit-margin-before: 0px;
+  -webkit-padding-start: 0;
+}
+.tapas-generic #TOC ol .toc-entry-label {
+  font-size: 17px;
+  margin-right: 5px;
+}
+@media (max-width: 1000px) {
+  .tapas-generic #TOC {
+    width: 100%;
+    float: none;
+    position: static;
+  }
 }
