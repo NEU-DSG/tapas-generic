@@ -32,7 +32,6 @@
   <xsl:include href="ography.xsl"/>
 
   <xsl:output method="xhtml"/>
-  <xsl:namespace-alias stylesheet-prefix="tei" result-prefix="html"/>
 
   <xsl:param name="teibpHome"  select="'http://dcl.slis.indiana.edu/teibp/'"/>
   <xsl:param name="tapasHome"  select="'http://tapasproject.org/'"/>
@@ -931,7 +930,7 @@
   </xsl:template>
   
   <xd:doc>
-    <xd:desc>Template to drop insigificant whitespace nodes</xd:desc>
+    <xd:desc>Template to drop insignificant whitespace nodes</xd:desc>
   </xd:doc>
   <xsl:template match="choice/text()[normalize-space(.) eq '']" mode="work"/>
 
@@ -944,10 +943,16 @@
   
   <xsl:template match="castList|listBibl|listEvent|listNym|listOrg|listPerson|listPlace" mode="work">
     <xsl:element name="{local-name()}">
+      <xsl:attribute name="class" select="'list-contextual'"/>
       <!--<xsl:apply-templates select="@*"/>-->
-      <xsl:if test="not(head)">
-        <head><xsl:value-of select="local-name()"/></head>
-      </xsl:if>
+      <xsl:choose>
+        <xsl:when test="head">
+          <xsl:apply-templates select="head" mode="#current"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <tei-head><xsl:value-of select="local-name()"/></tei-head>
+        </xsl:otherwise>
+      </xsl:choose>
       <xsl:apply-templates mode="og-entry">
         <xsl:with-param name="doc-uri" select="''" tunnel="yes"/>
       </xsl:apply-templates>

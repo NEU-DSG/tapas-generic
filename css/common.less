@@ -17,7 +17,7 @@ margin: 0;
 
 .tapas-generic {
 	.block {
-	display:block;
+	  display:block;
 	}
 	.clearfix{
 	  &:before,
@@ -130,7 +130,7 @@ margin: 0;
 	line-height:@body-line-height;
 	background-color:@background-color;
 	color:@color;
-	width:100%;
+	//width:100%;
 	padding-left:2em;
 	padding-right:2em;
 	margin:0;
@@ -315,7 +315,9 @@ margin: 0;
 	/* B */
 
 	back  {
-	.block;
+	.block(1em);
+  padding: 1em;
+  background-color: aliceblue;
 	}
 
 	bibl {}
@@ -847,11 +849,11 @@ margin: 0;
 
 	handShift {}
 
-	head {}
+	tei-head {}
 
 	/* Need head with TEI parent to distinguish from HTML head */
-	TEI head {
-	.block;
+	tei-head {
+	.block(0.4em);
 	.tapas-generic .head-font;
 	}
 
@@ -1207,6 +1209,20 @@ margin: 0;
 	text list item p:first-child {
 	.inline;
 	}
+  
+  .list-contextual {
+    margin-top: 1.4em;
+    display: block;
+    
+    > * {
+      margin: 1em 0 0.2em;
+      display: block;
+    }
+    
+    > tei-head {
+      font-size: 1.4em;
+    }
+  } // .list-contextual
 
 	listBibl bibl {
 	display: list-item;
@@ -1336,24 +1352,27 @@ margin: 0;
 	normalization {}
 
 	note {
-	.tapas-generic .hide;
-	}
-
-	note[place~="foot"],
-	note[place~="bottom"] {
-	.block;
-	font-size: 90%;
-	padding: 2px 0;
-	font-family: Arial, Verdana, sans-serif;
-	}
-
-	note[place~="foot"]:before,
-	note[place~="bottom"]:before {
-	vertical-align: super;
-	font-size: 70%;
-	content: attr(data-tapas-note-num) "\00a0";
-	}
-
+    display: block;
+    
+    &[data-tapas-anchored="true"] {
+    	.tapas-generic .hide;
+    }
+	
+  	&[place~="foot"],
+  	&[place~="bottom"] {
+    	.block;
+    	font-size: 90%;
+    	padding: 2px 0;
+    	font-family: Arial, Verdana, sans-serif;
+    
+      &:before {
+      	vertical-align: super;
+      	font-size: 70%;
+      	content: attr(data-tapas-note-num) "\00a0";
+      }
+  	}
+  } // note
+  
 	div[type="endnotes"]:before {
 	.block;
 	margin-top: 1em;

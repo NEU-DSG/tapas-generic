@@ -188,11 +188,19 @@
     </xsl:if>
   </xsl:template>
   
-  <xsl:template match="*[@xml:id]/*" mode="og-entry">
-    <p data-tapas-element="{local-name()}">
+  <xsl:template match="*[@xml:id]/*" mode="og-entry" priority="-30">
+    <xsl:element name="{local-name()}">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:apply-templates mode="#current"/>
-    </p>
+    </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="note[not(@xml:id) or not(@xml:id = key('OGs','')/@ref/substring-after(data(.),'#'))]" mode="og-entry">
+    <xsl:element name="{local-name()}">
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:attribute name="data-tapas-anchored" select="'false'"/>
+      <xsl:apply-templates mode="#current"/>
+    </xsl:element>
   </xsl:template>
   
 </xsl:stylesheet>

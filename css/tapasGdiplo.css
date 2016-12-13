@@ -146,7 +146,6 @@ body {
   line-height: 1.5;
   background-color: transparent;
   color: #232936;
-  width: 100%;
   padding-left: 2em;
   padding-right: 2em;
   margin: 0;
@@ -316,8 +315,10 @@ body {
 }
 .tapas-generic back {
   display: block;
-  margin-top: 0;
-  margin-bottom: 0;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding: 1em;
+  background-color: aliceblue;
 }
 .tapas-generic epigraph bibl:before {
   content: "\2014";
@@ -574,10 +575,10 @@ body {
 .tapas-generic graphic {
   display: none;
 }
-.tapas-generic TEI head {
+.tapas-generic tei-head {
   display: block;
-  margin-top: 0;
-  margin-bottom: 0;
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
   font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
   font-weight: normal;
 }
@@ -800,6 +801,17 @@ body {
 .tapas-generic text list item p:first-child {
   display: inline;
 }
+.tapas-generic .list-contextual {
+  margin-top: 1.4em;
+  display: block;
+}
+.tapas-generic .list-contextual > * {
+  margin: 1em 0 0.2em;
+  display: block;
+}
+.tapas-generic .list-contextual > tei-head {
+  font-size: 1.4em;
+}
 .tapas-generic listBibl bibl {
   display: list-item;
   list-style: none;
@@ -841,6 +853,9 @@ body {
   display: none;
 }
 .tapas-generic note {
+  display: block;
+}
+.tapas-generic note[data-tapas-anchored="true"] {
   display: none;
 }
 .tapas-generic note[place~="foot"],
@@ -1491,7 +1506,6 @@ body {
   line-height: 1.5;
   background-color: transparent;
   color: #232936;
-  width: 100%;
   padding-left: 2em;
   padding-right: 2em;
   margin: 0;
