@@ -8,6 +8,7 @@
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:tei="http://www.tei-c.org/ns/1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:tps="http://tapas.northeastern.edu"
   xmlns:wfn="http://www.wwp.northeastern.edu/ns/functions"
   exclude-result-prefixes="#all">
 
@@ -205,6 +206,12 @@
     <xsl:attribute name="data-tapas-xmlid">
       <xsl:value-of select="."/>
     </xsl:attribute>
+  </xsl:template>
+  
+  <xsl:template match="@ref|@target" mode="work">
+    <xsl:variable name="ident" select="tps:generate-og-id(data(.))"/>
+    <xsl:attribute name="{local-name()}" select="concat('#',$ident)"/>
+    <xsl:attribute name="data-tapas-gotoentry" select="$ogEntries[@id eq $ident] or key('IDs',$ident)"/>
   </xsl:template>
   
   <xd:doc>
@@ -536,6 +543,7 @@
       <xsl:call-template name="addID"/>
       <xsl:call-template name="addRend"/>
       <xsl:apply-templates select="@* except ( @rend, @rendition, @style )" mode="#current"/>
+      <xsl:attribute name="data-tapas-anchored" select="'true'"/>
       <xsl:apply-templates select="node()" mode="#current"/>
     </xsl:element>
   </xsl:template>

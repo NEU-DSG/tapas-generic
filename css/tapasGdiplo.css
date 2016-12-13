@@ -12,6 +12,7 @@ body {
 .tapas-generic {
   /* teibp classes */
   /* Choice elements */
+  /* 'ography things */
   /* A */
   /* add */
   /* B */
@@ -174,6 +175,11 @@ body {
 .tapas-generic choice orig + reg:after,
 .tapas-generic choice reg + orig:after {
   content: ")";
+}
+.tapas-generic *[data-tapas-gotoentry="true"] {
+  border-bottom: 1px dotted #000000;
+  background: #d3e5f7;
+  cursor: pointer;
 }
 .tapas-generic a[rend~="super"] {
   vertical-align: super;
@@ -931,10 +937,6 @@ body {
   content: "\00000a";
   white-space: pre;
 }
-.tapas-generic orgName[ref] {
-  background: #d3e5f7;
-  cursor: pointer;
-}
 .tapas-generic origPlace {
   font-weight: bold;
 }
@@ -978,11 +980,6 @@ body {
   display: block;
   margin-top: 1em;
   margin-bottom: 1em;
-}
-.tapas-generic persName[ref] {
-  border-bottom: 1px dotted #000000;
-  background: #d3e5f7;
-  cursor: pointer;
 }
 .tapas-generic person {
   display: block;
