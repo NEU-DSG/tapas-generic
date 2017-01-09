@@ -10,6 +10,10 @@ body {
 }
 /* Less variables */
 /* Rules for the popup dialog box */
+.ui-dialog .ui-dialog-title {
+  font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
+  font-size: 1em;
+}
 #tapas-ref-dialog {
   padding: 0.5em 1em;
   background: none;
@@ -225,6 +229,12 @@ body {
   border-bottom: 1px dotted #000000;
   background: #d3e5f7;
   cursor: pointer;
+}
+.tapas-generic .contextualItem span.heading-og {
+  font-weight: bold;
+}
+.tapas-generic .contextualItem .og-entry .og-metadata > * {
+  display: block;
 }
 .tapas-generic a[rend~="super"] {
   vertical-align: super;

@@ -64,11 +64,6 @@
   
   <!-- FUNCTIONS -->
   
-  <xsl:function name="tps:get-og-prefix" as="xs:string?">
-    <xsl:param name="filename" as="xs:string"/>
-    <xsl:value-of select="$ogMap[@key eq $filename]"/>
-  </xsl:function>
-  
   <xsl:function name="tps:generate-og-id" as="xs:string?">
     <xsl:param name="idref" as="xs:string"/>
     <xsl:variable name="refSeq" select="tokenize($idref,'#')"/>
@@ -79,6 +74,22 @@
                             if ( $prefix eq 'og0' ) then $refSeq[2]
                             else concat($prefix,'-',$refSeq[2])
                           else ()"/>
+  </xsl:function>
+  
+  <xsl:function name="tps:get-og-prefix" as="xs:string?">
+    <xsl:param name="filename" as="xs:string"/>
+    <xsl:value-of select="$ogMap[@key eq $filename]"/>
+  </xsl:function>
+  
+  <xsl:function name="tps:is-og-entry" as="xs:boolean">
+    <xsl:param name="element" as="node()"/>
+    <xsl:value-of select="exists($element
+                                  [ (self::bibl | self::biblStruct)[parent::listBibl] 
+                                  | self::event[parent::listEvent]
+                                  | self::org[parent::listOrg]
+                                  | (self::person | self::personGrp)[parent::listPerson]
+                                  | self::place[parent::listPlace] ]
+                                )"/>
   </xsl:function>
   
   
@@ -122,6 +133,9 @@
     </html>
   </xsl:template>
   
+  
+  <!-- MODES: 'OGRAPHY GENERATION -->
+  
   <xsl:template match="text()" mode="og-gen" priority="-10"/>
   
   <xsl:template match="*" mode="og-entry" priority="-20">
@@ -136,27 +150,31 @@
     <xsl:attribute name="data-tapas-{name()}" select="data(.)"/>
   </xsl:template>
   
-  <xsl:template match="*[@xml:id]" mode="og-gen">
+  <xsl:template match="*[tps:is-og-entry(.)]" mode="og-gen">
     <xsl:param name="doc-uri" as="xs:string" tunnel="yes"/>
     <xsl:param name="idrefs" as="xs:string*" tunnel="yes"/>
-    <xsl:if test="@xml:id = $idrefs">
+    <xsl:if test="count($idrefs) eq 0 or @xml:id = $idrefs">
       <div class="contextualItem {local-name()}">
         <xsl:call-template name="save-element"/>
         <xsl:apply-templates select="@*" mode="#current">
           <xsl:with-param name="doc-uri" select="$doc-uri" tunnel="yes"/>
         </xsl:apply-templates>
         <xsl:call-template name="make-part-header"/>
-        <!-- Display metadata first, then contextual <note>s and <p>s. -->
-        <div class="og-entry">
-          <div class="og-metadata">
-            <xsl:apply-templates select="* except ( note | p )" mode="og-entry"/>
-          </div>
-          <div class="og-context">
-            <xsl:apply-templates select="note | p" mode="og-entry"/>
-          </div>
-        </div>
+        <xsl:call-template name="og-entry"/>
       </div>
     </xsl:if>
+  </xsl:template>
+  
+  <xsl:template name="og-entry">
+    <!-- Display metadata first, then contextual <note>s and <p>s. -->
+    <div class="og-entry">
+      <div class="og-metadata">
+        <xsl:apply-templates select="* except ( note | p )" mode="og-entry"/>
+      </div>
+      <div class="og-context">
+        <xsl:apply-templates select="note | p" mode="og-entry"/>
+      </div>
+    </div>
   </xsl:template>
   
   <xsl:template match="@xml:id" mode="og-gen og-entry">
@@ -207,9 +225,10 @@
   
   <xsl:template match="* | text()" mode="og-head" priority="-30"/>
   
-  <xsl:template match="person/persName[@type eq 'main' or position() eq 1] 
+  <xsl:template match="bibl/title[@type eq 'main' or position() eq 1] 
                       | org/orgName[@type eq 'main' or position() eq 1] 
-                      | bibl/title[@type eq 'main' or position() eq 1]" mode="og-head">
+                      | person/persName[@type eq 'main' or position() eq 1] 
+                      | place/placeName[@type eq 'main' or position() eq 1]" mode="og-head">
     <xsl:value-of select="."/>
   </xsl:template>
   
@@ -246,9 +265,9 @@
   
   <!-- Attempt to create a heading for an 'ography entry. -->
   <xsl:template name="make-part-header">
-    <p class="heading heading-og">
+    <span class="heading heading-og">
       <xsl:apply-templates mode="og-head"/>
-    </p>
+    </span>
   </xsl:template>
   
   <xsl:template name="save-element">

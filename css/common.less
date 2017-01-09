@@ -36,6 +36,14 @@ margin: 0;
 @boxpadding: 5px;
 
 /* Rules for the popup dialog box */
+.ui-dialog {
+  
+  .ui-dialog-title {
+    font-family: @body-font-family;
+    font-size: 1em;
+  }
+}
+
 #tapas-ref-dialog {
   padding: 0.5em 1em;
 	background: none;
@@ -227,6 +235,23 @@ margin: 0;
   	border-bottom: @hoverunderline;
   	background: @tapas-blue;
   	cursor:pointer;
+  }
+  
+  .contextualItem {
+    
+    .heading-og {
+      font-weight: bold;
+    }
+    
+    .og-entry {
+      
+      .og-metadata {
+        
+        > * {
+          display: block;
+        }
+      }
+    }
   }
 
 	/* A */

@@ -951,21 +951,22 @@
   <!--<xsl:template match="nymList|listOrg|listPerson|placeList|nym|org|person|place" mode="work"/>-->
   
   <xsl:template match="castList|listBibl|listEvent|listNym|listOrg|listPerson|listPlace" mode="work">
-    <xsl:element name="{local-name()}">
+    <div>
       <xsl:attribute name="class" select="'list-contextual'"/>
-      <!--<xsl:apply-templates select="@*"/>-->
+      <xsl:call-template name="save-element"/>
+      <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:choose>
         <xsl:when test="head">
           <xsl:apply-templates select="head" mode="#current"/>
         </xsl:when>
         <xsl:otherwise>
-          <tei-head><xsl:value-of select="local-name()"/></tei-head>
+          <p class="heading heading-list"><xsl:value-of select="local-name()"/></p>
         </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates mode="og-entry">
+      <xsl:apply-templates mode="og-gen">
         <xsl:with-param name="doc-uri" select="''" tunnel="yes"/>
       </xsl:apply-templates>
-    </xsl:element>
+    </div>
   </xsl:template>
   
   <xsl:template match="listRef|listRelation" mode="work"/>
