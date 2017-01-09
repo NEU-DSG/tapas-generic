@@ -9,10 +9,29 @@ body {
   margin: 0;
 }
 /* Less variables */
+/* Rules for the popup dialog box */
+#tapas-ref-dialog {
+  padding: 0.5em 1em;
+  background: none;
+  color: black;
+  font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
+  font-size: 13pt;
+  line-height: 1.35;
+}
+#tapas-ref-dialog .og-metadata {
+  margin: 1em 0;
+}
+#tapas-ref-dialog .og-metadata > * {
+  display: block;
+}
+#tapas-ref-dialog .og-context {
+  padding-bottom: 0.4em;
+}
+/* Rules for the Tapas Generic reader */
 .tapas-generic {
   /* teibp classes */
   /* Choice elements */
-  /* 'ography things */
+  /* 'Ography things */
   /* A */
   /* add */
   /* B */
@@ -72,6 +91,32 @@ body {
   /* w */
   /* x */
   /* z */
+}
+.tapas-generic .head-font {
+  font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
+  font-weight: normal;
+}
+.tapas-generic #TOC {
+  width: 25%;
+  float: left;
+  position: static;
+  overflow: scroll;
+}
+.tapas-generic #TOC ol {
+  list-style-type: none;
+  -webkit-margin-before: 0px;
+  -webkit-padding-start: 0;
+}
+.tapas-generic #TOC ol .toc-entry-label {
+  font-size: 17px;
+  margin-right: 5px;
+}
+@media (max-width: 1000px) {
+  .tapas-generic #TOC {
+    width: 100%;
+    float: none;
+    position: static;
+  }
 }
 .tapas-generic .block {
   display: block;
@@ -895,8 +940,9 @@ body {
   font-family: Arial, Verdana, sans-serif;
 }
 .tapas-generic .note-marker {
+  padding: 0 0.2em;
   vertical-align: super;
-  font-size: 70%;
+  font-size: 80%;
 }
 .tapas-generic notesStmt {
   display: none;
@@ -1358,24 +1404,6 @@ body {
 .tapas-generic table > head {
   text-align: center;
 }
-.tapas-generic #tapas-ref-dialog {
-  padding: 0.5em 1.25em 0.5em 0.5em;
-  background: none;
-  color: black;
-  font-size: 13px;
-}
-.tapas-generic #tapas-ref-dialog .tei-element {
-  display: none;
-}
-.tapas-generic #tapas-ref-dialog p {
-  text-align: left;
-}
-.tapas-generic #tapas-ref-dialog .ography-data {
-  font-weight: bold;
-}
-.tapas-generic #tapas-ref-dialog .ography title {
-  display: inline;
-}
 .tapas-generic #tei_contextual {
   display: none;
 }
@@ -1625,32 +1653,6 @@ body {
 }
 .tapas-generic div#footer > p {
   text-align: center;
-}
-.tapas-generic .head-font {
-  font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
-  font-weight: normal;
-}
-.tapas-generic #TOC {
-  width: 25%;
-  float: left;
-  position: static;
-  overflow: scroll;
-}
-.tapas-generic #TOC ol {
-  list-style-type: none;
-  -webkit-margin-before: 0px;
-  -webkit-padding-start: 0;
-}
-.tapas-generic #TOC ol .toc-entry-label {
-  font-size: 17px;
-  margin-right: 5px;
-}
-@media (max-width: 1000px) {
-  .tapas-generic #TOC {
-    width: 100%;
-    float: none;
-    position: static;
-  }
 }
 .tapas-generic.normal choice reg,
 .tapas-generic.normal choice corr,

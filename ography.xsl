@@ -32,10 +32,11 @@
   <xsl:variable name="ogMap" as="item()*">
     <xsl:variable name="uris" 
       select="/TEI/text
-              //*[self::name | self::orgName | self::persName | self::placeName | self::rs | self::title ][@ref]
+              //*[ self::name | self::orgName | self::persName | self::placeName | self::rs | self::title ][@ref]
               /@ref/substring-before(normalize-space(.),'#')"/>
     <xsl:variable name="distinctURIs" select="for $uri in distinct-values($uris) return $uri"/>
-    <!-- 'ography entries located in the local TEI document are always identified with the prefix 'og0'. -->
+    <!-- 'Ography entries located in the local TEI document are always identified with 
+      the prefix 'og0'. -->
     <xsl:for-each-group select="$distinctURIs" group-by="if ( . eq '' ) then 0 else 1">
       <xsl:sort select="current-grouping-key()"/>
       <xsl:for-each select="current-group()">
@@ -121,57 +122,41 @@
     </html>
   </xsl:template>
   
-  <xsl:template name="get-entries">
-    <xsl:param name="docs" as="xs:string*"/>
-    <xsl:variable name="doc" select="$docs[1]"/>
-    <xsl:variable name="refs" select="key('OGs',$doc)"/>
-    <xsl:variable name="distinctTargets" select="distinct-values($refs/@ref/substring-after(.,'#'))"/>
-    <xsl:variable name="entries" select="if ( $doc eq '' ) then () else doc($doc)"/>
-    <xsl:apply-templates select="$entries" mode="og-gen">
-      <xsl:with-param name="doc-uri" select="$doc" tunnel="yes"/>
-      <xsl:with-param name="idrefs" select="$distinctTargets" tunnel="yes"/>
-    </xsl:apply-templates>
-    <!-- If $docs has more than one URI in it, strip out $doc (which this template 
-      just resolved) and run this template again on the subset. -->
-    <xsl:if test="count($docs) gt 1">
-      <xsl:text> </xsl:text>
-      <xsl:call-template name="get-entries">
-        <xsl:with-param name="docs" select="subsequence($docs,2)"/>
-      </xsl:call-template>
-    </xsl:if>
-  </xsl:template>
-  
   <xsl:template match="text()" mode="og-gen" priority="-10"/>
-  
-  <xsl:template match="*[@xml:id]" mode="og-gen">
-    <xsl:param name="doc-uri" as="xs:string" tunnel="yes"/>
-    <xsl:param name="idrefs" as="xs:string*" tunnel="yes"/>
-    <xsl:if test="@xml:id = $idrefs">
-      <div class="contextualItem {local-name()}">
-        <xsl:apply-templates select="@*" mode="#current">
-          <xsl:with-param name="doc-uri" select="$doc-uri" tunnel="yes"/>
-        </xsl:apply-templates>
-        <!-- Display metadata first, then contextual <note>s and <p>s. -->
-        <div class="metadata">
-          <xsl:apply-templates select="* except ( note | p )" mode="og-entry"/>
-        </div>
-        <div class="context">
-          <xsl:apply-templates select="note | p" mode="og-entry"/>
-        </div>
-      </div>
-    </xsl:if>
-  </xsl:template>
   
   <xsl:template match="*" mode="og-entry" priority="-20">
     <xsl:element name="{local-name()}">
-      <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:call-template name="save-element"/>
+      <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:apply-templates mode="#current"/>
     </xsl:element>
   </xsl:template>
   
   <xsl:template match="@*" mode="og-gen og-entry" name="make-data-attr" priority="-20">
     <xsl:attribute name="data-tapas-{name()}" select="data(.)"/>
+  </xsl:template>
+  
+  <xsl:template match="*[@xml:id]" mode="og-gen">
+    <xsl:param name="doc-uri" as="xs:string" tunnel="yes"/>
+    <xsl:param name="idrefs" as="xs:string*" tunnel="yes"/>
+    <xsl:if test="@xml:id = $idrefs">
+      <div class="contextualItem {local-name()}">
+        <xsl:call-template name="save-element"/>
+        <xsl:apply-templates select="@*" mode="#current">
+          <xsl:with-param name="doc-uri" select="$doc-uri" tunnel="yes"/>
+        </xsl:apply-templates>
+        <xsl:call-template name="make-part-header"/>
+        <!-- Display metadata first, then contextual <note>s and <p>s. -->
+        <div class="og-entry">
+          <div class="og-metadata">
+            <xsl:apply-templates select="* except ( note | p )" mode="og-entry"/>
+          </div>
+          <div class="og-context">
+            <xsl:apply-templates select="note | p" mode="og-entry"/>
+          </div>
+        </div>
+      </div>
+    </xsl:if>
   </xsl:template>
   
   <xsl:template match="@xml:id" mode="og-gen og-entry">
@@ -202,26 +187,72 @@
   
   <xsl:template match="*[@xml:id]/*" mode="og-entry" priority="-30">
     <xsl:element name="{local-name()}">
-      <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:call-template name="save-element"/>
+      <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:apply-templates mode="#current"/>
     </xsl:element>
   </xsl:template>
   
   <xsl:template match="note[not(@xml:id) or not(@xml:id = key('OGs','')/@ref/substring-after(data(.),'#'))]" mode="og-entry">
     <xsl:element name="{local-name()}">
-      <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:call-template name="save-element"/>
+      <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:attribute name="data-tapas-anchored" select="'false'"/>
       <xsl:apply-templates mode="#current"/>
     </xsl:element>
   </xsl:template>
   
   
+  <!-- MODE: 'OGRAPHY HEADING -->
+  
+  <xsl:template match="* | text()" mode="og-head" priority="-30"/>
+  
+  <xsl:template match="person/persName[@type eq 'main' or position() eq 1] 
+                      | org/orgName[@type eq 'main' or position() eq 1] 
+                      | bibl/title[@type eq 'main' or position() eq 1]" mode="og-head">
+    <xsl:value-of select="."/>
+  </xsl:template>
+  
+  <xsl:template match="biblStruct/analytic/title[@type eq 'main' or position() eq 1]" mode="og-head">
+    <xsl:value-of select="concat('“',normalize-space(.),'”—')"/>
+  </xsl:template>
+  
+  <xsl:template match="biblStruct/monogr/title[@type eq 'main' or position() eq 1]" mode="og-head">
+    <xsl:value-of select="normalize-space(.)"/>
+  </xsl:template>
+  
+  
   <!-- SUPPLEMENTAL TEMPLATES -->
   
+  <xsl:template name="get-entries">
+    <xsl:param name="docs" as="xs:string*"/>
+    <xsl:variable name="doc" select="$docs[1]"/>
+    <xsl:variable name="refs" select="key('OGs',$doc)"/>
+    <xsl:variable name="distinctTargets" select="distinct-values($refs/@ref/substring-after(.,'#'))"/>
+    <xsl:variable name="entries" select="if ( $doc eq '' ) then () else doc($doc)"/>
+    <xsl:apply-templates select="$entries" mode="og-gen">
+      <xsl:with-param name="doc-uri" select="$doc" tunnel="yes"/>
+      <xsl:with-param name="idrefs" select="$distinctTargets" tunnel="yes"/>
+    </xsl:apply-templates>
+    <!-- If $docs has more than one URI in it, strip out $doc (which this template 
+      just resolved) and run this template again on the subset. -->
+    <xsl:if test="count($docs) gt 1">
+      <xsl:text> </xsl:text>
+      <xsl:call-template name="get-entries">
+        <xsl:with-param name="docs" select="subsequence($docs,2)"/>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+  
+  <!-- Attempt to create a heading for an 'ography entry. -->
+  <xsl:template name="make-part-header">
+    <p class="heading heading-og">
+      <xsl:apply-templates mode="og-head"/>
+    </p>
+  </xsl:template>
+  
   <xsl:template name="save-element">
-    <xsl:attribute name="data-tapas-tei-element" select="local-name(.)"/>
+    <xsl:attribute name="data-tapas-gi" select="local-name(.)"/>
   </xsl:template>
   
 </xsl:stylesheet>

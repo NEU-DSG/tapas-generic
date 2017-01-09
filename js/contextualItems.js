@@ -37,24 +37,26 @@ Tapas.displayRefData = function(e) {
 
     console.log(aTarget);
     console.log("aTarget length is "+ aTarget.length);
-    if (  aTarget.length != 0  ) {
+    if (  aTarget.length !== 0  ) {
         //bop back up to the enclosing p@class='contextualItem'. it looks like that's the most reliable container
         //var parentTarget = aTarget.parent("[class='contextualItem']");
 
         //new version, go to the parent div
-        var parentTarget = aTarget.parent("div");
-        if(parentTarget) {
+        //var parentTarget = aTarget.parent("div");
+        //console.log(parentTarget);
+        //if (aTarget) {
             //html += "<p class='tei-element'>TEI element: " + e.target.nodeName + "</p>";
             //desperate effort to produce a consistent, non-code duplicating way to build HTML for the info dialog
-            html += Tapas.ographyToHtml(parentTarget);
+            //html += Tapas.ographyToHtml(parentTarget);
+            html += aTarget.children('div.og-entry').html();
             console.log("ref data is " + html);
 
             //send the parentTarget (the ography element to the dialog so it can
             //dig up the identifier text
-            Tapas.refreshDialog(html, parentTarget, coords);
-        } else {
+            Tapas.refreshDialog(html, aTarget, coords);
+        /*} else {
             console.log('failed finding target');
-        }
+        }*/
     } else {
         console.log('no aTarget!');
     }
@@ -67,13 +69,14 @@ Tapas.refreshDialog = function(html, target, coords) {
     //placing the dialog for data display in the big white space currently there. Adjust position via jQueryUI rules for different behavior
     // jQuery("#tapas-ref-dialog").dialog( "option", "position", { my: "right top+"+coords[0]/2, at: "right top+"+coords[0]/2, of: window });
     jQuery("#tapas-ref-dialog").dialog( "option", "position", { my: "left+10 top+150", at: "left+10 top+150", of: window });
-    var identifierEl = target.children('p.identifier');
-    if(identifierEl.length == 0) {
+    var ogHeader = target.children('.heading-og');
+    console.log(target);
+    if ( ogHeader.length === 0 ) {
         //dialog title by mouseovered text, where the mouseovered element is passed as target, usually a note
         jQuery("#tapas-ref-dialog").dialog( "option", "title", jQuery(target).text());
     } else {
         //dialog title by identifier, usually an ography
-        jQuery("#tapas-ref-dialog").dialog( "option", "title", jQuery(identifierEl).text());
+        jQuery("#tapas-ref-dialog").dialog( "option", "title", jQuery(ogHeader).text());
     }
     jQuery("#tapas-ref-dialog").dialog('open');
 }
