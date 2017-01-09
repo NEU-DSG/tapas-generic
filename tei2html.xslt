@@ -11,6 +11,8 @@
   xmlns:tps="http://tapas.northeastern.edu"
   xmlns:wfn="http://www.wwp.northeastern.edu/ns/functions"
   exclude-result-prefixes="#all">
+  
+  <xsl:import href="ography.xsl"/>
 
   <xd:doc scope="stylesheet">
     <xd:desc>
@@ -30,7 +32,6 @@
   </xd:doc>
 
   <xsl:include href="xml-to-string.xsl"/>
-  <xsl:include href="ography.xsl"/>
 
   <xsl:output method="xhtml"/>
 

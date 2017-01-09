@@ -14,18 +14,26 @@
 
   <xsl:output method="xhtml"/>
   
+  
   <!-- PARAMETERS -->
-  <!--<xsl:param name="assetsPrefix" select="'../'"/>-->
+  
+  <xsl:param name="assetsPrefix" select="'../'"/>
+  
   
   <!-- KEYS -->
-  <xsl:key name="OGs" match="//*[self::name | self::orgName | self::persName | self::placeName | self::rs | self::title ][@ref]" 
+  
+  <xsl:key name="OGs" 
+    match="//*[ self::name | self::orgName | self::persName | self::placeName | self::rs | self::title ][@ref]" 
     use="substring-before(@ref,'#')"/>
   
+  
   <!-- GLOBAL VARIABLES -->
+  
   <xsl:variable name="ogMap" as="item()*">
-    <xsl:variable name="uris" select="/TEI/text
-                                      //*[self::name | self::orgName | self::persName | self::placeName | self::rs | self::title ][@ref]
-                                      /@ref/substring-before(normalize-space(.),'#')"/>
+    <xsl:variable name="uris" 
+      select="/TEI/text
+              //*[self::name | self::orgName | self::persName | self::placeName | self::rs | self::title ][@ref]
+              /@ref/substring-before(normalize-space(.),'#')"/>
     <xsl:variable name="distinctURIs" select="for $uri in distinct-values($uris) return $uri"/>
     <!-- 'ography entries located in the local TEI document are always identified with the prefix 'og0'. -->
     <xsl:for-each-group select="$distinctURIs" group-by="if ( . eq '' ) then 0 else 1">
@@ -54,6 +62,7 @@
   
   
   <!-- FUNCTIONS -->
+  
   <xsl:function name="tps:get-og-prefix" as="xs:string?">
     <xsl:param name="filename" as="xs:string"/>
     <xsl:value-of select="$ogMap[@key eq $filename]"/>
@@ -71,7 +80,9 @@
                           else ()"/>
   </xsl:function>
   
+  
   <!-- TEMPLATES -->
+  
   <xsl:template match="/TEI">
     <html>
       <head>
@@ -154,6 +165,7 @@
   <xsl:template match="*" mode="og-entry" priority="-20">
     <xsl:element name="{local-name()}">
       <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:call-template name="save-element"/>
       <xsl:apply-templates mode="#current"/>
     </xsl:element>
   </xsl:template>
@@ -191,6 +203,7 @@
   <xsl:template match="*[@xml:id]/*" mode="og-entry" priority="-30">
     <xsl:element name="{local-name()}">
       <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:call-template name="save-element"/>
       <xsl:apply-templates mode="#current"/>
     </xsl:element>
   </xsl:template>
@@ -198,9 +211,17 @@
   <xsl:template match="note[not(@xml:id) or not(@xml:id = key('OGs','')/@ref/substring-after(data(.),'#'))]" mode="og-entry">
     <xsl:element name="{local-name()}">
       <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:call-template name="save-element"/>
       <xsl:attribute name="data-tapas-anchored" select="'false'"/>
       <xsl:apply-templates mode="#current"/>
     </xsl:element>
+  </xsl:template>
+  
+  
+  <!-- SUPPLEMENTAL TEMPLATES -->
+  
+  <xsl:template name="save-element">
+    <xsl:attribute name="data-tapas-tei-element" select="local-name(.)"/>
   </xsl:template>
   
 </xsl:stylesheet>

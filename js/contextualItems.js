@@ -1,7 +1,7 @@
 var Tapas = {};
 
 Tapas.findATarget = function(ref) {
-    var aTarget = jQuery("a[id='" + ref + "']");
+    var aTarget = jQuery("[id='" + ref + "']");
 
     if(aTarget.length !=0 ) {
         return aTarget;
@@ -9,23 +9,22 @@ Tapas.findATarget = function(ref) {
     // ref = ref.replace('#', '');
     ref = ref.split('#');
     ref = ref[1];
-    aTarget = jQuery("a[id='" + ref + "']");
+    aTarget = jQuery("[id='" + ref + "']");
 
     if(aTarget.length !=0 ) {
         return aTarget;
     }
 
     //try using the fancy character
-    aTarget = jQuery("a[id='Ћ." + ref + "']");
-    console.log("a[id='Ћ." + ref + "']");
+    aTarget = jQuery("[id='Ћ." + ref + "']");
+    console.log("[id='Ћ." + ref + "']");
     return aTarget;
 }
 
-//Set up an object to help deal with the needs of negiating through the document-database
+//Set up an object to help deal with the needs of negotiating through the document-database
 Tapas.displayRefData = function(e) {
     var html = '';
     var target = e.target;
-    console.log("target is " + target);
     var ref = jQuery(target).attr('ref');
     console.log("ref is "+ref);
     while (typeof ref == "undefined") {
@@ -38,7 +37,7 @@ Tapas.displayRefData = function(e) {
 
     console.log(aTarget);
     console.log("aTarget length is "+ aTarget.length);
-    if(aTarget.length != 0  ) {
+    if (  aTarget.length != 0  ) {
         //bop back up to the enclosing p@class='contextualItem'. it looks like that's the most reliable container
         //var parentTarget = aTarget.parent("[class='contextualItem']");
 
@@ -146,7 +145,7 @@ Tapas.linkifyExternalRef = function(el) {
  * Produce the HTML to stuff into the modal (popup) for displaying more data
  * Branch around the "ography" type passed in to get to the right nodes, and the right data within them
  *
- * Currently this is half-built. it might be abandoned, depending on the needs and complexit for data display in the modal
+ * Currently this is half-built. it might be abandoned, depending on the needs and complexity for data display in the modal
  */
 
 Tapas.ographyToHtml = function(ography) {
@@ -161,13 +160,13 @@ Tapas.ographyToHtml = function(ography) {
 
             default:
                 var childHtml = jQuery(child).html();
-                if(childHtml) {
+                if (childHtml) {
                     html += "<p>" + "<span class='ography-data'>" + jQuery(child).data('tapasLabel') + ": </span> " + childHtml + "</p>";
                 }
             break;
         }
     });
-    if(html == '') {
+    if ( html == '' ) {
         html = "<p>No additional data</p>";
     }
     return wrapperHtml + html + "</div>";
