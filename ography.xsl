@@ -154,7 +154,7 @@
     <xsl:param name="doc-uri" as="xs:string" tunnel="yes"/>
     <xsl:param name="idrefs" as="xs:string*" tunnel="yes"/>
     <xsl:if test="count($idrefs) eq 0 or @xml:id = $idrefs">
-      <div class="contextualItem {local-name()}">
+      <div class="contextual-item {local-name()}">
         <xsl:call-template name="save-element"/>
         <xsl:apply-templates select="@*" mode="#current">
           <xsl:with-param name="doc-uri" select="$doc-uri" tunnel="yes"/>

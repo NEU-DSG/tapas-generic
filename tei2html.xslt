@@ -915,6 +915,14 @@
       </xsl:choose>
     </title>
   </xsl:template>
+  
+  <xsl:template match="head" mode="work">
+    <tei-head class="heading">
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:call-template name="save-element"/>
+      <xsl:apply-templates select="*|text()"/>
+    </tei-head>
+  </xsl:template>
 
   <xd:doc>
     <xd:desc>add line numbers to poetry</xd:desc>
@@ -946,7 +954,7 @@
   <!-- ***************************** -->
   <!-- handle contextual information -->
   <!-- ***************************** -->
-
+  
   <!-- ignore lists of contextual info when they occur in normal processing -->
   <!--<xsl:template match="nymList|listOrg|listPerson|placeList|nym|org|person|place" mode="work"/>-->
   
@@ -957,13 +965,15 @@
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:choose>
         <xsl:when test="head">
-          <xsl:apply-templates select="head" mode="#current"/>
+          <xsl:apply-templates select="head" mode="work"/>
         </xsl:when>
         <xsl:otherwise>
-          <p class="heading heading-list"><xsl:value-of select="local-name()"/></p>
+          <span class="heading heading-listtype">
+            <xsl:value-of select="local-name()"/>
+          </span>
         </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates mode="og-gen">
+      <xsl:apply-templates select="* except head" mode="og-gen">
         <xsl:with-param name="doc-uri" select="''" tunnel="yes"/>
       </xsl:apply-templates>
     </div>

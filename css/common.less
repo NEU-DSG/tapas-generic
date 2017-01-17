@@ -237,7 +237,7 @@ margin: 0;
   	cursor:pointer;
   }
   
-  .contextualItem {
+  .contextual-item {
     
     .heading-og {
       font-weight: bold;
@@ -952,7 +952,17 @@ margin: 0;
 
 	handShift {}
 
-	tei-head {}
+	.heading {
+  	.block(0.4em);
+  	.tapas-generic .head-font;
+    
+    &.heading-listtype {
+      margin: 0.2em 0;
+      color: lightgray;
+      font-size: 1.25em;
+      font-style: italic;
+    }
+  }
 
 	/* Need head with TEI parent to distinguish from HTML head */
 	tei-head {
@@ -1314,16 +1324,17 @@ margin: 0;
 	}
   
   .list-contextual {
-    margin-top: 1.4em;
+    margin: 1.4em 1em 2em;
     display: block;
     
-    > * {
+    > .contextual-item {
       margin: 1em 0 0.2em;
       display: block;
     }
     
     > tei-head {
       font-size: 1.4em;
+      display: unset;
     }
   } // .list-contextual
 

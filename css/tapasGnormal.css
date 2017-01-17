@@ -230,10 +230,10 @@ body {
   background: #d3e5f7;
   cursor: pointer;
 }
-.tapas-generic .contextualItem span.heading-og {
+.tapas-generic .contextual-item .heading-og {
   font-weight: bold;
 }
-.tapas-generic .contextualItem .og-entry .og-metadata > * {
+.tapas-generic .contextual-item .og-entry .og-metadata > * {
   display: block;
 }
 .tapas-generic a[rend~="super"] {
@@ -636,6 +636,19 @@ body {
 .tapas-generic graphic {
   display: none;
 }
+.tapas-generic .heading {
+  display: block;
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+  font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
+  font-weight: normal;
+}
+.tapas-generic .heading.heading-listtype {
+  margin: 0.2em 0;
+  color: lightgray;
+  font-size: 1.25em;
+  font-style: italic;
+}
 .tapas-generic tei-head {
   display: block;
   margin-top: 0.4em;
@@ -863,15 +876,16 @@ body {
   display: inline;
 }
 .tapas-generic .list-contextual {
-  margin-top: 1.4em;
+  margin: 1.4em 1em 2em;
   display: block;
 }
-.tapas-generic .list-contextual > * {
+.tapas-generic .list-contextual > .contextual-item {
   margin: 1em 0 0.2em;
   display: block;
 }
 .tapas-generic .list-contextual > tei-head {
   font-size: 1.4em;
+  display: unset;
 }
 .tapas-generic listBibl bibl {
   display: list-item;
