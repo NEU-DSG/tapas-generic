@@ -25,11 +25,23 @@ body {
 #tapas-ref-dialog .og-metadata {
   margin: 1em 0;
 }
+#tapas-ref-dialog .og-metadata label {
+  color: #9699ae;
+  font-style: italic;
+  margin-right: 0.5em;
+  font-size: .9em;
+}
 #tapas-ref-dialog .og-metadata > * {
   display: block;
 }
 #tapas-ref-dialog .og-context {
   padding-bottom: 0.4em;
+}
+/* TAPAS-generated labels */
+.tapas-label {
+  color: #9699ae;
+  font-style: italic;
+  margin-right: 0.5em;
 }
 /* Rules for the Tapas Generic reader */
 .tapas-generic {
@@ -232,6 +244,12 @@ body {
 }
 .tapas-generic .contextual-item .heading-og {
   font-weight: bold;
+}
+.tapas-generic .contextual-item .og-entry .og-metadata label {
+  color: #9699ae;
+  font-style: italic;
+  margin-right: 0.5em;
+  font-size: .9em;
 }
 .tapas-generic .contextual-item .og-entry .og-metadata > * {
   display: block;
@@ -645,9 +663,10 @@ body {
 }
 .tapas-generic .heading.heading-listtype {
   margin: 0.2em 0;
-  color: lightgray;
-  font-size: 1.25em;
+  color: #9699ae;
   font-style: italic;
+  margin-right: 0.5em;
+  font-size: 1.25em;
 }
 .tapas-generic tei-head {
   display: block;

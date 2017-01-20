@@ -29,6 +29,26 @@
   
   <!-- GLOBAL VARIABLES -->
   
+  <xsl:variable name="labelMap" as="item()*">
+    <entry key="addName"        >additional name</entry>
+    <entry key="bibl"           >citation</entry>
+    <entry key="birth"          >born</entry>
+    <entry key="death"          >died</entry>
+    <entry key="genName"        >general name component</entry>
+    <entry key="geo"            >geographical coordinates</entry>
+    <entry key="geogFeat"       >geographical feature</entry>
+    <entry key="geogName"       >geographical name</entry>
+    <entry key="langKnowledge"  >language knowledge</entry>
+    <entry key="nameLink"       >name link</entry>
+    <entry key="org"            >organization</entry>
+    <entry key="orgName"        >organization name</entry>
+    <entry key="persName"       >personal name</entry>
+    <entry key="placeName"      >place name</entry>
+    <entry key="pubPlace"       >publication place</entry>
+    <entry key="roleName"       >role</entry>
+    <entry key="socecStatus"    >socio-economic status</entry>
+  </xsl:variable>
+  
   <xsl:variable name="ogMap" as="item()*">
     <xsl:variable name="uris" 
       select="/TEI/text
@@ -126,11 +146,20 @@
       <body style="width: 100%;">
         <div class="tapas-generic">
           <div>
-            <xsl:copy-of select="$ogEntries"/>
+            <!--<xsl:copy-of select="$ogEntries"/>-->
+            <xsl:value-of select="$labelMap[@key eq 'bibl']"/>
           </div>
         </div>
       </body>
     </html>
+  </xsl:template>
+  
+  <xsl:template match="head | title" mode="og-entry work">
+    <xsl:element name="tei-{local-name()}">
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:call-template name="save-element"/>
+      <xsl:apply-templates mode="#current"/>
+    </xsl:element>
   </xsl:template>
   
   
@@ -138,7 +167,7 @@
   
   <xsl:template match="text()" mode="og-gen" priority="-10"/>
   
-  <xsl:template match="*" mode="og-entry" priority="-20">
+  <xsl:template match="*" mode="og-entry" priority="-50">
     <xsl:element name="{local-name()}">
       <xsl:call-template name="save-element"/>
       <xsl:apply-templates select="@*" mode="#current"/>
@@ -203,12 +232,27 @@
     </xsl:if>
   </xsl:template>
   
-  <xsl:template match="*[@xml:id]/*" mode="og-entry" priority="-30">
-    <xsl:element name="{local-name()}">
+  <xsl:template match="*[@xml:id or self::persName]/*" mode="og-entry" priority="-20">
+    <xsl:variable name="me" select="local-name(.)"/>
+    <xsl:element name="{$me}">
+      <xsl:call-template name="save-element"/>
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:element name="label">
+        <xsl:value-of select="if ( $me = $labelMap/@key ) then
+                                $labelMap[@key eq $me]/normalize-space(.)
+                              else $me"/>
+      </xsl:element>
+      <xsl:text> </xsl:text>
+      <xsl:apply-templates mode="#current"/>
+    </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="*[@xml:id]/persName" mode="og-entry">
+    <persName>
       <xsl:call-template name="save-element"/>
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:apply-templates mode="#current"/>
-    </xsl:element>
+    </persName>
   </xsl:template>
   
   <xsl:template match="note[not(@xml:id) or not(@xml:id = key('OGs','')/@ref/substring-after(data(.),'#'))]" mode="og-entry">
