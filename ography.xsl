@@ -23,7 +23,7 @@
   <!-- KEYS -->
   
   <xsl:key name="OGs" 
-    match="//*[ self::name | self::orgName | self::persName | self::placeName | self::rs | self::title ][@ref]" 
+    match="//*[@ref][ self::name | self::orgName | self::persName | self::placeName | self::rs | self::title ]" 
     use="substring-before(@ref,'#')"/>
   
   
@@ -33,16 +33,26 @@
     <entry key="addName"        >additional name</entry>
     <entry key="bibl"           >citation</entry>
     <entry key="birth"          >born</entry>
+    <entry key="castGroup"      >Cast List Grouping</entry>
+    <entry key="castItem"       >cast list entry</entry>
+    <entry key="castList"       >Cast List</entry>
     <entry key="death"          >died</entry>
     <entry key="genName"        >general name component</entry>
     <entry key="geo"            >geographical coordinates</entry>
     <entry key="geogFeat"       >geographical feature</entry>
     <entry key="geogName"       >geographical name</entry>
     <entry key="langKnowledge"  >language knowledge</entry>
+    <entry key="listBibl"       >Bibliography</entry>
+    <entry key="listEvent"      >List of Events</entry>
+    <entry key="listNym"        >List of Canonical Names</entry>
+    <entry key="listOrg"        >List of Organizations</entry>
+    <entry key="listPerson"     >List of Persons</entry>
+    <entry key="listPlace"      >List of Places</entry>
     <entry key="nameLink"       >name link</entry>
     <entry key="org"            >organization</entry>
     <entry key="orgName"        >organization name</entry>
     <entry key="persName"       >personal name</entry>
+    <entry key="personGrp"      >personal group</entry>
     <entry key="placeName"      >place name</entry>
     <entry key="pubPlace"       >publication place</entry>
     <entry key="roleName"       >role</entry>
@@ -146,8 +156,8 @@
       <body style="width: 100%;">
         <div class="tapas-generic">
           <div>
-            <!--<xsl:copy-of select="$ogEntries"/>-->
-            <xsl:value-of select="$labelMap[@key eq 'bibl']"/>
+            <xsl:copy-of select="$ogEntries"/>
+            <!--<xsl:value-of select="$labelMap[@key eq 'bibl']"/>-->
           </div>
         </div>
       </body>
@@ -156,8 +166,7 @@
   
   <xsl:template match="head | title" mode="og-entry work">
     <xsl:element name="tei-{local-name()}">
-      <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:call-template name="save-element"/>
+      <xsl:call-template name="get-attributes"/>
       <xsl:apply-templates mode="#current"/>
     </xsl:element>
   </xsl:template>
@@ -169,8 +178,7 @@
   
   <xsl:template match="*" mode="og-entry" priority="-50">
     <xsl:element name="{local-name()}">
-      <xsl:call-template name="save-element"/>
-      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:call-template name="get-attributes"/>
       <xsl:apply-templates mode="#current"/>
     </xsl:element>
   </xsl:template>
@@ -184,7 +192,7 @@
     <xsl:param name="idrefs" as="xs:string*" tunnel="yes"/>
     <xsl:if test="count($idrefs) eq 0 or @xml:id = $idrefs">
       <div class="contextual-item {local-name()}">
-        <xsl:call-template name="save-element"/>
+        <xsl:call-template name="save-gi"/>
         <xsl:apply-templates select="@*" mode="#current">
           <xsl:with-param name="doc-uri" select="$doc-uri" tunnel="yes"/>
         </xsl:apply-templates>
@@ -201,7 +209,7 @@
         <xsl:apply-templates select="* except ( note | p )" mode="og-entry"/>
       </div>
       <div class="og-context">
-        <xsl:apply-templates select="note | p" mode="og-entry"/>
+        <xsl:apply-templates select="desc | note | p | roleDesc" mode="og-entry"/>
       </div>
     </div>
   </xsl:template>
@@ -235,30 +243,25 @@
   <xsl:template match="*[@xml:id or self::persName]/*" mode="og-entry" priority="-20">
     <xsl:variable name="me" select="local-name(.)"/>
     <xsl:element name="{$me}">
-      <xsl:call-template name="save-element"/>
-      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:call-template name="get-attributes"/>
       <xsl:element name="label">
-        <xsl:value-of select="if ( $me = $labelMap/@key ) then
-                                $labelMap[@key eq $me]/normalize-space(.)
-                              else $me"/>
+        <xsl:call-template name="set-label"/>
       </xsl:element>
       <xsl:text> </xsl:text>
       <xsl:apply-templates mode="#current"/>
     </xsl:element>
   </xsl:template>
   
-  <xsl:template match="*[@xml:id]/persName" mode="og-entry">
+  <!--<xsl:template match="*[@xml:id]/persName" mode="og-entry">
     <persName>
-      <xsl:call-template name="save-element"/>
-      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:call-template name="get-attributes"/>
       <xsl:apply-templates mode="#current"/>
     </persName>
-  </xsl:template>
+  </xsl:template>-->
   
   <xsl:template match="note[not(@xml:id) or not(@xml:id = key('OGs','')/@ref/substring-after(data(.),'#'))]" mode="og-entry">
     <xsl:element name="{local-name()}">
-      <xsl:call-template name="save-element"/>
-      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:call-template name="get-attributes"/>
       <xsl:attribute name="data-tapas-anchored" select="'false'"/>
       <xsl:apply-templates mode="#current"/>
     </xsl:element>
@@ -287,6 +290,13 @@
   
   <!-- SUPPLEMENTAL TEMPLATES -->
   
+  <!-- Apply templates on attributes. -->
+  <xsl:template name="get-attributes">
+    <xsl:apply-templates select="@*" mode="#current"/>
+    <xsl:call-template name="save-gi"/>
+  </xsl:template>
+  
+  <!-- Create 'ography entries for external references. -->
   <xsl:template name="get-entries">
     <xsl:param name="docs" as="xs:string*"/>
     <xsl:variable name="doc" select="$docs[1]"/>
@@ -314,8 +324,26 @@
     </span>
   </xsl:template>
   
-  <xsl:template name="save-element">
+  <!-- Create a data attribute to store the name of the current TEI element. -->
+  <xsl:template name="save-gi">
     <xsl:attribute name="data-tapas-gi" select="local-name(.)"/>
+  </xsl:template>
+  
+  <!-- Generate a metadata label using the current element context. No wrapper is 
+    added, so that this template can be used to create 'ography headings as well. -->
+  <xsl:template name="set-label">
+    <xsl:param name="is-header" as="xs:boolean" select="false()"/>
+    <xsl:variable name="me" select="local-name()"/>
+    <xsl:value-of select="if ( $me = $labelMap/@key ) then
+                            $labelMap[@key eq $me]/normalize-space(.)
+                          else $me"/>
+    <xsl:if test="@type">
+      <xsl:text>, </xsl:text>
+      <xsl:value-of select="@type"/>
+    </xsl:if>
+    <xsl:if test="not($is-header)">
+      <xsl:text>: </xsl:text>
+    </xsl:if>
   </xsl:template>
   
 </xsl:stylesheet>

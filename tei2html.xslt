@@ -918,8 +918,7 @@
   
   <xsl:template match="head" mode="work">
     <tei-head class="heading">
-      <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:call-template name="save-element"/>
+      <xsl:call-template name="get-attributes"/>
       <xsl:apply-templates select="*|text()"/>
     </tei-head>
   </xsl:template>
@@ -961,15 +960,15 @@
   <xsl:template match="castList|listBibl|listEvent|listNym|listOrg|listPerson|listPlace" mode="work">
     <div>
       <xsl:attribute name="class" select="'list-contextual'"/>
-      <xsl:call-template name="save-element"/>
-      <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:choose>
         <xsl:when test="head">
           <xsl:apply-templates select="head" mode="work"/>
         </xsl:when>
         <xsl:otherwise>
           <span class="heading heading-listtype">
-            <xsl:value-of select="local-name()"/>
+            <xsl:call-template name="set-label">
+              <xsl:with-param name="is-header" select="true()"/>
+            </xsl:call-template>
           </span>
         </xsl:otherwise>
       </xsl:choose>
