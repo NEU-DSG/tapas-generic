@@ -111,6 +111,13 @@
     <xsl:value-of select="$ogMap[@key eq $filename]"/>
   </xsl:function>
   
+  <xsl:function name="tps:is-desc-like" as="xs:boolean">
+    <xsl:param name="element" as="node()"/>
+    <xsl:value-of select="exists($element
+                                  [ self::desc | self::note | self::p | self::roleDesc ]
+                                )"/>
+  </xsl:function>
+  
   <xsl:function name="tps:is-og-entry" as="xs:boolean">
     <xsl:param name="element" as="node()"/>
     <xsl:value-of select="exists($element
@@ -164,11 +171,21 @@
     </html>
   </xsl:template>
   
+  <!-- Modify the names of <head> and <title>, since HTML has different expectations 
+    for elements with those names. -->
   <xsl:template match="head | title" mode="og-entry work">
-    <xsl:element name="tei-{local-name()}">
-      <xsl:call-template name="get-attributes"/>
-      <xsl:apply-templates mode="#current"/>
-    </xsl:element>
+    <xsl:param name="entryHeading" select="''" tunnel="yes"/>
+    <xsl:choose>
+      <!-- If the current node exactly matches the heading of an 'ography entry (and 
+        has no child elements), suppress it. -->
+      <xsl:when test="$entryHeading ne '' and $entryHeading eq normalize-space(.) and not(*)"/>
+      <xsl:otherwise>
+        <xsl:element name="tei-{local-name()}">
+          <xsl:call-template name="get-attributes"/>
+          <xsl:apply-templates mode="#current"/>
+        </xsl:element>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
   
@@ -196,22 +213,25 @@
         <xsl:apply-templates select="@*" mode="#current">
           <xsl:with-param name="doc-uri" select="$doc-uri" tunnel="yes"/>
         </xsl:apply-templates>
-        <xsl:call-template name="make-part-header"/>
-        <xsl:call-template name="og-entry"/>
+        <xsl:variable name="header">
+          <xsl:apply-templates mode="og-head"/>
+        </xsl:variable>
+        <span class="heading heading-og">
+          <xsl:value-of select="$header"/>
+        </span>
+        <!-- Display metadata first, then contextual <note>s and <p>s. -->
+        <div class="og-entry">
+          <div class="og-metadata">
+            <xsl:apply-templates select="*[not(tps:is-desc-like(.))]" mode="og-entry">
+              <xsl:with-param name="entryHeading" select="$header" tunnel="yes"/>
+            </xsl:apply-templates>
+          </div>
+          <div class="og-context">
+            <xsl:apply-templates select="*[tps:is-desc-like(.)]" mode="og-entry"/>
+          </div>
+        </div>
       </div>
     </xsl:if>
-  </xsl:template>
-  
-  <xsl:template name="og-entry">
-    <!-- Display metadata first, then contextual <note>s and <p>s. -->
-    <div class="og-entry">
-      <div class="og-metadata">
-        <xsl:apply-templates select="* except ( note | p )" mode="og-entry"/>
-      </div>
-      <div class="og-context">
-        <xsl:apply-templates select="desc | note | p | roleDesc" mode="og-entry"/>
-      </div>
-    </div>
   </xsl:template>
   
   <xsl:template match="@xml:id" mode="og-gen og-entry">
@@ -241,24 +261,25 @@
   </xsl:template>
   
   <xsl:template match="*[@xml:id or self::persName]/*" mode="og-entry" priority="-20">
+    <xsl:param name="entryHeading" select="''" tunnel="yes"/>
     <xsl:variable name="me" select="local-name(.)"/>
-    <xsl:element name="{$me}">
-      <xsl:call-template name="get-attributes"/>
-      <xsl:attribute name="class" select="'og-metadata-item'"/>
-      <xsl:element name="label">
-        <xsl:call-template name="set-label"/>
-      </xsl:element>
-      <xsl:text> </xsl:text>
-      <xsl:apply-templates mode="#current"/>
-    </xsl:element>
+    <xsl:choose>
+      <!-- If the current node exactly matches the heading of an 'ography entry (and 
+        has no child elements), suppress it. -->
+      <xsl:when test="$entryHeading ne '' and $entryHeading eq normalize-space(.) and not(*)"/>
+      <xsl:otherwise>
+        <xsl:element name="{$me}">
+          <xsl:call-template name="get-attributes"/>
+          <xsl:attribute name="class" select="'og-metadata-item'"/>
+          <xsl:element name="label">
+            <xsl:call-template name="set-label"/>
+          </xsl:element>
+          <xsl:text> </xsl:text>
+          <xsl:apply-templates mode="#current"/>
+        </xsl:element>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
-  
-  <!--<xsl:template match="*[@xml:id]/persName" mode="og-entry">
-    <persName>
-      <xsl:call-template name="get-attributes"/>
-      <xsl:apply-templates mode="#current"/>
-    </persName>
-  </xsl:template>-->
   
   <xsl:template match="note[not(@xml:id) or not(@xml:id = key('OGs','')/@ref/substring-after(data(.),'#'))]" mode="og-entry">
     <xsl:element name="{local-name()}">
@@ -274,10 +295,11 @@
   <xsl:template match="* | text()" mode="og-head" priority="-30"/>
   
   <xsl:template match="bibl/title[@type eq 'main' or position() eq 1] 
+                      | head
                       | org/orgName[@type eq 'main' or position() eq 1] 
                       | person/persName[@type eq 'main' or position() eq 1] 
                       | place/placeName[@type eq 'main' or position() eq 1]" mode="og-head">
-    <xsl:value-of select="."/>
+    <xsl:value-of select="normalize-space(.)"/>
   </xsl:template>
   
   <xsl:template match="biblStruct/analytic/title[@type eq 'main' or position() eq 1]" mode="og-head">
@@ -316,13 +338,6 @@
         <xsl:with-param name="docs" select="subsequence($docs,2)"/>
       </xsl:call-template>
     </xsl:if>
-  </xsl:template>
-  
-  <!-- Attempt to create a heading for an 'ography entry. -->
-  <xsl:template name="make-part-header">
-    <span class="heading heading-og">
-      <xsl:apply-templates mode="og-head"/>
-    </span>
   </xsl:template>
   
   <!-- Create a data attribute to store the name of the current TEI element. -->
