@@ -244,6 +244,7 @@
     <xsl:variable name="me" select="local-name(.)"/>
     <xsl:element name="{$me}">
       <xsl:call-template name="get-attributes"/>
+      <xsl:attribute name="class" select="'og-metadata-item'"/>
       <xsl:element name="label">
         <xsl:call-template name="set-label"/>
       </xsl:element>

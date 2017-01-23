@@ -22,19 +22,24 @@ body {
   font-size: 13pt;
   line-height: 1.35;
 }
-#tapas-ref-dialog .og-metadata {
+.og-metadata {
   margin: 1em 0;
 }
-#tapas-ref-dialog .og-metadata label {
+.og-metadata label {
   color: #9699ae;
   font-style: italic;
   margin-right: 0.5em;
   font-size: .9em;
 }
-#tapas-ref-dialog .og-metadata > * {
+.og-metadata .og-metadata-item {
+  margin-bottom: 0.35em;
   display: block;
 }
-#tapas-ref-dialog .og-context {
+.og-metadata .og-metadata-item .og-metadata-item {
+  margin-bottom: 0;
+  margin-left: 1em;
+}
+.og-context {
   padding-bottom: 0.4em;
 }
 /* TAPAS-generated labels */
@@ -244,15 +249,6 @@ body {
 }
 .tapas-generic .contextual-item .heading-og {
   font-weight: bold;
-}
-.tapas-generic .contextual-item .og-entry .og-metadata label {
-  color: #9699ae;
-  font-style: italic;
-  margin-right: 0.5em;
-  font-size: .9em;
-}
-.tapas-generic .contextual-item .og-entry .og-metadata > * {
-  display: block;
 }
 .tapas-generic a[rend~="super"] {
   vertical-align: super;
@@ -660,13 +656,11 @@ body {
   margin-bottom: 0.4em;
   font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
   font-weight: normal;
-}
-.tapas-generic .heading.heading-listtype {
-  margin: 0.2em 0;
-  color: #9699ae;
-  font-style: italic;
-  margin-right: 0.5em;
-  font-size: 1.25em;
+  /*&.heading-listtype {
+      margin: 0.2em 0;
+      .tapas-label;
+      font-size: 1.25em;
+    }*/
 }
 .tapas-generic tei-head {
   display: block;
@@ -902,7 +896,8 @@ body {
   margin: 1em 0 0.2em;
   display: block;
 }
-.tapas-generic .list-contextual > tei-head {
+.tapas-generic .list-contextual > tei-head,
+.tapas-generic .list-contextual > span.heading-listtype {
   font-size: 1.4em;
   display: unset;
 }

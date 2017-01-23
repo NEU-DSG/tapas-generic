@@ -52,23 +52,29 @@ margin: 0;
 	font-family: @body-font-family;
   font-size: @body-font-size;
   line-height: 1.35;
-  
-  .og-metadata {
-    margin: 1em 0;
-      
-    label {
-      .tapas-label;
-      font-size: .9em;
-    }
+}
+
+.og-metadata {
+  margin: 1em 0;
     
-    > * {
-      display: block;
-    }
+  label {
+    .tapas-label;
+    font-size: .9em;
   }
   
-  .og-context {
-    padding-bottom: 0.4em;
+  .og-metadata-item {
+    margin-bottom: 0.35em;
+    display: block;
+    
+    .og-metadata-item {
+      margin-bottom: 0;
+      margin-left: 1em;
+    }
   }
+}
+
+.og-context {
+  padding-bottom: 0.4em;
 }
 
 /* TAPAS-generated labels */
@@ -259,17 +265,6 @@ margin: 0;
     
     .og-entry {
       
-      .og-metadata {
-      
-        label {
-          .tapas-label;
-          font-size: .9em;
-        }
-        
-        > * {
-          display: block;
-        }
-      }
     }
   }
 
@@ -975,11 +970,11 @@ margin: 0;
   	.block(0.4em);
   	.tapas-generic .head-font;
     
-    &.heading-listtype {
+    /*&.heading-listtype {
       margin: 0.2em 0;
       .tapas-label;
       font-size: 1.25em;
-    }
+    }*/
   }
 
 	/* Need head with TEI parent to distinguish from HTML head */
@@ -1350,7 +1345,8 @@ margin: 0;
       display: block;
     }
     
-    > tei-head {
+    > tei-head, 
+    > span.heading-listtype {
       font-size: 1.4em;
       display: unset;
     }
