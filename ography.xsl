@@ -365,13 +365,16 @@
   
   <xsl:template match="roleName" mode="og-head-persname">
     <xsl:param name="surname-forename" as="xs:boolean"/>
+    <xsl:variable name="theOneJustBefore" select="preceding-sibling::node()[1]"/>
+    <xsl:variable name="theGiBefore" select="preceding-sibling::*[1]"/>
     <!-- Insert a comma before the role name if:
       (1) the role isn't first of the name components, and
       (2) a comma hasn't already been inserted due to a preceding surname in 
-      "last name, first name" mode. -->
-    <xsl:if test="not(position() eq 1 or exists(preceding-sibling::text()[normalize-space(.) eq ''])) and 
-                  not($surname-forename and exists(preceding-sibling::*[1][self::surname]))">
+      "last name, first name" convention. -->
+    <xsl:if test="($theGiBefore or $theOneJustBefore[self::text()[not(normalize-space(.) eq '')]]) and
+                  not($surname-forename and exists($theGiBefore[self::surname]))">
       <xsl:text>, </xsl:text>
+      
     </xsl:if>
     <xsl:value-of select="normalize-space(.)"/>
   </xsl:template>
