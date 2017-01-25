@@ -35,6 +35,7 @@
     <entry key="altIdentifier"  >alternate identifier</entry>
     <entry key="appInfo"        >application information</entry>
     <entry key="bibl"           >citation</entry>
+    <entry key="biblScope"      >scope of bibliographic reference</entry>
     <entry key="bindingDesc"    >binding description</entry>
     <entry key="birth"          >born</entry>
     <entry key="castGroup"      >Cast List Grouping</entry>
@@ -310,8 +311,9 @@
   
   <xsl:template match="bibl/title[@type eq 'main' or position() eq 1] 
                       | head
+                      | label[not(preceding-sibling::head)][not(preceding-sibling::label)]
                       | org/orgName[@type eq 'main' or position() eq 1] 
-                      | person/persName[@type eq 'main' or position() eq 1] 
+                      | person/persName[@type eq 'main' or position() eq 1][not(*)]
                       | place/placeName[@type eq 'main' or position() eq 1]" mode="og-head">
     <xsl:value-of select="normalize-space(.)"/>
   </xsl:template>
@@ -321,6 +323,56 @@
   </xsl:template>
   
   <xsl:template match="biblStruct/monogr/title[@type eq 'main' or position() eq 1]" mode="og-head">
+    <xsl:value-of select="normalize-space(.)"/>
+  </xsl:template>
+  
+  <xsl:template match="person/persName[@type eq 'main' or position() eq 1][*]" mode="og-head">
+    <xsl:variable name="surname-forename" 
+      select="exists(surname) and exists(surname[not(preceding-sibling::forename)])" as="xs:boolean"/>
+    <xsl:variable name="header">
+      <xsl:apply-templates mode="og-head-persname">
+        <xsl:with-param name="surname-forename" select="$surname-forename"/>
+      </xsl:apply-templates>
+    </xsl:variable>
+    <xsl:value-of select="replace($header,'\s+(, )','$1')"/>
+  </xsl:template>
+  
+  
+  <!-- MODE: PERSNAMES FOR 'OGRAPHY HEADINGS -->
+  
+  <!-- Turn whitespace-only text nodes into a single space. -->
+  <xsl:template match="text()[normalize-space(.) eq '']" mode="og-head-persname">
+    <xsl:text> </xsl:text>
+  </xsl:template>
+  
+  <xsl:template match="*" mode="og-head-persname">
+    <xsl:value-of select="normalize-space(.)"/>
+  </xsl:template>
+  
+  <xsl:template match="surname" mode="og-head-persname">
+    <xsl:param name="surname-forename" as="xs:boolean"/>
+    <xsl:value-of select="normalize-space(.)"/>
+    <!-- Insert a comma following the surname if: 
+      (1) the naming convention is "last name, first name", and 
+      (2) there is at least one following name part, and 
+      (3) the very next part is not a surname. -->
+    <xsl:if test="$surname-forename and 
+                  exists(following-sibling::node()[not(self::text()[normalize-space(.) eq ''])]) and 
+                  not(following-sibling::*[1][self::surname])">
+      <xsl:text>, </xsl:text>
+    </xsl:if>
+  </xsl:template>
+  
+  <xsl:template match="roleName" mode="og-head-persname">
+    <xsl:param name="surname-forename" as="xs:boolean"/>
+    <!-- Insert a comma before the role name if:
+      (1) the role isn't first of the name components, and
+      (2) a comma hasn't already been inserted due to a preceding surname in 
+      "last name, first name" mode. -->
+    <xsl:if test="not(position() eq 1 or exists(preceding-sibling::text()[normalize-space(.) eq ''])) and 
+                  not($surname-forename and exists(preceding-sibling::*[1][self::surname]))">
+      <xsl:text>, </xsl:text>
+    </xsl:if>
     <xsl:value-of select="normalize-space(.)"/>
   </xsl:template>
   
@@ -367,9 +419,9 @@
     <xsl:value-of select="if ( $me = $labelMap/@key ) then
                             $labelMap[@key eq $me]/normalize-space(.)
                           else $me"/>
-    <xsl:if test="@type">
+    <xsl:if test="@type | @unit">
       <xsl:text>, </xsl:text>
-      <xsl:value-of select="@type"/>
+      <xsl:value-of select="@type | @unit"/>
     </xsl:if>
     <xsl:if test="not($is-header)">
       <xsl:text>: </xsl:text>
