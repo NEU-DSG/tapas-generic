@@ -978,7 +978,8 @@
     </div>
   </xsl:template>
   
-  <xsl:template match="listRef|listRelation" mode="work"/>
+  <!-- 'ographies and entries we are currently not equipped to handle. -->
+  <xsl:template match="custodialHist|listRef|listRelation|listTranspose" mode="work"/>
 
   <xd:doc>
     <xd:desc>Generate an entry for the separate "contextual information" block</xd:desc>

@@ -31,11 +31,16 @@
   
   <xsl:variable name="labelMap" as="item()*">
     <entry key="addName"        >additional name</entry>
+    <entry key="accMat"         >accompanying materials</entry>
+    <entry key="altIdentifier"  >alternate identifier</entry>
+    <entry key="appInfo"        >application information</entry>
     <entry key="bibl"           >citation</entry>
+    <entry key="bindingDesc"    >binding description</entry>
     <entry key="birth"          >born</entry>
     <entry key="castGroup"      >Cast List Grouping</entry>
     <entry key="castItem"       >cast list entry</entry>
     <entry key="castList"       >Cast List</entry>
+    <entry key="custEvent"      >custodial event</entry>
     <entry key="death"          >died</entry>
     <entry key="genName"        >general name component</entry>
     <entry key="geo"            >geographical coordinates</entry>
@@ -48,14 +53,19 @@
     <entry key="listOrg"        >List of Organizations</entry>
     <entry key="listPerson"     >List of Persons</entry>
     <entry key="listPlace"      >List of Places</entry>
+    <entry key="musicNotation"  >musical notation</entry>
     <entry key="nameLink"       >name link</entry>
+    <entry key="objectType"     >object type</entry>
     <entry key="org"            >organization</entry>
     <entry key="orgName"        >organization name</entry>
+    <entry key="origDate"       >date of origin</entry>
+    <entry key="origPlace"      >place of origin</entry>
     <entry key="persName"       >personal name</entry>
     <entry key="personGrp"      >personal group</entry>
     <entry key="placeName"      >place name</entry>
     <entry key="pubPlace"       >publication place</entry>
     <entry key="roleName"       >role</entry>
+    <entry key="secFol"         >second folio</entry>
     <entry key="socecStatus"    >socio-economic status</entry>
   </xsl:variable>
   
@@ -173,7 +183,8 @@
   
   <!-- Modify the names of <head> and <title>, since HTML has different expectations 
     for elements with those names. -->
-  <xsl:template match="head | title" mode="og-entry work">
+  <xsl:template match="head[not(ancestor::*[tps:is-desc-like(.)])] 
+                     | title[not(ancestor::*[tps:is-desc-like(.)])]" mode="og-entry">
     <xsl:param name="entryHeading" select="''" tunnel="yes"/>
     <xsl:choose>
       <!-- If the current node exactly matches the heading of an 'ography entry (and 
@@ -182,6 +193,9 @@
       <xsl:otherwise>
         <xsl:element name="tei-{local-name()}">
           <xsl:call-template name="get-attributes"/>
+          <label>
+            <xsl:call-template name="set-label"/>
+          </label>
           <xsl:apply-templates mode="#current"/>
         </xsl:element>
       </xsl:otherwise>

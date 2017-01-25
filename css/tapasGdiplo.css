@@ -271,17 +271,10 @@ body {
   margin-top: 0;
   margin-bottom: 0;
 }
-.tapas-generic accMat:before {
-  content: "accompanying materials: ";
-}
 .tapas-generic acquisition {
   display: block;
   margin-top: 0;
   margin-bottom: 0;
-}
-.tapas-generic acquisition:before {
-  font-weight: bold;
-  content: "acquisition";
 }
 .tapas-generic activity {
   display: block;
@@ -432,16 +425,10 @@ body {
   margin-top: 0;
   margin-bottom: 0;
 }
-.tapas-generic bindngDesc:before {
-  content: "Binding Description: \A";
-}
 .tapas-generic birth {
   display: block;
   margin-top: 0;
   margin-bottom: 0;
-}
-.tapas-generic birth:before {
-  content: "Birth: ";
 }
 .tapas-generic body {
   color: inherit;
@@ -500,10 +487,6 @@ body {
   display: block;
   margin-top: 1em;
   margin-bottom: 1em;
-}
-.tapas-generic climate:before {
-  font-weight: bold;
-  content: "Climate: ";
 }
 .tapas-generic closer {
   margin-bottom: 1em;
@@ -1024,10 +1007,6 @@ body {
 .tapas-generic origPlace {
   font-weight: bold;
 }
-.tapas-generic origPlace:before {
-  font-weight: bold;
-  content: "Place of Origin: ";
-}
 .tapas-generic p {
   display: block;
   margin-top: 1em;
@@ -1088,10 +1067,6 @@ body {
 }
 .tapas-generic principal {
   font-weight: bold;
-}
-.tapas-generic principal:before {
-  font-weight: bold;
-  content: "Principal: ";
 }
 .tapas-generic profileDesc {
   display: none;
@@ -1200,10 +1175,6 @@ body {
 .tapas-generic remarks {
   font-weight: bold;
 }
-.tapas-generic remarks:before {
-  font-weight: bold;
-  content: "remarks: ";
-}
 .tapas-generic respStmt {
   display: block;
   margin-top: 0;
@@ -1252,10 +1223,6 @@ body {
   display: block;
   margin-top: 1em;
   margin-bottom: 1em;
-}
-.tapas-generic secFol:before {
-  font-weight: bold;
-  content: "Second Folio: ";
 }
 .tapas-generic sense {
   display: block;
@@ -1329,10 +1296,6 @@ body {
   margin-top: 0;
   margin-bottom: 0;
 }
-.tapas-generic sponsor:before {
-  font-weight: bold;
-  content: "Sponsor: ";
-}
 .tapas-generic stage {
   display: block;
   margin-top: 1em;
@@ -1343,10 +1306,6 @@ body {
   display: block;
   margin-top: 1em;
   margin-bottom: 1em;
-}
-.tapas-generic stamp:before {
-  font-weight: bold;
-  content: "Stamped: ";
 }
 .tapas-generic stringVal {
   /* doesn't seem to be part of tei 5 */
