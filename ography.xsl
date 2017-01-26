@@ -296,6 +296,40 @@
     </xsl:choose>
   </xsl:template>
   
+  <xsl:template match="birth | death | floruit | residence" mode="og-entry"> <!-- XD -->
+    <xsl:element name="{local-name()}">
+      <xsl:call-template name="save-gi"/>
+      <xsl:apply-templates select="@* except (@when, @from, @to, @notBefore, @notAfter)" mode="#current"/>
+      <xsl:attribute name="class" select="'og-metadata-item'"/>
+      <xsl:variable name="attrDates" as="item()*">
+        <xsl:apply-templates select="@when | @from | @to | @notBefore | @notAfter" mode="og-datelike"/>
+      </xsl:variable>
+      <xsl:element name="label">
+        <xsl:call-template name="set-label"/>
+      </xsl:element>
+      <xsl:if test="$attrDates">
+        <!-- Test if this <birth> or <death> contains a year-like pattern, or a 
+          <date>. This should reduce most repetition when these elements are tagged 
+          with a W3C date attribute but also contain plain-text representations of 
+          dates. -->
+        <xsl:if test="not(matches(normalize-space(),'\d\d\d\d')) and not(descendant::date)">
+          <xsl:value-of select="$attrDates"/>
+          <xsl:text> </xsl:text>
+        </xsl:if>
+      </xsl:if>
+      <xsl:apply-templates mode="#current"/>
+    </xsl:element>
+  </xsl:template>
+  
+  <!-- Places mentioned inside event-like elements are given an label " in ". -->
+  <xsl:template match="placeName[parent::birth or parent::death or parent::floruit or parent::residence]" mode="og-entry">
+    <xsl:element name="{local-name()}">
+      <xsl:call-template name="get-attributes"/>
+      <label class="og-label-inner"> in </label>
+      <xsl:apply-templates mode="#current"/>
+    </xsl:element>
+  </xsl:template>
+  
   <xsl:template match="note[not(@xml:id) or not(@xml:id = key('OGs','')/@ref/substring-after(data(.),'#'))]" mode="og-entry">
     <xsl:element name="{local-name()}">
       <xsl:call-template name="get-attributes"/>
@@ -326,6 +360,10 @@
     <xsl:value-of select="normalize-space(.)"/>
   </xsl:template>
   
+  <!-- If the first relevant <persName> has child elements, test the naming 
+    convention used within this particular <persName> (is there a <surname> without 
+    a preceding <forename>?). Then, run "og-head-persname" mode to join the children 
+    together, using commas to separate word parts as necessary. -->
   <xsl:template match="person/persName[@type eq 'main' or position() eq 1][*]" mode="og-head">
     <xsl:variable name="surname-forename" 
       select="exists(surname) and exists(surname[not(preceding-sibling::forename)])" as="xs:boolean"/>
@@ -334,6 +372,7 @@
         <xsl:with-param name="surname-forename" select="$surname-forename"/>
       </xsl:apply-templates>
     </xsl:variable>
+    <!-- Replace any whitespace introduced before a comma. -->
     <xsl:value-of select="replace($header,'\s+(, )','$1')"/>
   </xsl:template>
   
@@ -349,13 +388,13 @@
     <xsl:value-of select="normalize-space(.)"/>
   </xsl:template>
   
+  <!-- Insert a comma following the surname if: 
+    (1) the naming convention is "last name, first name", and 
+    (2) there is at least one following name part, and 
+    (3) the very next part is not a surname. -->
   <xsl:template match="surname" mode="og-head-persname">
     <xsl:param name="surname-forename" as="xs:boolean"/>
     <xsl:value-of select="normalize-space(.)"/>
-    <!-- Insert a comma following the surname if: 
-      (1) the naming convention is "last name, first name", and 
-      (2) there is at least one following name part, and 
-      (3) the very next part is not a surname. -->
     <xsl:if test="$surname-forename and 
                   exists(following-sibling::node()[not(self::text()[normalize-space(.) eq ''])]) and 
                   not(following-sibling::*[1][self::surname])">
@@ -363,20 +402,27 @@
     </xsl:if>
   </xsl:template>
   
+  <!-- Insert a comma before the role name if:
+    (1) the role isn't first of the name components, and
+    (2) a comma hasn't already been inserted due to a preceding surname in 
+        "last name, first name" convention. -->
   <xsl:template match="roleName" mode="og-head-persname">
     <xsl:param name="surname-forename" as="xs:boolean"/>
-    <xsl:variable name="theOneJustBefore" select="preceding-sibling::node()[1]"/>
+    <xsl:variable name="precededByNonwhitespaceText" 
+      select="exists(preceding-sibling::node()[1][self::text()[not(normalize-space(.) eq '')]])"/>
     <xsl:variable name="theGiBefore" select="preceding-sibling::*[1]"/>
-    <!-- Insert a comma before the role name if:
-      (1) the role isn't first of the name components, and
-      (2) a comma hasn't already been inserted due to a preceding surname in 
-      "last name, first name" convention. -->
-    <xsl:if test="($theGiBefore or $theOneJustBefore[self::text()[not(normalize-space(.) eq '')]]) and
+    <xsl:if test="($precededByNonwhitespaceText or $theGiBefore) and
                   not($surname-forename and exists($theGiBefore[self::surname]))">
       <xsl:text>, </xsl:text>
-      
     </xsl:if>
     <xsl:value-of select="normalize-space(.)"/>
+  </xsl:template>
+  
+  
+  <!-- MODE: DATES -->
+  
+  <xsl:template match="@when | @from | @to | @notBefore | @notAfter" mode="og-datelike">
+    <xsl:value-of select="."/>
   </xsl:template>
   
   
