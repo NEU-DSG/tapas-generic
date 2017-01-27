@@ -30,6 +30,7 @@
   <!-- GLOBAL VARIABLES -->
   
   <xsl:variable name="labelMap" as="item()*">
+    <!-- elements -->
     <entry key="addName"        >additional name</entry>
     <entry key="accMat"         >accompanying materials</entry>
     <entry key="altIdentifier"  >alternate identifier</entry>
@@ -68,6 +69,9 @@
     <entry key="roleName"       >role</entry>
     <entry key="secFol"         >second folio</entry>
     <entry key="socecStatus"    >socio-economic status</entry>
+    <!-- Attributes -->
+    <entry key="notAfter"       >not after</entry>
+    <entry key="notBefore"      >not before</entry>
   </xsl:variable>
   
   <xsl:variable name="ogMap" as="item()*">
@@ -296,13 +300,16 @@
     </xsl:choose>
   </xsl:template>
   
-  <xsl:template match="birth | death | floruit | residence" mode="og-entry"> <!-- XD -->
+  <xsl:template match="birth | date | death | floruit | residence" mode="og-entry"> <!-- XD -->
     <xsl:element name="{local-name()}">
       <xsl:call-template name="save-gi"/>
       <xsl:apply-templates select="@* except (@when, @from, @to, @notBefore, @notAfter)" mode="#current"/>
       <xsl:attribute name="class" select="'og-metadata-item'"/>
       <xsl:variable name="attrDates" as="item()*">
         <xsl:apply-templates select="@when | @from | @to | @notBefore | @notAfter" mode="og-datelike"/>
+      </xsl:variable>
+      <xsl:variable name="content" as="item()*">
+        <xsl:apply-templates mode="#current"/>
       </xsl:variable>
       <xsl:element name="label">
         <xsl:call-template name="set-label"/>
@@ -313,11 +320,16 @@
           with a W3C date attribute but also contain plain-text representations of 
           dates. -->
         <xsl:if test="not(matches(normalize-space(),'\d\d\d\d')) and not(descendant::date)">
-          <xsl:value-of select="$attrDates"/>
+          <xsl:copy-of select="$attrDates"/>
+          <!-- If necessary, separate the contents of this element from attribute-
+            generated text. -->
+          <xsl:if test="$content">
+            <xsl:text>,</xsl:text>
+          </xsl:if>
           <xsl:text> </xsl:text>
         </xsl:if>
       </xsl:if>
-      <xsl:apply-templates mode="#current"/>
+      <xsl:copy-of select="$content"/>
     </xsl:element>
   </xsl:template>
   
@@ -325,7 +337,9 @@
   <xsl:template match="placeName[parent::birth or parent::death or parent::floruit or parent::residence]" mode="og-entry">
     <xsl:element name="{local-name()}">
       <xsl:call-template name="get-attributes"/>
-      <label class="og-label-inner"> in </label>
+      <xsl:text> </xsl:text>
+      <label class="og-label-inner">in</label>
+      <xsl:text> </xsl:text>
       <xsl:apply-templates mode="#current"/>
     </xsl:element>
   </xsl:template>
@@ -419,9 +433,18 @@
   </xsl:template>
   
   
-  <!-- MODE: DATES -->
+  <!-- MODE: W3C DATES -->
   
-  <xsl:template match="@when | @from | @to | @notBefore | @notAfter" mode="og-datelike">
+  <xsl:template match="@when" mode="og-datelike">
+    <xsl:value-of select="."/>
+  </xsl:template>
+  
+  <xsl:template match="@from | @to | @notBefore | @notAfter" mode="og-datelike">
+    <label class="og-label-inner">
+      <xsl:call-template name="set-label">
+        <xsl:with-param name="is-field-label" select="false()"/>
+      </xsl:call-template>
+    </label>
     <xsl:value-of select="."/>
   </xsl:template>
   
@@ -463,7 +486,7 @@
   <!-- Generate a metadata label using the current element context. No wrapper is 
     added, so that this template can be used to create 'ography headings as well. -->
   <xsl:template name="set-label">
-    <xsl:param name="is-header" as="xs:boolean" select="false()"/>
+    <xsl:param name="is-field-label" as="xs:boolean" select="true()"/>
     <xsl:variable name="me" select="local-name()"/>
     <xsl:value-of select="if ( $me = $labelMap/@key ) then
                             $labelMap[@key eq $me]/normalize-space(.)
@@ -472,7 +495,7 @@
       <xsl:text>, </xsl:text>
       <xsl:value-of select="@type | @unit"/>
     </xsl:if>
-    <xsl:if test="not($is-header)">
+    <xsl:if test="$is-field-label">
       <xsl:text>: </xsl:text>
     </xsl:if>
   </xsl:template>

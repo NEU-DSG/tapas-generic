@@ -967,7 +967,7 @@
         <xsl:otherwise>
           <span class="heading heading-listtype">
             <xsl:call-template name="set-label">
-              <xsl:with-param name="is-header" select="true()"/>
+              <xsl:with-param name="is-field-label" select="false()"/>
             </xsl:call-template>
           </span>
         </xsl:otherwise>
