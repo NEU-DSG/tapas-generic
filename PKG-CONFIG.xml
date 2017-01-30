@@ -14,8 +14,9 @@
   <css_dir>css/</css_dir>
   <js_dir>js/</js_dir>
   <parameters>
-    <parameter name="assets-base">A file path representing the path to the parent directory of the CSS/JS/image assets associated with the requested Reader type.</parameter>
-    <parameter name="file">A TEI-encoded XML document.</parameter>
+    <parameter name="assets-base" as="xs:string">A file path representing the path to the parent 
+      directory of the CSS/JS/image assets associated with the requested Reader type.</parameter>
+    <parameter name="file" as="node()">A TEI-encoded XML document.</parameter>
   </parameters>
   <run type="xslt" pgm="tei2html.xslt"/>
 </view_package>
