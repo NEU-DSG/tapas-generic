@@ -40,16 +40,16 @@
   <xsl:param name="tapasTitle" select="'TAPAS: '"/>
   <xsl:param name="less"       select="'styles.less'"/>
   <xsl:param name="lessJS"     select="'less.js'"/>
-  <!-- set assetsPrefix parameter to "../" to use locally; path below is for within-TAPAS use -->
-  <xsl:param name="assetsPrefix" select="'../'"/>
-  <xsl:param name="view.diplo" select="concat($assetsPrefix,'css/tapasGdiplo.css')"/>
-  <xsl:param name="view.norma" select="concat($assetsPrefix,'css/tapasGnormal.css')"/>
-  <xsl:param name="jqueryUIcss"    select="concat($assetsPrefix,'css/jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css')"/>
-  <xsl:param name="jqueryJS"   select="concat($assetsPrefix,'js/jquery/jquery.min.js')"/>
-  <xsl:param name="jqueryUIJS" select="concat($assetsPrefix,'js/jquery-ui/ui/minified/jquery-ui.min.js')"/>
-  <xsl:param name="jqueryBlockUIJS" select="concat($assetsPrefix,'js/jquery/plugins/jquery.blockUI.js')"/>
-  <xsl:param name="contextualJS" select="concat($assetsPrefix,'js/contextualItems.js')"/>
-  <xsl:param name="teibpJS"    select="concat($assetsPrefix,'js/tapas-generic.js')"/>
+  <!-- set assets-base parameter to "../" to use locally; path below is for within-TAPAS use -->
+  <xsl:param name="assets-base" select="'../'"/>
+  <xsl:param name="view.diplo" select="concat($assets-base,'css/tapasGdiplo.css')"/>
+  <xsl:param name="view.norma" select="concat($assets-base,'css/tapasGnormal.css')"/>
+  <xsl:param name="jqueryUIcss"    select="concat($assets-base,'css/jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css')"/>
+  <xsl:param name="jqueryJS"   select="concat($assets-base,'js/jquery/jquery.min.js')"/>
+  <xsl:param name="jqueryUIJS" select="concat($assets-base,'js/jquery-ui/ui/minified/jquery-ui.min.js')"/>
+  <xsl:param name="jqueryBlockUIJS" select="concat($assets-base,'js/jquery/plugins/jquery.blockUI.js')"/>
+  <xsl:param name="contextualJS" select="concat($assets-base,'js/contextualItems.js')"/>
+  <xsl:param name="teibpJS"    select="concat($assets-base,'js/tapas-generic.js')"/>
   <xsl:param name="fullHTML"   select="'false'"/> <!-- set to 'true' to get browsable output for debugging -->
   <xsl:variable name="root" select="/" as="node()"/>
   <xsl:variable name="htmlFooter">
@@ -380,7 +380,7 @@
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <a href="{$target}" class="{$class}">
+    <a href="{$target}" class="{$class}" target="_blank">
       <xsl:apply-templates select="@* except @target" mode="#current"/>
       <xsl:apply-templates select="node()" mode="#current"/>
       <xsl:if test="$gi eq 'ptr'">

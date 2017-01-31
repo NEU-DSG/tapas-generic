@@ -17,7 +17,7 @@
   
   <!-- PARAMETERS -->
   
-  <xsl:param name="assetsPrefix" select="'../'"/>
+  <xsl:param name="assets-base" select="'../'"/>
   
   
   <!-- KEYS -->
@@ -35,7 +35,7 @@
     <entry key="accMat"         >accompanying materials</entry>
     <entry key="altIdentifier"  >alternate identifier</entry>
     <entry key="appInfo"        >application information</entry>
-    <entry key="bibl"           >citation</entry>
+    <entry key="bibl"           >bibliographic entry</entry>
     <entry key="biblScope"      >scope of bibliographic reference</entry>
     <entry key="bindingDesc"    >binding description</entry>
     <entry key="birth"          >born</entry>
@@ -55,6 +55,7 @@
     <entry key="listOrg"        >List of Organizations</entry>
     <entry key="listPerson"     >List of Persons</entry>
     <entry key="listPlace"      >List of Places</entry>
+    <entry key="monogr"         >monograph</entry>
     <entry key="musicNotation"  >musical notation</entry>
     <entry key="nameLink"       >name link</entry>
     <entry key="objectType"     >object type</entry>
@@ -66,12 +67,17 @@
     <entry key="personGrp"      >personal group</entry>
     <entry key="placeName"      >place name</entry>
     <entry key="pubPlace"       >publication place</entry>
+    <entry key="relatedItem"    >related item</entry>
     <entry key="roleName"       >role</entry>
     <entry key="secFol"         >second folio</entry>
     <entry key="socecStatus"    >socio-economic status</entry>
     <!-- Attributes -->
+    <entry key="copyOf"         >copy of</entry>
+    <entry key="corresp"        >corresponds to</entry>
     <entry key="notAfter"       >not after</entry>
     <entry key="notBefore"      >not before</entry>
+    <entry key="sameAs"         >same as</entry>
+    <entry key="synch"          >synchronous with</entry>
   </xsl:variable>
   
   <xsl:variable name="ogMap" as="item()*">
@@ -153,12 +159,12 @@
         <title>
           <xsl:value-of select="normalize-space(descendant::teiHeader/fileDesc/titleStmt/title)"/>
         </title>
-        <link id="maincss" rel="stylesheet" type="text/css" href="{concat($assetsPrefix,'css/tapasGdiplo.css')}"></link>
-        <script type="application/javascript" src="{concat($assetsPrefix,'js/jquery/jquery.min.js')}"/>
-        <script type="application/javascript" src="{concat($assetsPrefix,'js/jquery-ui/ui/minified/jquery-ui.min.js')}"/>
-        <script type="application/javascript" src="{concat($assetsPrefix,'js/jquery/plugins/jquery.blockUI.js')}"/>
-        <script type="application/javascript" src="{concat($assetsPrefix,'js/contextualItems.js')}"/>
-        <script type="application/javascript" src="{concat($assetsPrefix,'js/tapas-generic.js')}"/>
+        <link id="maincss" rel="stylesheet" type="text/css" href="{concat($assets-base,'css/tapasGdiplo.css')}"></link>
+        <script type="application/javascript" src="{concat($assets-base,'js/jquery/jquery.min.js')}"/>
+        <script type="application/javascript" src="{concat($assets-base,'js/jquery-ui/ui/minified/jquery-ui.min.js')}"/>
+        <script type="application/javascript" src="{concat($assets-base,'js/jquery/plugins/jquery.blockUI.js')}"/>
+        <script type="application/javascript" src="{concat($assets-base,'js/contextualItems.js')}"/>
+        <script type="application/javascript" src="{concat($assets-base,'js/tapas-generic.js')}"/>
         <style type="text/css">
           <![CDATA[
             .contextualItem {
@@ -220,7 +226,7 @@
   </xsl:template>
   
   <xsl:template match="@*" mode="og-gen og-entry" name="make-data-attr" priority="-20">
-    <xsl:attribute name="data-tapas-{name()}" select="data(.)"/>
+    <xsl:attribute name="data-tapas-{local-name()}" select="data(.)"/>
   </xsl:template>
   
   <xsl:template match="*[tps:is-og-entry(.)]" mode="og-gen">
@@ -279,7 +285,7 @@
     </xsl:if>
   </xsl:template>
   
-  <xsl:template match="*[@xml:id or self::persName]/*" mode="og-entry" priority="-20">
+  <xsl:template match="*[@xml:id or self::persName or self::analytic or self::monogr or self::imprint]/*" mode="og-entry" priority="-20">
     <xsl:param name="entryHeading" select="''" tunnel="yes"/>
     <xsl:variable name="me" select="local-name(.)"/>
     <xsl:choose>
@@ -298,6 +304,22 @@
         </xsl:element>
       </xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="respStmt" mode="og-entry">
+    <xsl:element name="{local-name()}">
+      <xsl:attribute name="class" select="'og-metadata-item'"/>
+      <xsl:call-template name="get-attributes"/>
+      <xsl:variable name="respRoles" select="string-join(resp/normalize-space(.)[not(. eq '')],', ')"/>
+      <label>
+        <!-- If there is no usable content in $respRoles, use the generic term "contributor". -->
+        <xsl:value-of select="if ( $respRoles ne '' ) then $respRoles
+                              else 'contributor'"/>
+        <xsl:text>:</xsl:text>
+      </label>
+      <xsl:text> </xsl:text>
+      <xsl:apply-templates mode="#current"/>
+    </xsl:element>
   </xsl:template>
   
   <xsl:template match="birth | date | death | floruit | residence" mode="og-entry"> <!-- XD -->
@@ -348,7 +370,7 @@
     <xsl:element name="{local-name()}">
       <xsl:call-template name="get-attributes"/>
       <xsl:attribute name="data-tapas-anchored" select="'false'"/>
-      <xsl:apply-templates mode="#current"/>
+      <xsl:apply-templates mode="work"/>
     </xsl:element>
   </xsl:template>
   
@@ -357,8 +379,7 @@
   
   <xsl:template match="* | text()" mode="og-head" priority="-30"/>
   
-  <xsl:template match="bibl/title[@type eq 'main' or position() eq 1] 
-                      | head
+  <xsl:template match="head
                       | label[not(preceding-sibling::head)][not(preceding-sibling::label)]
                       | org/orgName[@type eq 'main' or position() eq 1] 
                       | person/persName[@type eq 'main' or position() eq 1][not(*)]
@@ -366,11 +387,13 @@
     <xsl:value-of select="normalize-space(.)"/>
   </xsl:template>
   
-  <xsl:template match="biblStruct/analytic/title[@type eq 'main' or position() eq 1]" mode="og-head">
-    <xsl:value-of select="concat('“',normalize-space(.),'”—')"/>
+  <xsl:template match="biblStruct/analytic/title[@type eq 'main' or position() eq 1] 
+                      | bibl/title[@level eq 'a']" mode="og-head" priority="11">
+    <xsl:value-of select="concat('“',normalize-space(.),'”')"/>
   </xsl:template>
   
-  <xsl:template match="biblStruct/monogr/title[@type eq 'main' or position() eq 1]" mode="og-head">
+  <xsl:template match="biblStruct/monogr/title[@type eq 'main' or position() eq 1]
+                      | bibl/title[@type eq 'main' or position() eq 1 or @level eq 'm']" mode="og-head">
     <xsl:value-of select="normalize-space(.)"/>
   </xsl:template>
   
