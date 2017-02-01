@@ -439,7 +439,8 @@ margin: 0;
 
 	/* B */
 
-	back  {
+	back,
+  front  {
 	.block(1em);
   padding: 1em;
   background-color: aliceblue;
@@ -978,71 +979,72 @@ margin: 0;
   }
 
 	/* Need head with TEI parent to distinguish from HTML head */
-	tei-head {
+	tei-head, 
+  .heading {
 	.block(0.4em);
 	.tapas-generic .head-font;
 	}
 
-	TEI text front > head, TEI text body > head, TEI text back > head {
+	TEI text front > .heading, TEI text body > .heading, TEI text back > .heading {
 	margin-bottom: 1em;
 	}
 
-	body > head {
+	body > .heading {
 	font-size: 140%;
 	}
 
-	div > head {
+	div > .heading {
 	font-size: 135%;
 	}
 
-	div > div > head {
+	div > div > .heading {
 	font-size: 130%;
 	}
 
-	div > div > div > head {
+	div > div > div > .heading {
 	font-size: 125%;
 	}
 
-	div > div > div > div > head,
+	div > div > div > div > .heading,
 	list > head {
 	font-size: 120%;
 	}
 
-	div > div > div > div > div > head {
+	div > div > div > div > div > .heading {
 	font-size: 115%;
 	}
 
-	div > div > div > div > div > div head {
+	div > div > div > div > div > div .heading {
 	font-size: 110%;
 	}
 
-	figure > head {
+	figure > .heading {
 	.note-like;
 	width:85%;
 	font-family:@body-font-family;
 	font-size:@body-font-size;
 	}
 
-	div[type="canto"] head {
+	div[type="canto"] .heading {
 	.block(.25em);
 	}
 
-	div head[type="sub"]{
+	div .heading[data-tapas-type="sub"]{
 	font-size: 115%;
 	}
 
-	div[type="chapter"] > head {
+	div[data-tapas-type="chapter"] > .heading {
 	text-align: center;
 	margin-bottom: 1em;
 	}
 
-	div[type="half_title"] > head {
+	div[data-tapas-type="half_title"] > .heading {
 	text-align:center;
 	padding: 1em;
 	border: 1px dashed lightgray;
 	}
 
-	head[type="supplied"] {
+	.heading[data-tapas-type="supplied"] {
 	.tapas-generic .hide;
 	}
 

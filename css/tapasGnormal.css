@@ -384,7 +384,8 @@ body {
   font-weight: bold;
   content: "Availability (" attr(status) "): ";
 }
-.tapas-generic back {
+.tapas-generic back,
+.tapas-generic front {
   display: block;
   margin-top: 1em;
   margin-bottom: 1em;
@@ -648,41 +649,42 @@ body {
       font-size: 1.25em;
     }*/
 }
-.tapas-generic tei-head {
+.tapas-generic tei-head,
+.tapas-generic .heading {
   display: block;
   margin-top: 0.4em;
   margin-bottom: 0.4em;
   font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
   font-weight: normal;
 }
-.tapas-generic TEI text front > head,
-.tapas-generic TEI text body > head,
-.tapas-generic TEI text back > head {
+.tapas-generic TEI text front > .heading,
+.tapas-generic TEI text body > .heading,
+.tapas-generic TEI text back > .heading {
   margin-bottom: 1em;
 }
-.tapas-generic body > head {
+.tapas-generic body > .heading {
   font-size: 140%;
 }
-.tapas-generic div > head {
+.tapas-generic div > .heading {
   font-size: 135%;
 }
-.tapas-generic div > div > head {
+.tapas-generic div > div > .heading {
   font-size: 130%;
 }
-.tapas-generic div > div > div > head {
+.tapas-generic div > div > div > .heading {
   font-size: 125%;
 }
-.tapas-generic div > div > div > div > head,
+.tapas-generic div > div > div > div > .heading,
 .tapas-generic list > head {
   font-size: 120%;
 }
-.tapas-generic div > div > div > div > div > head {
+.tapas-generic div > div > div > div > div > .heading {
   font-size: 115%;
 }
-.tapas-generic div > div > div > div > div > div head {
+.tapas-generic div > div > div > div > div > div .heading {
   font-size: 110%;
 }
-.tapas-generic figure > head {
+.tapas-generic figure > .heading {
   display: block;
   margin-top: 0;
   margin-bottom: 0;
@@ -705,24 +707,24 @@ body {
   font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
   font-size: 13pt;
 }
-.tapas-generic div[type="canto"] head {
+.tapas-generic div[type="canto"] .heading {
   display: block;
   margin-top: 0.25em;
   margin-bottom: 0.25em;
 }
-.tapas-generic div head[type="sub"] {
+.tapas-generic div .heading[data-tapas-type="sub"] {
   font-size: 115%;
 }
-.tapas-generic div[type="chapter"] > head {
+.tapas-generic div[data-tapas-type="chapter"] > .heading {
   text-align: center;
   margin-bottom: 1em;
 }
-.tapas-generic div[type="half_title"] > head {
+.tapas-generic div[data-tapas-type="half_title"] > .heading {
   text-align: center;
   padding: 1em;
   border: 1px dashed lightgray;
 }
-.tapas-generic head[type="supplied"] {
+.tapas-generic .heading[data-tapas-type="supplied"] {
   display: none;
 }
 .tapas-generic ident {

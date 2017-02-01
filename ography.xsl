@@ -31,53 +31,54 @@
   
   <xsl:variable name="labelMap" as="item()*">
     <!-- elements -->
-    <entry key="addName"        >additional name</entry>
-    <entry key="accMat"         >accompanying materials</entry>
-    <entry key="altIdentifier"  >alternate identifier</entry>
-    <entry key="appInfo"        >application information</entry>
-    <entry key="bibl"           >bibliographic entry</entry>
-    <entry key="biblScope"      >scope of bibliographic reference</entry>
-    <entry key="bindingDesc"    >binding description</entry>
-    <entry key="birth"          >born</entry>
+    <entry key="addName"        >Additional Name</entry>
+    <entry key="accMat"         >Accompanying Materials</entry>
+    <entry key="altIdentifier"  >Alternate Identifier</entry>
+    <entry key="appInfo"        >Application Information</entry>
+    <entry key="bibl"           >Bibliographic Entry</entry>
+    <entry key="biblScope"      >Scope of Bibliographic Reference</entry>
+    <entry key="bindingDesc"    >Binding Description</entry>
+    <entry key="birth"          >Born</entry>
     <entry key="castGroup"      >Cast List Grouping</entry>
     <entry key="castItem"       >cast list entry</entry>
     <entry key="castList"       >Cast List</entry>
+    <entry key="catRef"         >Category</entry>
     <entry key="custEvent"      >custodial event</entry>
-    <entry key="death"          >died</entry>
-    <entry key="genName"        >general name component</entry>
-    <entry key="geo"            >geographical coordinates</entry>
-    <entry key="geogFeat"       >geographical feature</entry>
-    <entry key="geogName"       >geographical name</entry>
-    <entry key="langKnowledge"  >language knowledge</entry>
+    <entry key="death"          >Died</entry>
+    <entry key="genName"        >General Name Component</entry>
+    <entry key="geo"            >Geographical Coordinates</entry>
+    <entry key="geogFeat"       >Geographical Feature</entry>
+    <entry key="geogName"       >Geographical Name</entry>
+    <entry key="langKnowledge"  >Language knowledge</entry>
     <entry key="listBibl"       >Bibliography</entry>
     <entry key="listEvent"      >List of Events</entry>
     <entry key="listNym"        >List of Canonical Names</entry>
     <entry key="listOrg"        >List of Organizations</entry>
     <entry key="listPerson"     >List of Persons</entry>
     <entry key="listPlace"      >List of Places</entry>
-    <entry key="monogr"         >monograph</entry>
-    <entry key="musicNotation"  >musical notation</entry>
-    <entry key="nameLink"       >name link</entry>
-    <entry key="objectType"     >object type</entry>
-    <entry key="org"            >organization</entry>
-    <entry key="orgName"        >organization name</entry>
-    <entry key="origDate"       >date of origin</entry>
-    <entry key="origPlace"      >place of origin</entry>
-    <entry key="persName"       >personal name</entry>
-    <entry key="personGrp"      >personal group</entry>
-    <entry key="placeName"      >place name</entry>
-    <entry key="pubPlace"       >publication place</entry>
-    <entry key="relatedItem"    >related item</entry>
-    <entry key="roleName"       >role</entry>
-    <entry key="secFol"         >second folio</entry>
-    <entry key="socecStatus"    >socio-economic status</entry>
+    <entry key="monogr"         >Monograph</entry>
+    <entry key="musicNotation"  >Musical Notation</entry>
+    <entry key="nameLink"       >Name Link</entry>
+    <entry key="objectType"     >Object Type</entry>
+    <entry key="org"            >Organization</entry>
+    <entry key="orgName"        >Organization Name</entry>
+    <entry key="origDate"       >Date of Origin</entry>
+    <entry key="origPlace"      >Place of Origin</entry>
+    <entry key="persName"       >Personal Name</entry>
+    <entry key="personGrp"      >Personal Group</entry>
+    <entry key="placeName"      >Place Name</entry>
+    <entry key="pubPlace"       >Publication Place</entry>
+    <entry key="relatedItem"    >Related Item</entry>
+    <entry key="roleName"       >Role</entry>
+    <entry key="secFol"         >Second Folio</entry>
+    <entry key="socecStatus"    >Socio-economic Status</entry>
     <!-- Attributes -->
-    <entry key="copyOf"         >copy of</entry>
-    <entry key="corresp"        >corresponds to</entry>
-    <entry key="notAfter"       >not after</entry>
-    <entry key="notBefore"      >not before</entry>
-    <entry key="sameAs"         >same as</entry>
-    <entry key="synch"          >synchronous with</entry>
+    <entry key="copyOf"         >Copy of</entry>
+    <entry key="corresp"        >Corresponds to</entry>
+    <entry key="notAfter"       >Not after</entry>
+    <entry key="notBefore"      >Not before</entry>
+    <entry key="sameAs"         >Same as</entry>
+    <entry key="synch"          >Synchronous with</entry>
   </xsl:variable>
   
   <xsl:variable name="ogMap" as="item()*">
@@ -203,6 +204,7 @@
       <xsl:when test="$entryHeading ne '' and $entryHeading eq normalize-space(.) and not(*)"/>
       <xsl:otherwise>
         <xsl:element name="tei-{local-name()}">
+          <xsl:attribute name="class" select="'og-metadata-item'"/>
           <xsl:call-template name="get-attributes"/>
           <label>
             <xsl:call-template name="set-label"/>
@@ -238,11 +240,15 @@
         <xsl:apply-templates select="@*" mode="#current">
           <xsl:with-param name="doc-uri" select="$doc-uri" tunnel="yes"/>
         </xsl:apply-templates>
+        <!-- Generate a sequence of potential entry headers, and choose the first. -->
         <xsl:variable name="header">
-          <xsl:apply-templates mode="og-head"/>
+          <xsl:variable name="options" as="item()*">
+            <xsl:apply-templates select="*" mode="og-head"/>
+          </xsl:variable>
+          <xsl:copy-of select="if ( $options ) then $options[1] else @xml:id/data(.)"/>
         </xsl:variable>
         <span class="heading heading-og">
-          <xsl:value-of select="$header"/>
+          <xsl:value-of select="$header[1]"/>
         </span>
         <!-- Display metadata first, then contextual <note>s and <p>s. -->
         <div class="og-entry">
@@ -379,6 +385,10 @@
   
   <xsl:template match="* | text()" mode="og-head" priority="-30"/>
   
+  <xsl:template match="biblStruct/*" mode="og-head">
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+  
   <xsl:template match="head
                       | label[not(preceding-sibling::head)][not(preceding-sibling::label)]
                       | org/orgName[@type eq 'main' or position() eq 1] 
@@ -387,13 +397,13 @@
     <xsl:value-of select="normalize-space(.)"/>
   </xsl:template>
   
-  <xsl:template match="biblStruct/analytic/title[@type eq 'main' or position() eq 1] 
+  <xsl:template match="analytic/title[@type eq 'main' or position() eq 1] 
                       | bibl/title[@level eq 'a']" mode="og-head" priority="11">
     <xsl:value-of select="concat('“',normalize-space(.),'”')"/>
   </xsl:template>
   
-  <xsl:template match="biblStruct/monogr/title[@type eq 'main' or position() eq 1]
-                      | bibl/title[@type eq 'main' or position() eq 1 or @level eq 'm']" mode="og-head">
+  <xsl:template match="monogr[1]/title[@type eq 'main' or position() eq 1]
+                      | bibl/title[@type eq 'main' or position() eq 1 or @level eq 'm']" mode="og-head" priority="30">
     <xsl:value-of select="normalize-space(.)"/>
   </xsl:template>
   
@@ -511,9 +521,13 @@
   <xsl:template name="set-label">
     <xsl:param name="is-field-label" as="xs:boolean" select="true()"/>
     <xsl:variable name="me" select="local-name()"/>
-    <xsl:value-of select="if ( $me = $labelMap/@key ) then
-                            $labelMap[@key eq $me]/normalize-space(.)
-                          else $me"/>
+    <xsl:variable name="label" select="$labelMap[@key eq $me]/normalize-space(.)"/>
+    <xsl:value-of 
+      select="if ( $label ) then
+                if ( $is-field-label ) then
+                  lower-case($label)
+                else $label
+              else $me"/>
     <xsl:if test="@type | @unit">
       <xsl:text>, </xsl:text>
       <xsl:value-of select="@type | @unit"/>
