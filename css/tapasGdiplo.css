@@ -17,17 +17,17 @@ body {
 .og-metadata {
   margin: 0.5em 1.5em 1em;
 }
-.og-metadata label {
+.og-metadata .og-label {
   color: #9699ae;
   font-style: italic;
   margin-right: 0.5em;
   display: inline-block;
-  width: 100px;
+  width: 115px;
   line-height: 1.2em;
   text-align: right;
   font-size: .9em;
 }
-.og-metadata label.og-label-inner {
+.og-metadata .og-label.og-label-inner {
   margin: 0 0.4em;
   display: inline;
   width: auto;
@@ -40,6 +40,7 @@ body {
 }
 .og-metadata .og-metadata-item .og-metadata-item {
   margin-bottom: 0;
+  padding-bottom: 0.25em;
   line-height: 1.2em;
 }
 .og-metadata .og-metadata-item .og-metadata-item:first-child {

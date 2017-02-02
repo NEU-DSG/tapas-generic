@@ -113,6 +113,7 @@
     <xsl:copy-of select="$pass1"/>
   </xsl:variable>
   
+  <xsl:variable name="starterFile" select="base-uri(.)"/>
   
   <!-- FUNCTIONS -->
   
@@ -204,9 +205,9 @@
       <xsl:when test="$entryHeading ne '' and $entryHeading eq normalize-space(.) and not(*)"/>
       <xsl:otherwise>
         <div class="og-metadata-item">
-          <label>
+          <span class="og-label">
             <xsl:call-template name="set-label"/>
-          </label>
+          </span>
           <xsl:element name="tei-{local-name()}">
             <xsl:call-template name="get-attributes"/>
             <xsl:apply-templates mode="#current"/>
@@ -221,7 +222,7 @@
   
   <xsl:template match="text()" mode="og-gen" priority="-10"/>
   
-  <xsl:template match="*" mode="og-entry" priority="-50">
+  <xsl:template name="passthru-og-element" match="*" mode="og-entry" priority="-50">
     <xsl:element name="{local-name()}">
       <xsl:call-template name="get-attributes"/>
       <xsl:apply-templates mode="#current"/>
@@ -246,7 +247,7 @@
           <xsl:variable name="options" as="item()*">
             <xsl:apply-templates select="*" mode="og-head"/>
           </xsl:variable>
-          <xsl:copy-of select="if ( $options ) then $options[1] else @xml:id/data(.)"/>
+          <xsl:copy-of select="if ( $options[1] and normalize-space($options[1]) ne '' ) then $options[1] else @xml:id/data(.)"/>
         </xsl:variable>
         <span class="heading heading-og">
           <xsl:value-of select="$header[1]"/>
@@ -301,9 +302,9 @@
       <xsl:when test="$entryHeading ne '' and $entryHeading eq normalize-space(.) and not(*)"/>
       <xsl:otherwise>
         <div class="og-metadata-item">
-          <xsl:element name="label">
+          <span class="og-label">
             <xsl:call-template name="set-label"/>
-          </xsl:element>
+          </span>
           <xsl:element name="{$me}">
             <xsl:call-template name="get-attributes"/>
             <xsl:apply-templates mode="#current"/>
@@ -315,26 +316,25 @@
   
   <xsl:template match="respStmt" mode="og-entry">
     <div class="og-metadata-item">
-      <label>
+      <span class="og-label">
         <xsl:variable name="respRoles" select="string-join(resp/normalize-space(.)[not(. eq '')],', ')"/>
         <!-- If there is no usable content in $respRoles, use the generic term "contributor". -->
         <xsl:value-of select="if ( $respRoles ne '' ) then $respRoles
                               else 'contributor'"/>
         <xsl:text>:</xsl:text>
-      </label>
-      <xsl:element name="{local-name()}">
-        <xsl:call-template name="get-attributes"/>
-        <xsl:apply-templates mode="#current"/>
-      </xsl:element>
+      </span>
+      <xsl:call-template name="passthru-og-element"/>
     </div>
   </xsl:template>
   
+  <!-- On elements serving as indicators of events, W3C-datable attributes should 
+    come before any field content. -->
   <xsl:template match="birth | date | death | floruit | residence" mode="og-entry"> <!-- XD -->
     <div>
       <xsl:attribute name="class" select="'og-metadata-item'"/>
-      <xsl:element name="label">
+      <span class="og-label">
         <xsl:call-template name="set-label"/>
-      </xsl:element>
+      </span>
       <xsl:element name="{local-name()}">
         <xsl:call-template name="save-gi"/>
         <xsl:apply-templates select="@* except (@when, @from, @to, @notBefore, @notAfter)" mode="#current"/>
@@ -351,11 +351,6 @@
             dates. XD: It will *not* handle years with 1-3 digits! -->
           <xsl:if test="not(matches(normalize-space(),'\d\d\d\d')) and not(descendant::date)">
             <xsl:copy-of select="$attrDates"/>
-            <!-- If necessary, separate the contents of this element from attribute-
-              generated text. -->
-            <xsl:if test="$content">
-              <xsl:text>,</xsl:text>
-            </xsl:if>
             <xsl:text> </xsl:text>
           </xsl:if>
         </xsl:if>
@@ -367,15 +362,43 @@
   <!-- Places mentioned inside event-like elements are given an label " in ". -->
   <xsl:template match="placeName[parent::birth or parent::death or parent::floruit or parent::residence]" mode="og-entry">
     <xsl:text> </xsl:text>
-    <label class="og-label-inner">in</label>
+    <span class="og-label og-label-inner">in</span>
     <xsl:text> </xsl:text>
-    <xsl:element name="{local-name()}">
-      <xsl:call-template name="get-attributes"/>
-      <xsl:apply-templates mode="#current"/>
-    </xsl:element>
+    <xsl:call-template name="passthru-og-element"/>
   </xsl:template>
   
-  <xsl:template match="note[not(@xml:id) or not(@xml:id = key('OGs','')/@ref/substring-after(data(.),'#'))]" mode="og-entry">
+  <xsl:template match="biblScope" mode="og-entry">
+    <div class="og-metadata-item">
+      <span class="og-label">
+        <xsl:choose>
+          <xsl:when test="@unit">
+            <xsl:value-of select="@unit"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:call-template name="set-label"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </span>
+      <xsl:choose>
+        <xsl:when test=".[not(normalize-space(.) eq '')][@from or @to]">
+          <xsl:element name="{local-name()}">
+            <xsl:call-template name="get-attributes"/>
+            <xsl:value-of select="@from"/>
+            <xsl:if test="not(@to) or .[@from][@to[not(. eq ../@from)]]">
+              <xsl:text>-</xsl:text>
+              <xsl:value-of select="@to"/>
+            </xsl:if>
+          </xsl:element>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:call-template name="passthru-og-element"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="desc | note[not(@xml:id) or not(@xml:id = key('OGs','')/@ref/substring-after(data(.),'#'))]
+                      | *[tps:is-og-entry(.)]/p | roleDesc" mode="og-entry">
     <xsl:element name="{local-name()}">
       <xsl:call-template name="get-attributes"/>
       <xsl:attribute name="data-tapas-anchored" select="'false'"/>
@@ -476,11 +499,11 @@
   </xsl:template>
   
   <xsl:template match="@from | @to | @notBefore | @notAfter" mode="og-datelike">
-    <label class="og-label-inner">
+    <span class="og-label og-label-inner">
       <xsl:call-template name="set-label">
         <xsl:with-param name="is-inner-label" select="true()"/>
       </xsl:call-template>
-    </label>
+    </span>
     <xsl:value-of select="."/>
   </xsl:template>
   
@@ -496,8 +519,14 @@
     </xsl:if>
   </xsl:template>
   
+  <!-- If an 'ography entry is referenced within an 'ography entry internal to the 
+    input document, use "work" mode to create a data attribute for linking. 
+    For sanity's sake, references are not linked from within external 'ography 
+    entries. -->
   <xsl:template name="og-referrer">
-    <xsl:apply-templates select="@ref" mode="work"/>
+    <xsl:if test="base-uri(.) eq $starterFile">
+      <xsl:apply-templates select="@ref" mode="work"/>
+    </xsl:if>
   </xsl:template>
   
   <!-- Create 'ography entries for external references. -->
