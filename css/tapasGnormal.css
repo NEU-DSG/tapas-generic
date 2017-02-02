@@ -29,21 +29,35 @@ body {
   color: #9699ae;
   font-style: italic;
   margin-right: 0.5em;
+  display: inline-block;
+  width: 120px;
+  line-height: 1.2em;
+  text-align: right;
   font-size: .9em;
 }
 .og-metadata label.og-label-inner {
   margin: 0 0.4em;
+  display: inline;
+  width: auto;
+  line-height: inherit;
+  text-align: inherit;
 }
 .og-metadata .og-metadata-item {
-  margin-bottom: 0.35em;
+  margin-bottom: 0.5em;
   display: block;
 }
 .og-metadata .og-metadata-item .og-metadata-item {
   margin-bottom: 0;
-  margin-left: 1em;
+  line-height: 1.2em;
+}
+.og-metadata .og-metadata-item .og-metadata-item:first-child {
+  line-height: 1em;
 }
 .og-context {
   padding-bottom: 0.4em;
+}
+.og-context > * {
+  margin-bottom: 0.5em;
 }
 /* TAPAS-generated labels */
 .tapas-label {
@@ -425,11 +439,6 @@ body {
   white-space: pre-wrap;
 }
 .tapas-generic bindingDesc {
-  display: block;
-  margin-top: 0;
-  margin-bottom: 0;
-}
-.tapas-generic birth {
   display: block;
   margin-top: 0;
   margin-bottom: 0;

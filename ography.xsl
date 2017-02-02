@@ -203,14 +203,15 @@
         has no child elements), suppress it. -->
       <xsl:when test="$entryHeading ne '' and $entryHeading eq normalize-space(.) and not(*)"/>
       <xsl:otherwise>
-        <xsl:element name="tei-{local-name()}">
-          <xsl:attribute name="class" select="'og-metadata-item'"/>
-          <xsl:call-template name="get-attributes"/>
+        <div class="og-metadata-item">
           <label>
             <xsl:call-template name="set-label"/>
           </label>
-          <xsl:apply-templates mode="#current"/>
-        </xsl:element>
+          <xsl:element name="tei-{local-name()}">
+            <xsl:call-template name="get-attributes"/>
+            <xsl:apply-templates mode="#current"/>
+          </xsl:element>
+        </div>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -299,75 +300,79 @@
         has no child elements), suppress it. -->
       <xsl:when test="$entryHeading ne '' and $entryHeading eq normalize-space(.) and not(*)"/>
       <xsl:otherwise>
-        <xsl:element name="{$me}">
-          <xsl:call-template name="get-attributes"/>
-          <xsl:attribute name="class" select="'og-metadata-item'"/>
+        <div class="og-metadata-item">
           <xsl:element name="label">
             <xsl:call-template name="set-label"/>
           </xsl:element>
-          <xsl:text> </xsl:text>
-          <xsl:apply-templates mode="#current"/>
-        </xsl:element>
+          <xsl:element name="{$me}">
+            <xsl:call-template name="get-attributes"/>
+            <xsl:text> </xsl:text>
+            <xsl:apply-templates mode="#current"/>
+          </xsl:element>
+        </div>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
   
   <xsl:template match="respStmt" mode="og-entry">
-    <xsl:element name="{local-name()}">
-      <xsl:attribute name="class" select="'og-metadata-item'"/>
-      <xsl:call-template name="get-attributes"/>
-      <xsl:variable name="respRoles" select="string-join(resp/normalize-space(.)[not(. eq '')],', ')"/>
+    <div class="og-metadata-item">
       <label>
+        <xsl:variable name="respRoles" select="string-join(resp/normalize-space(.)[not(. eq '')],', ')"/>
         <!-- If there is no usable content in $respRoles, use the generic term "contributor". -->
         <xsl:value-of select="if ( $respRoles ne '' ) then $respRoles
                               else 'contributor'"/>
         <xsl:text>:</xsl:text>
       </label>
-      <xsl:text> </xsl:text>
-      <xsl:apply-templates mode="#current"/>
-    </xsl:element>
+      <xsl:element name="{local-name()}">
+        <xsl:call-template name="get-attributes"/>
+        <xsl:text> </xsl:text>
+        <xsl:apply-templates mode="#current"/>
+      </xsl:element>
+    </div>
   </xsl:template>
   
   <xsl:template match="birth | date | death | floruit | residence" mode="og-entry"> <!-- XD -->
-    <xsl:element name="{local-name()}">
-      <xsl:call-template name="save-gi"/>
-      <xsl:apply-templates select="@* except (@when, @from, @to, @notBefore, @notAfter)" mode="#current"/>
+    <div>
       <xsl:attribute name="class" select="'og-metadata-item'"/>
-      <xsl:variable name="attrDates" as="item()*">
-        <xsl:apply-templates select="@when | @from | @to | @notBefore | @notAfter" mode="og-datelike"/>
-      </xsl:variable>
-      <xsl:variable name="content" as="item()*">
-        <xsl:apply-templates mode="#current"/>
-      </xsl:variable>
       <xsl:element name="label">
         <xsl:call-template name="set-label"/>
       </xsl:element>
-      <xsl:if test="$attrDates">
-        <!-- Test if this <birth> or <death> contains a year-like pattern, or a 
-          <date>. This should reduce most repetition when these elements are tagged 
-          with a W3C date attribute but also contain plain-text representations of 
-          dates. -->
-        <xsl:if test="not(matches(normalize-space(),'\d\d\d\d')) and not(descendant::date)">
-          <xsl:copy-of select="$attrDates"/>
-          <!-- If necessary, separate the contents of this element from attribute-
-            generated text. -->
-          <xsl:if test="$content">
-            <xsl:text>,</xsl:text>
+      <xsl:element name="{local-name()}">
+        <xsl:call-template name="save-gi"/>
+        <xsl:apply-templates select="@* except (@when, @from, @to, @notBefore, @notAfter)" mode="#current"/>
+        <xsl:variable name="attrDates" as="item()*">
+          <xsl:apply-templates select="@when | @from | @to | @notBefore | @notAfter" mode="og-datelike"/>
+        </xsl:variable>
+        <xsl:variable name="content" as="item()*">
+          <xsl:apply-templates mode="#current"/>
+        </xsl:variable>
+        <xsl:if test="$attrDates">
+          <!-- Test if this <birth> or <death> contains a year-like pattern, or a 
+            <date>. This should reduce most repetition when these elements are tagged 
+            with a W3C date attribute but also contain plain-text representations of 
+            dates. XD: It will *not* handle years with 1-3 digits! -->
+          <xsl:if test="not(matches(normalize-space(),'\d\d\d\d')) and not(descendant::date)">
+            <xsl:copy-of select="$attrDates"/>
+            <!-- If necessary, separate the contents of this element from attribute-
+              generated text. -->
+            <xsl:if test="$content">
+              <xsl:text>,</xsl:text>
+            </xsl:if>
+            <xsl:text> </xsl:text>
           </xsl:if>
-          <xsl:text> </xsl:text>
         </xsl:if>
-      </xsl:if>
-      <xsl:copy-of select="$content"/>
-    </xsl:element>
+        <xsl:copy-of select="$content"/>
+      </xsl:element>
+    </div>
   </xsl:template>
   
   <!-- Places mentioned inside event-like elements are given an label " in ". -->
   <xsl:template match="placeName[parent::birth or parent::death or parent::floruit or parent::residence]" mode="og-entry">
+    <xsl:text> </xsl:text>
+    <label class="og-label-inner">in</label>
+    <xsl:text> </xsl:text>
     <xsl:element name="{local-name()}">
       <xsl:call-template name="get-attributes"/>
-      <xsl:text> </xsl:text>
-      <label class="og-label-inner">in</label>
-      <xsl:text> </xsl:text>
       <xsl:apply-templates mode="#current"/>
     </xsl:element>
   </xsl:template>
@@ -475,7 +480,7 @@
   <xsl:template match="@from | @to | @notBefore | @notAfter" mode="og-datelike">
     <label class="og-label-inner">
       <xsl:call-template name="set-label">
-        <xsl:with-param name="is-field-label" select="false()"/>
+        <xsl:with-param name="is-inner-label" select="true()"/>
       </xsl:call-template>
     </label>
     <xsl:value-of select="."/>
@@ -488,6 +493,13 @@
   <xsl:template name="get-attributes">
     <xsl:apply-templates select="@*" mode="#current"/>
     <xsl:call-template name="save-gi"/>
+    <xsl:if test="@ref[. ne '']">
+      <xsl:call-template name="og-referrer"/>
+    </xsl:if>
+  </xsl:template>
+  
+  <xsl:template name="og-referrer">
+    <xsl:apply-templates select="@ref" mode="work"/>
   </xsl:template>
   
   <!-- Create 'ography entries for external references. -->
@@ -520,6 +532,7 @@
     added, so that this template can be used to create 'ography headings as well. -->
   <xsl:template name="set-label">
     <xsl:param name="is-field-label" as="xs:boolean" select="true()"/>
+    <xsl:param name="is-inner-label" as="xs:boolean" select="false()"/>
     <xsl:variable name="me" select="local-name()"/>
     <xsl:variable name="label" select="$labelMap[@key eq $me]/normalize-space(.)"/>
     <xsl:value-of 
@@ -532,7 +545,7 @@
       <xsl:text>, </xsl:text>
       <xsl:value-of select="@type | @unit"/>
     </xsl:if>
-    <xsl:if test="$is-field-label">
+    <xsl:if test="$is-field-label and not($is-inner-label)">
       <xsl:text>: </xsl:text>
     </xsl:if>
   </xsl:template>

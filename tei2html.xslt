@@ -33,7 +33,7 @@
 
   <xsl:include href="xml-to-string.xsl"/>
 
-  <xsl:output method="xhtml"/>
+  <xsl:output method="xhtml" indent="no"/>
 
   <xsl:param name="teibpHome"  select="'http://dcl.slis.indiana.edu/teibp/'"/>
   <xsl:param name="tapasHome"  select="'http://tapasproject.org/'"/>
