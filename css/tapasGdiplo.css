@@ -14,23 +14,15 @@ body {
   font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
   font-size: 1em;
 }
-#tapas-ref-dialog {
-  padding: 0.5em 1em;
-  background: none;
-  color: black;
-  font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
-  font-size: 13pt;
-  line-height: 1.35;
-}
 .og-metadata {
-  margin: 0.5em 1.5em;
+  margin: 0.5em 1.5em 1em;
 }
 .og-metadata label {
   color: #9699ae;
   font-style: italic;
   margin-right: 0.5em;
   display: inline-block;
-  width: 120px;
+  width: 100px;
   line-height: 1.2em;
   text-align: right;
   font-size: .9em;
@@ -58,6 +50,17 @@ body {
 }
 .og-context > * {
   margin-bottom: 0.5em;
+}
+#tapas-ref-dialog {
+  padding: 0.5em 1em;
+  background: none;
+  color: black;
+  font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
+  font-size: 13pt;
+  line-height: 1.35;
+}
+#tapas-ref-dialog .og-metadata {
+  margin: 0.5em;
 }
 /* TAPAS-generated labels */
 .tapas-label {

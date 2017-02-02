@@ -45,22 +45,13 @@ margin: 0;
   }
 }
 
-#tapas-ref-dialog {
-  padding: 0.5em 1em;
-	background: none;
-	color: black;
-	font-family: @body-font-family;
-  font-size: @body-font-size;
-  line-height: 1.35;
-}
-
 .og-metadata {
-  margin: 0.5em 1.5em;
+  margin: 0.5em 1.5em 1em;
     
   label {
     .tapas-label;
     display: inline-block;
-    width: 120px;
+    width: 100px;
     line-height: 1.2em;
     text-align: right;
     font-size: .9em;
@@ -84,7 +75,6 @@ margin: 0;
     
     .og-metadata-item {
       margin-bottom: 0;
-      //margin-left: 1em;
       line-height: 1.2em;
       
       &:first-child {
@@ -99,6 +89,19 @@ margin: 0;
   
   > * {
     margin-bottom: 0.5em;
+  }
+}
+
+#tapas-ref-dialog {
+  padding: 0.5em 1em;
+	background: none;
+	color: black;
+	font-family: @body-font-family;
+  font-size: @body-font-size;
+  line-height: 1.35;
+  
+  .og-metadata {
+    margin: 0.5em;
   }
 }
 

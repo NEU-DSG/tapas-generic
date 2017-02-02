@@ -306,7 +306,6 @@
           </xsl:element>
           <xsl:element name="{$me}">
             <xsl:call-template name="get-attributes"/>
-            <xsl:text> </xsl:text>
             <xsl:apply-templates mode="#current"/>
           </xsl:element>
         </div>
@@ -325,7 +324,6 @@
       </label>
       <xsl:element name="{local-name()}">
         <xsl:call-template name="get-attributes"/>
-        <xsl:text> </xsl:text>
         <xsl:apply-templates mode="#current"/>
       </xsl:element>
     </div>
