@@ -43,13 +43,14 @@
     <entry key="castItem"       >cast list entry</entry>
     <entry key="castList"       >Cast List</entry>
     <entry key="catRef"         >Category</entry>
-    <entry key="custEvent"      >custodial event</entry>
+    <entry key="citedRange"     >Cited Range</entry>
+    <entry key="custEvent"      >Custodial Event</entry>
     <entry key="death"          >Died</entry>
     <entry key="genName"        >General Name Component</entry>
     <entry key="geo"            >Geographical Coordinates</entry>
     <entry key="geogFeat"       >Geographical Feature</entry>
     <entry key="geogName"       >Geographical Name</entry>
-    <entry key="langKnowledge"  >Language knowledge</entry>
+    <entry key="langKnowledge"  >Language Knowledge</entry>
     <entry key="listBibl"       >Bibliography</entry>
     <entry key="listEvent"      >List of Events</entry>
     <entry key="listNym"        >List of Canonical Names</entry>
@@ -367,11 +368,11 @@
     <xsl:call-template name="passthru-og-element"/>
   </xsl:template>
   
-  <xsl:template match="biblScope" mode="og-entry">
+  <xsl:template match="biblScope | citedRange" mode="og-entry">
     <div class="og-metadata-item">
       <span class="og-label">
         <xsl:choose>
-          <xsl:when test="@unit">
+          <xsl:when test="self::biblScope and @unit">
             <xsl:value-of select="@unit"/>
           </xsl:when>
           <xsl:otherwise>
