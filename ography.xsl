@@ -8,6 +8,7 @@
   xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl"
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:tei="http://www.tei-c.org/ns/1.0"
   xmlns:wfn="http://www.wwp.northeastern.edu/ns/functions"
   xmlns:tps="http://tapas.northeastern.edu"
   exclude-result-prefixes="#all">
@@ -82,6 +83,17 @@
     <entry key="synch"          >Synchronous with</entry>
   </xsl:variable>
   
+  <xsl:variable name="model.nameLike" as="xs:string*" 
+    select="( $model.placeStateLike, 'addName', 'forename', 'genName', 'geogFeat', 
+      'idno', 'lang', 'name', 'nameLink', 'offset', 'orgName', 'persName', 
+      'roleName', 'rs', 'surname' 
+      )"/>
+  
+  <xsl:variable name="model.placeStateLike" as="xs:string*"
+    select="( 'bloc', 'climate', 'country', 'district', 'geogName', 'location', 
+      'placeName', 'population', 'region', 'settlement', 'state', 'terrain', 'trait' 
+      )"/>
+  
   <xsl:variable name="ogMap" as="item()*">
     <xsl:variable name="uris" 
       select="/TEI/text
@@ -118,38 +130,73 @@
   
   <!-- FUNCTIONS -->
   
+  <!-- Given a reference pointer, create an 'ography identifier using a generated 
+    prefix for the filename. Because this function may be used while making 'ography 
+    entries, no testing is done on whether or not the referenced entry actually 
+    exists. User-created prefixes cannot yet be handled. -->
   <xsl:function name="tps:generate-og-id" as="xs:string?">
     <xsl:param name="idref" as="xs:string"/>
     <xsl:variable name="refSeq" select="tokenize($idref,'#')"/>
     <xsl:variable name="prefix" select="tps:get-og-prefix($refSeq[1])"/>
-    <!-- Because this function may be used while making 'ography entries, no testing 
-      is done on whether or not the referenced entry actually exists. -->
+    <!--  -->
     <xsl:value-of select="if ( $prefix ) then
                             if ( $prefix eq 'og0' ) then $refSeq[2]
                             else concat($prefix,'-',$refSeq[2])
                           else ()"/>
   </xsl:function>
   
+  <!-- Using the map of ography keys, figure out the (generated) 'ography prefix 
+    from a filename. -->
   <xsl:function name="tps:get-og-prefix" as="xs:string?">
     <xsl:param name="filename" as="xs:string"/>
     <xsl:value-of select="$ogMap[@key eq $filename]"/>
   </xsl:function>
   
+  <!-- Tests an element to see if it might function as narrative context for an 
+    'ograpy entry. -->
   <xsl:function name="tps:is-desc-like" as="xs:boolean">
     <xsl:param name="element" as="node()"/>
-    <xsl:value-of select="exists($element
+    <xsl:value-of select="exists($element[self::*]
                                   [ self::desc | self::note | self::p | self::roleDesc ]
                                 )"/>
   </xsl:function>
   
+  <!-- Tests an element to see if it contains both elements and non-whitespace text. -->
+  <xsl:function name="tps:is-mixed-content" as="xs:boolean">
+    <xsl:param name="element" as="node()"/>
+    <xsl:value-of select="exists($element/*) and 
+                          exists($element/text()[not(normalize-space(.) eq '')])"/>
+  </xsl:function>
+  
+  <!-- Tests an element for membership in model.nameLike. -->
+  <xsl:function name="tps:is-name-like" as="xs:boolean">
+    <xsl:param name="element" as="node()"/>
+    <xsl:value-of select="exists($element[self::*]
+                                  [ local-name() = $model.nameLike ]
+                                )"/>
+  </xsl:function>
+  
+  <!-- Tests an element to see if it is an 'ography entry. -->
   <xsl:function name="tps:is-og-entry" as="xs:boolean">
     <xsl:param name="element" as="node()"/>
-    <xsl:value-of select="exists($element
+    <xsl:value-of select="exists($element[self::*]
                                   [ (self::bibl | self::biblStruct)[parent::listBibl] 
                                   | self::event[parent::listEvent]
                                   | self::org[parent::listOrg]
                                   | (self::person | self::personGrp)[parent::listPerson]
                                   | self::place[parent::listPlace] ]
+                                )"/>
+  </xsl:function>
+  
+  <!-- Tests an element for membership in model.persStateLike or model.placeStateLike -->
+  <xsl:function name="tps:is-state-like" as="xs:boolean">
+    <xsl:param name="element" as="node()"/>
+    <xsl:value-of select="exists($element[self::*]
+                                  [ self::affiliation | self::age | self::climate | self::education 
+                                  | self::faith | self::floruit | self::langKnowledge 
+                                  | self::location | self::nationality | self::occupation 
+                                  | self::persName | self::population | self::residence | self::sex 
+                                  | self::socecStatus | self::state | self::terrain | self::trait ]
                                 )"/>
   </xsl:function>
   
@@ -210,7 +257,9 @@
             <xsl:call-template name="set-label"/>
           </span>
           <xsl:element name="tei-{local-name()}">
-            <xsl:call-template name="get-attributes"/>
+            <xsl:call-template name="get-attributes">
+              <xsl:with-param name="labelled" select="true()"/>
+            </xsl:call-template>
             <xsl:apply-templates mode="#current"/>
           </xsl:element>
         </div>
@@ -221,7 +270,7 @@
   
   <!-- MODES: 'OGRAPHY GENERATION -->
   
-  <xsl:template match="text()" mode="og-gen" priority="-10"/>
+  <xsl:template match="text()" mode="og-gen" priority="-15"/>
   
   <xsl:template name="passthru-og-element" match="*" mode="og-entry" priority="-50">
     <xsl:element name="{local-name()}">
@@ -231,7 +280,7 @@
   </xsl:template>
   
   <xsl:template match="@*" mode="og-gen og-entry" name="make-data-attr" priority="-20">
-    <xsl:attribute name="data-tapas-{local-name()}" select="data(.)"/>
+    <xsl:attribute name="data-tapas-att-{local-name()}" select="data(.)"/>
   </xsl:template>
   
   <xsl:template match="*[tps:is-og-entry(.)]" mode="og-gen">
@@ -307,7 +356,9 @@
             <xsl:call-template name="set-label"/>
           </span>
           <xsl:element name="{$me}">
-            <xsl:call-template name="get-attributes"/>
+            <xsl:call-template name="get-attributes">
+              <xsl:with-param name="labelled" select="true()"/>
+            </xsl:call-template>
             <xsl:apply-templates mode="#current"/>
           </xsl:element>
         </div>
@@ -339,6 +390,7 @@
       <xsl:element name="{local-name()}">
         <xsl:call-template name="save-gi"/>
         <xsl:apply-templates select="@* except (@when, @from, @to, @notBefore, @notAfter)" mode="#current"/>
+        <xsl:attribute name="class" select="'og-labelled'"/>
         <xsl:variable name="attrDates" as="item()*">
           <xsl:apply-templates select="@when | @from | @to | @notBefore | @notAfter" mode="og-datelike"/>
         </xsl:variable>
@@ -383,7 +435,9 @@
       <xsl:choose>
         <xsl:when test=".[not(normalize-space(.) eq '')][@from or @to]">
           <xsl:element name="{local-name()}">
-            <xsl:call-template name="get-attributes"/>
+            <xsl:call-template name="get-attributes">
+              <xsl:with-param name="labelled" select="true()"/>
+            </xsl:call-template>
             <xsl:value-of select="@from"/>
             <xsl:if test="not(@to) or .[@from][@to[not(. eq ../@from)]]">
               <xsl:text>-</xsl:text>
@@ -513,10 +567,14 @@
   
   <!-- Apply templates on attributes. -->
   <xsl:template name="get-attributes">
+    <xsl:param name="labelled" select="false()" as="xs:boolean"/>
     <xsl:apply-templates select="@*" mode="#current"/>
     <xsl:call-template name="save-gi"/>
     <xsl:if test="@ref[. ne '']">
       <xsl:call-template name="og-referrer"/>
+    </xsl:if>
+    <xsl:if test="$labelled">
+      <xsl:attribute name="class" select="'og-labelled'"/>
     </xsl:if>
   </xsl:template>
   

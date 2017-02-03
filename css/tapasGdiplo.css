@@ -725,19 +725,19 @@ body {
   margin-top: 0.25em;
   margin-bottom: 0.25em;
 }
-.tapas-generic div .heading[data-tapas-type="sub"] {
+.tapas-generic div .heading[data-tapas-att-type="sub"] {
   font-size: 115%;
 }
-.tapas-generic div[data-tapas-type="chapter"] > .heading {
+.tapas-generic div[data-tapas-att-type="chapter"] > .heading {
   text-align: center;
   margin-bottom: 1em;
 }
-.tapas-generic div[data-tapas-type="half_title"] > .heading {
+.tapas-generic div[data-tapas-att-type="half_title"] > .heading {
   text-align: center;
   padding: 1em;
   border: 1px dashed lightgray;
 }
-.tapas-generic .heading[data-tapas-type="supplied"] {
+.tapas-generic .heading[data-tapas-att-type="supplied"] {
   display: none;
 }
 .tapas-generic ident {
