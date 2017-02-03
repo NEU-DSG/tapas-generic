@@ -209,7 +209,8 @@
     </xsl:attribute>
   </xsl:template>
   
-  <xsl:template match="@ref | @target" mode="work">
+  <xsl:template match="@parts[parent::nym] 
+                      | @ref | @target" mode="work">
     <xsl:variable name="ident" select="tps:generate-og-id(data(.))"/>
     <xsl:attribute name="{local-name()}" select="concat('#',$ident)"/>
     <xsl:variable name="gotoentry" select="$ogEntries[@id eq $ident] or key('IDs',$ident)"/>

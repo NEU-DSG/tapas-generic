@@ -41,17 +41,28 @@
     <entry key="bindingDesc"    >Binding Description</entry>
     <entry key="birth"          >Born</entry>
     <entry key="castGroup"      >Cast List Grouping</entry>
-    <entry key="castItem"       >cast list entry</entry>
+    <entry key="castItem"       >Cast List Entry</entry>
     <entry key="castList"       >Cast List</entry>
     <entry key="catRef"         >Category</entry>
+    <entry key="cit"            >Citation</entry>
     <entry key="citedRange"     >Cited Range</entry>
+    <entry key="colloc"         >Collocated</entry>
     <entry key="custEvent"      >Custodial Event</entry>
     <entry key="death"          >Died</entry>
+    <entry key="etym"           >Etymology</entry>
+    <entry key="form"           >Form Information Group</entry>
+    <entry key="gen"            >Gender</entry>
     <entry key="genName"        >General Name Component</entry>
     <entry key="geo"            >Geographical Coordinates</entry>
     <entry key="geogFeat"       >Geographical Feature</entry>
     <entry key="geogName"       >Geographical Name</entry>
+    <entry key="gram"           >Grammatical Information</entry>
+    <entry key="gramGrp"        >Grammatical Information Group</entry>
+    <entry key="hom"            >Homograph</entry>
+    <entry key="hyph"           >Hyphenation</entry>
+    <entry key="lbl"            >Label</entry>
     <entry key="idno"           >Identifier</entry>
+    <entry key="iType"          >Inflectional Class</entry>
     <entry key="langKnowledge"  >Language Knowledge</entry>
     <entry key="listBibl"       >Bibliography</entry>
     <entry key="listEvent"      >List of Events</entry>
@@ -62,19 +73,30 @@
     <entry key="monogr"         >Monograph</entry>
     <entry key="musicNotation"  >Musical Notation</entry>
     <entry key="nameLink"       >Name Link</entry>
+    <entry key="nym"            >Canonical Name</entry>
     <entry key="objectType"     >Object Type</entry>
     <entry key="org"            >Organization</entry>
     <entry key="orgName"        >Organization Name</entry>
     <entry key="origDate"       >Date of Origin</entry>
     <entry key="origPlace"      >Place of Origin</entry>
+    <entry key="orth"           >Orthographic Form</entry>
+    <entry key="person"         >Grammatical Person</entry>
     <entry key="persName"       >Personal Name</entry>
     <entry key="personGrp"      >Personal Group</entry>
     <entry key="placeName"      >Place Name</entry>
+    <entry key="pos"            >Part of Speech</entry>
+    <entry key="pron"           >Pronunciation</entry>
+    <entry key="re"             >Related Entry</entry>
     <entry key="pubPlace"       >Publication Place</entry>
     <entry key="relatedItem"    >Related Item</entry>
     <entry key="roleName"       >Role Name</entry>
     <entry key="secFol"         >Second Folio</entry>
     <entry key="socecStatus"    >Socio-economic Status</entry>
+    <entry key="subc"           >Subcategorization</entry>
+    <entry key="syll"           >Syllabification</entry>
+    <entry key="tns"            >Tense</entry>
+    <entry key="usg"            >Usage</entry>
+    <entry key="xr"             >Cross-Reference Phrase</entry>
     <!-- Attributes -->
     <entry key="copyOf"         >Copy of</entry>
     <entry key="corresp"        >Corresponds to</entry>
@@ -82,6 +104,8 @@
     <entry key="notBefore"      >Not before</entry>
     <entry key="sameAs"         >Same as</entry>
     <entry key="synch"          >Synchronous with</entry>
+    <!-- Both -->
+    <entry key="sex"            >Gender</entry>
   </xsl:variable>
   
   <xsl:variable name="model.nameLike" as="xs:string*" 
@@ -158,7 +182,9 @@
   <xsl:function name="tps:is-desc-like" as="xs:boolean">
     <xsl:param name="element" as="node()"/>
     <xsl:value-of select="exists($element[self::*]
-                                  [ self::desc | self::note | self::p | self::roleDesc ]
+                                  [ self::desc 
+                                  | ( self::def | self::etym )[parent::nym] 
+                                  | self::note | self::p | self::roleDesc ]
                                 )"/>
   </xsl:function>
   
@@ -184,6 +210,7 @@
                                   [ (self::bibl | self::biblStruct)[parent::listBibl] 
                                   | self::event[parent::listEvent]
                                   | self::org[parent::listOrg]
+                                  | self::nym[parent::listNym]
                                   | (self::person | self::personGrp)[parent::listPerson]
                                   | self::place[parent::listPlace] ]
                                 )"/>
@@ -322,7 +349,7 @@
                                      else concat($ns,'-',$id)"/>
   </xsl:template>
   
-  <xsl:template match="@ref" mode="og-gen og-entry">
+  <xsl:template match="@parts[parent::nym] | @ref | @target" mode="og-gen og-entry">
     <xsl:param name="doc-uri" as="xs:string" tunnel="yes"/>
     <!-- Make a standard data attribute for the @ref. -->
     <xsl:call-template name="make-data-attr"/>
