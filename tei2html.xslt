@@ -209,10 +209,23 @@
     </xsl:attribute>
   </xsl:template>
   
-  <xsl:template match="@ref|@target" mode="work">
+  <xsl:template match="@ref | @target" mode="work">
     <xsl:variable name="ident" select="tps:generate-og-id(data(.))"/>
     <xsl:attribute name="{local-name()}" select="concat('#',$ident)"/>
-    <xsl:attribute name="data-tapas-gotoentry" select="$ogEntries[@id eq $ident] or key('IDs',$ident)"/>
+    <xsl:variable name="gotoentry" select="$ogEntries[@id eq $ident] or key('IDs',$ident)"/>
+    <xsl:attribute name="data-tapas-gotoentry" select="$gotoentry"/>
+    <!-- If there *is* a valid 'ography entry and there is no user-supplied label, 
+      use a generated header. This template will create the content of an element, 
+      so it MUST be run after all other attributes have been added. -->
+    <xsl:if test="$gotoentry and parent::*[not(*) and not(text())]">
+      <xsl:variable name="ogMatch" as="node()" select="($ogEntries[@id eq $ident], key('IDs',$ident))[1]"/>
+      <xsl:variable name="heading">
+        <xsl:call-template name="get-entry-header">
+          <xsl:with-param name="element" select="$ogMatch"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:value-of select="normalize-space($heading)"/>
+    </xsl:if>
   </xsl:template>
   
   <xd:doc>
@@ -230,7 +243,8 @@
     <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
       <xsl:call-template name="addID"/>
       <xsl:call-template name="addRend"/>
-      <xsl:apply-templates select="@* except ( @rend, @rendition, @style )" mode="#current"/>
+      <xsl:apply-templates select="@* except ( @rend, @rendition, @style, @ref, @target )" mode="#current"/>
+      <xsl:apply-templates select="@ref | @target" mode="#current"/>
       <xsl:apply-templates select="node()" mode="#current"/>
     </xsl:element>
   </xsl:template>
@@ -566,7 +580,11 @@
     <xsl:element name="{local-name(.)}">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:call-template name="addID"/>
-      <img alt="{wfn:mult_to_1(figDesc)}" src="{graphic/@url}"/>
+      <img src="{graphic/@url}">
+        <xsl:if test="figDesc">
+          <xsl:attribute name="alt" select="wfn:mult_to_1(figDesc)"/>
+        </xsl:if>
+      </img>
       <xsl:apply-templates select="* except ( self::graphic, self::figDesc )" mode="#current"/>
     </xsl:element>
   </xsl:template>
@@ -959,7 +977,10 @@
   
   <xsl:template match="castList|listBibl|listEvent|listNym|listOrg|listPerson|listPlace" mode="work">
     <div>
+      <xsl:call-template name="addID"/>
+      <xsl:call-template name="addRend"/>
       <xsl:attribute name="class" select="'list-contextual'"/>
+      <xsl:attribute name="data-tapas-tocme" select="true()"/>
       <xsl:choose>
         <xsl:when test="head">
           <xsl:apply-templates select="head" mode="work"/>

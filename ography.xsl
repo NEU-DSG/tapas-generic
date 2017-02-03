@@ -51,6 +51,7 @@
     <entry key="geo"            >Geographical Coordinates</entry>
     <entry key="geogFeat"       >Geographical Feature</entry>
     <entry key="geogName"       >Geographical Name</entry>
+    <entry key="idno"           >Identifier</entry>
     <entry key="langKnowledge"  >Language Knowledge</entry>
     <entry key="listBibl"       >Bibliography</entry>
     <entry key="listEvent"      >List of Events</entry>
@@ -71,7 +72,7 @@
     <entry key="placeName"      >Place Name</entry>
     <entry key="pubPlace"       >Publication Place</entry>
     <entry key="relatedItem"    >Related Item</entry>
-    <entry key="roleName"       >Role</entry>
+    <entry key="roleName"       >Role Name</entry>
     <entry key="secFol"         >Second Folio</entry>
     <entry key="socecStatus"    >Socio-economic Status</entry>
     <!-- Attributes -->
@@ -292,15 +293,11 @@
         <xsl:apply-templates select="@*" mode="#current">
           <xsl:with-param name="doc-uri" select="$doc-uri" tunnel="yes"/>
         </xsl:apply-templates>
-        <!-- Generate a sequence of potential entry headers, and choose the first. -->
         <xsl:variable name="header">
-          <xsl:variable name="options" as="item()*">
-            <xsl:apply-templates select="*" mode="og-head"/>
-          </xsl:variable>
-          <xsl:copy-of select="if ( $options[1] and normalize-space($options[1]) ne '' ) then $options[1] else @xml:id/data(.)"/>
+          <xsl:call-template name="get-entry-header"/>
         </xsl:variable>
         <span class="heading heading-og">
-          <xsl:value-of select="$header[1]"/>
+          <xsl:value-of select="$header"/>
         </span>
         <!-- Display metadata first, then contextual <note>s and <p>s. -->
         <div class="og-entry">
@@ -413,7 +410,8 @@
   </xsl:template>
   
   <!-- Places mentioned inside event-like elements are given an label " in ". -->
-  <xsl:template match="placeName[parent::birth or parent::death or parent::floruit or parent::residence]" mode="og-entry">
+  <xsl:template match="*[local-name() = $model.placeStateLike]
+                        [parent::birth or parent::death or parent::floruit or parent::residence]" mode="og-entry">
     <xsl:text> </xsl:text>
     <span class="og-label og-label-inner">in</span>
     <xsl:text> </xsl:text>
@@ -452,7 +450,8 @@
     </div>
   </xsl:template>
   
-  <xsl:template match="desc | note[not(@xml:id) or not(@xml:id = key('OGs','')/@ref/substring-after(data(.),'#'))]
+  <xsl:template match="desc 
+                      | note[not(@xml:id) or not(@xml:id = key('OGs','')/@ref/substring-after(data(.),'#'))]
                       | *[tps:is-og-entry(.)]/p | roleDesc" mode="og-entry">
     <xsl:element name="{local-name()}">
       <xsl:call-template name="get-attributes"/>
@@ -464,6 +463,17 @@
   
   <!-- MODE: 'OGRAPHY HEADING -->
   
+  <!-- Generate a sequence of potential entry headers, and choose the first. -->
+  <xsl:template name="get-entry-header">
+    <xsl:param name="element" select="." as="node()"/>
+    <xsl:variable name="options" as="item()*">
+      <xsl:apply-templates select="$element/*" mode="og-head"/>
+    </xsl:variable>
+    <xsl:variable name="not-blank" as="item()*" select="$options[normalize-space(.) ne '']"/>
+    <xsl:copy-of select="if ( $not-blank[1] ) then $not-blank[1] 
+                         else $element/@xml:id/data(.)"/>
+  </xsl:template>
+  
   <xsl:template match="* | text()" mode="og-head" priority="-30"/>
   
   <xsl:template match="biblStruct/*" mode="og-head">
@@ -474,7 +484,7 @@
                       | label[not(preceding-sibling::head)][not(preceding-sibling::label)]
                       | org/orgName[@type eq 'main' or position() eq 1] 
                       | person/persName[@type eq 'main' or position() eq 1][not(*)]
-                      | place/placeName[@type eq 'main' or position() eq 1]" mode="og-head">
+                      | place/*[local-name() = $model.placeStateLike][@type eq 'main' or position() eq 1]" mode="og-head">
     <xsl:value-of select="normalize-space(.)"/>
   </xsl:template>
   
@@ -570,11 +580,11 @@
     <xsl:param name="labelled" select="false()" as="xs:boolean"/>
     <xsl:apply-templates select="@*" mode="#current"/>
     <xsl:call-template name="save-gi"/>
-    <xsl:if test="@ref[. ne '']">
-      <xsl:call-template name="og-referrer"/>
-    </xsl:if>
     <xsl:if test="$labelled">
       <xsl:attribute name="class" select="'og-labelled'"/>
+    </xsl:if>
+    <xsl:if test="@ref[. ne ''] or self::ref[@target[. ne '']]">
+      <xsl:call-template name="og-referrer"/>
     </xsl:if>
   </xsl:template>
   
