@@ -29,12 +29,12 @@ function initialize_tapas_g(){
 	jQuery(this).checked = false;
 	if (jQuery("#TOC").length > 0){
 		var toc = jQuery('#TOC').offset().top;
-		fixTOC(toc);
 		jQuery(window).scroll(function() {
-		    fixTOC(toc);
+			var toc = jQuery('#TOC').offset().top;
+		  fixTOC(toc);
 		});
 		jQuery(window).resize(function(){
-				fixTOC(toc);
+			fixTOC();
 		})
 	}
 }
@@ -42,17 +42,17 @@ function initialize_tapas_g(){
 function fixTOC(toc){
 	if (jQuery(window).width() > 1000){
 		var currentScroll = jQuery(window).scrollTop();
-		if (currentScroll >= toc) {
-				jQuery('#TOC').css({
-						position: 'fixed',
-						top: jQuery("#navbar").height() + 40,
-						width: jQuery(".reader_tapas_generic").width() * .25 - 15,
-						height: jQuery(window).height() - jQuery("#navbar").height() - 40
-				});
+		if ((jQuery(window).height() - currentScroll) < (currentScroll + 40)) {
+			jQuery('#TOC').css({
+					position: 'fixed',
+					top: jQuery("#navbar").height() + 40,
+					width: jQuery(".reader_tapas_generic").width() * .25 - 15,
+					height: jQuery(window).height() - jQuery("#navbar").height() - 40
+			});
 		} else {
-				jQuery('#TOC').css({
-						position: 'static'
-				});
+			jQuery('#TOC').css({
+					position: 'static'
+			});
 		}
 	} else {
 		jQuery('#TOC').css({
