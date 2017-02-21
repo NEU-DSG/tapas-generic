@@ -477,6 +477,27 @@
     </div>
   </xsl:template>
   
+  <xsl:template match="idno" mode="og-entry">
+    <div class="og-metadata-item">
+      <xsl:call-template name="get-attributes"/>
+      <span class="og-label">
+        <xsl:call-template name="set-label"/>
+      </span>
+      <xsl:choose>
+        <xsl:when test="@type eq 'URI' or starts-with(normalize-space(),'http')">
+          <xsl:variable name="uri" select="normalize-space()"/>
+          <a target="_blank">
+            <xsl:attribute name="href" select="$uri"/>
+            <xsl:value-of select="if ( @subtype ) then @subtype else $uri"/>
+          </a>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates mode="#current"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </div>
+  </xsl:template>
+  
   <xsl:template match="desc 
                       | note[not(@xml:id) or not(@xml:id = key('OGs','')/@ref/substring-after(data(.),'#'))]
                       | *[tps:is-og-entry(.)]/p | roleDesc" mode="og-entry">
@@ -664,10 +685,17 @@
                   lower-case($label)
                 else $label
               else $me"/>
-    <xsl:if test="@type | @unit">
+    <xsl:variable name="specializations" as="item()*">
+      <xsl:variable name="lang" select="@xml:lang"/>
+      <!-- XD: get description from IANA registry? 
+        http://www.iana.org/assignments/language-subtag-registry/language-subtag-registry -->
+      <xsl:copy-of select="@type | @unit"/>
+      <xsl:copy-of select="$lang"/>
+    </xsl:variable>
+    <xsl:for-each select="$specializations">
       <xsl:text>, </xsl:text>
-      <xsl:value-of select="@type | @unit"/>
-    </xsl:if>
+      <xsl:value-of select="."/>
+    </xsl:for-each>
     <xsl:if test="$is-field-label and not($is-inner-label)">
       <xsl:text>: </xsl:text>
     </xsl:if>
