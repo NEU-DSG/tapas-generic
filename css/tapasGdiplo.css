@@ -23,7 +23,6 @@ body {
   margin-right: 0.5em;
   display: inline-block;
   width: 115px;
-  line-height: 1.2em;
   text-align: right;
   font-size: .9em;
 }
@@ -41,9 +40,6 @@ body {
 .og-metadata .og-metadata-item .og-metadata-item {
   margin-bottom: 0;
   padding-bottom: 0.25em;
-  line-height: 1.2em;
-}
-.og-metadata .og-metadata-item .og-metadata-item:first-child {
   line-height: 1em;
 }
 .og-context {

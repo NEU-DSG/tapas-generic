@@ -329,6 +329,7 @@
         <!-- Display metadata first, then contextual <note>s and <p>s. -->
         <div class="og-entry">
           <div class="og-metadata">
+            <xsl:apply-templates select="@*" mode="og-entry-att"/>
             <xsl:apply-templates select="*[not(tps:is-desc-like(.))]" mode="og-entry">
               <xsl:with-param name="entryHeading" select="$header" tunnel="yes"/>
             </xsl:apply-templates>
@@ -439,8 +440,15 @@
   <!-- Places mentioned inside event-like elements are given an label " in ". -->
   <xsl:template match="*[local-name() = $model.placeStateLike]
                         [parent::birth or parent::death or parent::floruit or parent::residence]" mode="og-entry">
-    <xsl:text> </xsl:text>
-    <span class="og-label og-label-inner">in</span>
+    <xsl:choose>
+      <xsl:when test="preceding-sibling::*[local-name() = $model.placeStateLike]">
+        <xsl:text>, </xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text> </xsl:text>
+        <span class="og-label og-label-inner">in</span>
+      </xsl:otherwise>
+    </xsl:choose>
     <xsl:text> </xsl:text>
     <xsl:call-template name="passthru-og-element"/>
   </xsl:template>
@@ -532,7 +540,7 @@
                       | label[not(preceding-sibling::head)][not(preceding-sibling::label)]
                       | org/orgName[@type eq 'main' or position() eq 1] 
                       | person/persName[@type eq 'main' or position() eq 1][not(*)]
-                      | place/*[local-name() = $model.placeStateLike][@type eq 'main' or position() eq 1]" mode="og-head">
+                      | place/placeName[@type eq 'main' or position() eq 1]" mode="og-head">
     <xsl:value-of select="normalize-space(.)"/>
   </xsl:template>
   
@@ -621,6 +629,95 @@
   </xsl:template>
   
   
+  <!-- MODE: 'OGRAPHY ENTRIES FOR ATTRIBUTES -->
+  
+  <xsl:template match="@*" mode="og-entry-att"/>
+  
+  <xsl:template match="@copyOf | @corresp | @next | @prev | @sameAs | @sync" mode="og-entry-att">
+    <div class="og-metadata-item">
+      <span class="og-label">
+        <xsl:call-template name="set-label"/>
+      </span>
+      <span class="og-labelled">
+        <xsl:call-template name="og-referrer">
+          <xsl:with-param name="onAttribute" select="true()"/>
+        </xsl:call-template>
+      </span>
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="person/@age | person/@role" mode="og-entry-att">
+    <div class="og-metadata-item">
+      <span class="og-label">
+        <xsl:call-template name="set-label"/>
+      </span>
+      <span class="og-labelled">
+        <xsl:value-of select="."/>
+      </span>
+    </div>
+  </xsl:template>
+  
+  <xsl:template match="person/@sex" mode="og-entry-att">
+    <div class="og-metadata-item">
+      <span class="og-label">
+        <xsl:call-template name="set-label"/>
+      </span>
+      <span class="og-labelled">
+        <xsl:choose>
+          <!-- If @sex consists of more than one character (read: words), output the 
+            user's data. -->
+          <xsl:when test="string-length() gt 1">
+            <xsl:value-of select="."/>
+          </xsl:when>
+          <!-- If @sex is one character long, test it for conformance to vCard's sex 
+            property or ISO 5218:2004, the two gender/sex standards mentioned in the 
+            TEI docs for <person>. -->
+          <xsl:when test=". = ('U','M','F','N','O')">
+            <xsl:choose>
+              <xsl:when test=". eq 'U'">
+                <xsl:text>unknown</xsl:text>
+              </xsl:when>
+              <xsl:when test=". eq 'M'">
+                <xsl:text>male</xsl:text>
+              </xsl:when>
+              <xsl:when test=". eq 'F'">
+                <xsl:text>female</xsl:text>
+              </xsl:when>
+              <xsl:when test=". eq 'N'">
+                <xsl:text>none or not applicable</xsl:text>
+              </xsl:when>
+              <xsl:when test=". eq 'O'">
+                <xsl:text>unknown</xsl:text>
+              </xsl:when>
+            </xsl:choose>
+          </xsl:when>
+          <xsl:when test=". = ('0','1','2','9')">
+            <xsl:choose>
+              <xsl:when test=". eq '0'">
+                <xsl:text>unknown</xsl:text>
+              </xsl:when>
+              <xsl:when test=". eq '1'">
+                <xsl:text>male</xsl:text>
+              </xsl:when>
+              <xsl:when test=". eq '2'">
+                <xsl:text>female</xsl:text>
+              </xsl:when>
+              <xsl:when test=". eq '9'">
+                <xsl:text>not applicable</xsl:text>
+              </xsl:when>
+            </xsl:choose>
+          </xsl:when>
+          <!-- If all other avenues have failed, just output the contents of the 
+            attribute. -->
+          <xsl:otherwise>
+            <xsl:value-of select="."/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </span>
+    </div>
+  </xsl:template>
+  
+  
   <!-- SUPPLEMENTAL TEMPLATES -->
   
   <!-- Apply templates on attributes. -->
@@ -641,8 +738,16 @@
     For sanity's sake, references are not linked from within external 'ography 
     entries. -->
   <xsl:template name="og-referrer">
+    <xsl:param name="onAttribute" select="false()" as="xs:boolean"/>
     <xsl:if test="base-uri(.) eq $starterFile">
-      <xsl:apply-templates select="@ref" mode="work"/>
+      <xsl:choose>
+        <xsl:when test="$onAttribute">
+          <xsl:apply-templates select="." mode="work"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates select="@ref" mode="work"/>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:if>
   </xsl:template>
   
