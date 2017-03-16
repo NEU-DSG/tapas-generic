@@ -265,9 +265,6 @@ body {
   background: #d3e5f7;
   cursor: pointer;
 }
-.tapas-generic .contextual-item .heading-og {
-  font-weight: bold;
-}
 .tapas-generic a[rend~="super"] {
   vertical-align: super;
   font-size: 70%;
@@ -896,7 +893,7 @@ body {
 }
 .tapas-generic .list-contextual > tei-head,
 .tapas-generic .list-contextual > span.heading-listtype {
-  font-size: 1.4em;
+  font-size: 1.5em;
   display: unset;
 }
 .tapas-generic listBibl bibl {

@@ -43,10 +43,12 @@ function fixTOC(toc){
 	if (jQuery(window).width() > 1000){
 		var currentScroll = jQuery(window).scrollTop();
 		if (currentScroll >= toc) {
+      var navbarHeight = jQuery("#navbar").height();
+      var readerWidth = jQuery(".reader_tapas_generic").width();
 				jQuery('#TOC').css({
-						position: 'fixed',
-						top: jQuery("#navbar").height() + 40,
-						width: jQuery(".reader_tapas_generic").width() * .25 - 15,
+          position: 'fixed',
+						top: navbarHeight === null ? '0' : navbarHeight + 40,
+						width: readerWidth === null ? '25%' : readerWidth * .25 - 15,
 						height: jQuery(window).height() - jQuery("#navbar").height() - 40
 				});
 		} else {
