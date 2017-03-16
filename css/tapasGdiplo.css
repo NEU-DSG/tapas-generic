@@ -139,12 +139,13 @@ body {
   width: 25%;
   float: left;
   position: static;
-  overflow: scroll;
+  overflow-y: scroll;
 }
 .tapas-generic #TOC ol {
   list-style-type: none;
   -webkit-margin-before: 0px;
   -webkit-padding-start: 0;
+  padding-left: 1em;
 }
 .tapas-generic #TOC ol .toc-entry-label {
   font-size: 17px;
@@ -894,7 +895,7 @@ body {
 .tapas-generic .list-contextual > tei-head,
 .tapas-generic .list-contextual > span.heading-listtype {
   font-size: 1.5em;
-  display: unset;
+  text-align: center;
 }
 .tapas-generic listBibl bibl {
   display: list-item;
@@ -1334,7 +1335,7 @@ body {
   left: 80%;
   background: #FFF;
   padding: 5px 10px 8px;
-  border: 1px solid #7681CE;
+  border: 1px solid #7681ce;
   font-size: 13px;
   text-transform: uppercase;
   line-height: 1.5;

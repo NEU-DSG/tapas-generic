@@ -24,6 +24,7 @@ margin: 0;
 @linkdarkgrey: #333333;
 @linkblack: #000000;
 @border-color:#4D88CD;
+@toolbox-border: #7681CE;
 @note-background-color:#FAF3ED;
 @underline: 1px dotted @linkgrey;
 @darkunderline: 1px dotted @linkdarkgrey;
@@ -123,11 +124,12 @@ margin: 0;
     width:25%;
     float:left;
     position:static;
-    overflow:scroll;
+    overflow-y:scroll;
     ol {
       list-style-type: none;
       -webkit-margin-before: 0px;
       -webkit-padding-start: 0;
+      padding-left: 1em;
       .toc-entry-label {
         font-size: 17px;
         margin-right: 5px;
@@ -1368,7 +1370,8 @@ margin: 0;
     > tei-head, 
     > span.heading-listtype {
       font-size: 1.5em;
-      display: unset;
+      //display: unset;
+      text-align: center;
     }
   } // .list-contextual
 
@@ -2111,7 +2114,7 @@ margin: 0;
 	left: 80%;
 	background: #FFF;
 	padding: 5px 10px 8px;
-	border: 1px solid #7681CE;
+	border: 1px solid @toolbox-border;
 	font-size: 13px;
 	text-transform: uppercase;
 	line-height: 1.5;

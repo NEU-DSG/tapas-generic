@@ -1465,6 +1465,13 @@
         </span>
         <span class="">
           <xsl:choose>
+            <xsl:when test="html:*[ @data-tapas-gi eq 'head' ]
+                          | html:*[ contains(@class, 'heading') ]">
+              <xsl:attribute name="class" select="'TOC-entry-heading'"/>
+              <xsl:apply-templates mode="string"
+                select="html:*[ @data-tapas-gi eq 'head' ]
+                      | html:*[ contains(@class, 'heading') ]"/>
+            </xsl:when>
             <xsl:when test="count( html:head ) eq 1">
               <xsl:attribute name="class" select="'TOC-entry-heading'"/>
               <xsl:apply-templates mode="string" select="html:head[1]"/>
