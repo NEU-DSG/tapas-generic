@@ -421,6 +421,7 @@
           <xsl:apply-templates mode="#current"/>
         </xsl:variable>
         <xsl:if test="$attrDates">
+          <!-- Create a regex using the years listed in attributes. -->
           <xsl:variable name="yearsPattern">
             <xsl:variable name="years" as="item()*">
               <xsl:for-each select="$attrDates">
@@ -434,12 +435,13 @@
                 </xsl:if>
               </xsl:for-each>
             </xsl:variable>
-            <xsl:value-of select="concat('(',string-join($years,'|'),')')"/>
+            <xsl:value-of select="concat('(',string-join(distinct-values($years),'|'),')')"/>
           </xsl:variable>
           <!-- If this element contains a human-readable representation of a W3C-
             formatted date, don't output data from the W3C date attributes. This 
             should reduce some repetition. -->
-          <xsl:if test="not( matches(normalize-space(), $yearsPattern) ) and not(descendant::date)">
+          <xsl:if test="( $yearsPattern eq '()' or not( matches(normalize-space(), $yearsPattern) ) ) 
+                        and not(descendant::date)">
             <xsl:apply-templates select="$attrDates" mode="og-datelike"/>
             <xsl:text> </xsl:text>
           </xsl:if>
@@ -552,15 +554,15 @@
                       | label[not(preceding-sibling::head)][not(preceding-sibling::label)]
                       | org/orgName[@type eq 'main' or position() eq 1] 
                       | person/persName[@type eq 'main' or position() eq 1][not(*)]
-                      | place/*[local-name() = $model.placeStateLike][@type eq 'main']" mode="og-head">
+                      | place/*[local-name() = $model.nameLike][@type eq 'main']" mode="og-head">
                       <!--| place/placeName[@type eq 'main' or position() eq 1]" mode="og-head">-->
     <xsl:value-of select="normalize-space(.)"/>
   </xsl:template>
   
-  <xsl:template match="place/*[local-name() = $model.placeStateLike][position() eq 1]" mode="og-head" priority="-10">
+  <xsl:template match="place/*[local-name() = $model.nameLike][position() eq 1]" mode="og-head" priority="-10">
     <xsl:variable name="text" select="normalize-space(.)"/>
     <!-- Give preference to any sibling name-like of @type 'main'.  -->
-    <xsl:if test="not(../*[local-name() = $model.placeStateLike][@type eq 'main'])">
+    <xsl:if test="not(../*[local-name() = $model.nameLike][@type eq 'main'])">
       <xsl:choose>
         <!-- If this name-like is a <placeName>, we have no more work to do. -->
         <xsl:when test="self::placeName">
