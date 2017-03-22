@@ -552,9 +552,31 @@
                       | label[not(preceding-sibling::head)][not(preceding-sibling::label)]
                       | org/orgName[@type eq 'main' or position() eq 1] 
                       | person/persName[@type eq 'main' or position() eq 1][not(*)]
-                      | place/*[local-name() = $model.placeStateLike][@type eq 'main' or position() eq 1]" mode="og-head">
+                      | place/*[local-name() = $model.placeStateLike][@type eq 'main']" mode="og-head">
                       <!--| place/placeName[@type eq 'main' or position() eq 1]" mode="og-head">-->
     <xsl:value-of select="normalize-space(.)"/>
+  </xsl:template>
+  
+  <xsl:template match="place/*[local-name() = $model.placeStateLike][position() eq 1]" mode="og-head" priority="-10">
+    <xsl:variable name="text" select="normalize-space(.)"/>
+    <!-- Give preference to any sibling name-like of @type 'main'.  -->
+    <xsl:if test="not(../*[local-name() = $model.placeStateLike][@type eq 'main'])">
+      <xsl:choose>
+        <!-- If this name-like is a <placeName>, we have no more work to do. -->
+        <xsl:when test="self::placeName">
+          <xsl:value-of select="$text"/>
+        </xsl:when>
+        <!-- Give preference to the first of any sibling <placeName>s. -->
+        <xsl:when test="../placeName">
+          <xsl:value-of select="normalize-space(../placeName[1])"/>
+        </xsl:when>
+        <!-- If all other possibilities have been exhausted, output this element's 
+          text. -->
+        <xsl:otherwise>
+          <xsl:value-of select="$text"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
   </xsl:template>
   
   <xsl:template match="analytic/title[@type eq 'main' or position() eq 1] 
