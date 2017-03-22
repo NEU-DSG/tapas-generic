@@ -416,19 +416,31 @@
         <xsl:call-template name="save-gi"/>
         <xsl:apply-templates select="@* except (@when, @from, @to, @notBefore, @notAfter)" mode="#current"/>
         <xsl:attribute name="class" select="'og-labelled'"/>
-        <xsl:variable name="attrDates" as="item()*">
-          <xsl:apply-templates select="@when | @from | @to | @notBefore | @notAfter" mode="og-datelike"/>
-        </xsl:variable>
+        <xsl:variable name="attrDates" select="@when | @from | @to | @notBefore | @notAfter" as="item()*"/>
         <xsl:variable name="content" as="item()*">
           <xsl:apply-templates mode="#current"/>
         </xsl:variable>
         <xsl:if test="$attrDates">
-          <!-- Test if this <birth> or <death> contains a year-like pattern, or a 
-            <date>. This should reduce most repetition when these elements are tagged 
-            with a W3C date attribute but also contain plain-text representations of 
-            dates. XD: It will *not* handle years with 1-3 digits! -->
-          <xsl:if test="not(matches(normalize-space(),'\d\d\d\d')) and not(descendant::date)">
-            <xsl:copy-of select="$attrDates"/>
+          <xsl:variable name="yearsPattern">
+            <xsl:variable name="years" as="item()*">
+              <xsl:for-each select="$attrDates">
+                <!-- Remove any leading hyphen from the given date. -->
+                <xsl:variable name="this" select="replace(data(.),'^-','')"/>
+                <!-- Get the year from the given date. -->
+                <xsl:variable name="year" select="tokenize($this,'-')[1]"/>
+                <xsl:if test="$year ne ''">
+                  <!-- Remove any leading zeroes. -->
+                  <xsl:value-of select="replace($year, '^0+(\d*)', '$1')"/>
+                </xsl:if>
+              </xsl:for-each>
+            </xsl:variable>
+            <xsl:value-of select="concat('(',string-join($years,'|'),')')"/>
+          </xsl:variable>
+          <!-- If this element contains a human-readable representation of a W3C-
+            formatted date, don't output data from the W3C date attributes. This 
+            should reduce some repetition. -->
+          <xsl:if test="not( matches(normalize-space(), $yearsPattern) ) and not(descendant::date)">
+            <xsl:apply-templates select="$attrDates" mode="og-datelike"/>
             <xsl:text> </xsl:text>
           </xsl:if>
         </xsl:if>
@@ -540,7 +552,8 @@
                       | label[not(preceding-sibling::head)][not(preceding-sibling::label)]
                       | org/orgName[@type eq 'main' or position() eq 1] 
                       | person/persName[@type eq 'main' or position() eq 1][not(*)]
-                      | place/placeName[@type eq 'main' or position() eq 1]" mode="og-head">
+                      | place/*[local-name() = $model.placeStateLike][@type eq 'main' or position() eq 1]" mode="og-head">
+                      <!--| place/placeName[@type eq 'main' or position() eq 1]" mode="og-head">-->
     <xsl:value-of select="normalize-space(.)"/>
   </xsl:template>
   
