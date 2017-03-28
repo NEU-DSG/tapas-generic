@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../config.rnc" type="application/relax-ng-compact-syntax"?>
+<view_package xmlns="http://www.wheatoncollege.edu/TAPAS/1.0" 
+  version="1.0" xml:id="tapas-generic" dynamic="false" scope="file">
+  <human_name>TAPAS Generic</human_name>
+  <description>A web-friendly, somewhat-generic view. Features include: pop-up notes
+    and metadata entries; the ability for readers to decide whether they want to see
+    page breaks ("diplomatic") or not ("normalized"); and pop-up facsimiles for page
+    images uploaded to TAPAS.</description>
+  <file_types>
+    <file_type>tei</file_type>
+  </file_types>
+  <git_branch>develop</git_branch>
+  <css_files>
+    <css_file>css/tapasGdiplo.css</css_file>
+    <css_file>css/tapasGnormal.css</css_file>
+    <css_file>css/jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css</css_file>
+  </css_files>
+  <js_files>
+    <js_file>js/jquery/jquery.min.js</js_file>
+    <js_file>js/jquery-ui/ui/minified/jquery-ui.min.js</js_file>
+    <js_file>js/jquery/plugins/jquery.blockUI.js</js_file>
+    <js_file>js/contextualItems.js</js_file>
+    <js_file>js/tapas-generic.js</js_file>
+  </js_files>
+  <parameters>
+    <parameter name="assets-base" as="xs:string">A file path representing the path to the parent 
+      directory of the CSS/JS/image assets associated with the requested Reader type.</parameter>
+    <parameter name="file" as="node(tei:TEI)">A TEI-encoded XML document.</parameter>
+  </parameters>
+  <run type="xslt" pgm="tei2html.xslt"/>
+</view_package>

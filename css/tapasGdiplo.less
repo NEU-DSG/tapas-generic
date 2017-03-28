@@ -2,7 +2,7 @@
 @body-font-family: Georgia,Baskerville,Palatino,'Palatino Linotype','Book Antiqua','Times New Roman',serif;
 @body-font-size: 13pt;
 @body-line-height: 1.5;
-@background-color:#EDF3FA;
+@background-color:transparent;
 @color:#232936;
 @link-color:#337DD3;
 @linkgrey: #808080;
@@ -20,12 +20,33 @@
 @whitebackground: #FFFFFF;
 @greybackground: #CCCCCC;
 @boxpadding: 5px;
+@tapas-blue:rgba(110, 168, 229, 0.3);
 
 
 .tapas-generic {
   .head-font {
     font-family: @body-font-family;
     font-weight: normal;
+  }
+  #TOC{
+    width:25%;
+    float:left;
+    position:static;
+    overflow:scroll;
+    ol {
+      list-style-type: none;
+      -webkit-margin-before: 0px;
+      -webkit-padding-start: 0;
+      .toc-entry-label {
+        font-size: 17px;
+        margin-right: 5px;
+      }
+    }
+    @media(max-width: 1000px){
+      width:100%;
+      float:none;
+      position:static;
+    }
   }
 }
 
@@ -34,9 +55,9 @@
   background: @highlightyellow;
   }
 
-  add:hover:before {
-  .tapas-generic .italic;
-  content:"(Added by: " attr(hand) " ) " ;
+  add[hand]:hover:before{
+   .tapas-generic .italic;
+   content:"(Added by: " attr(hand) " ) ";
   }
 
   choice orig, choice sic, choice abbr, supplied, gap {
