@@ -119,6 +119,8 @@
       'placeName', 'population', 'region', 'settlement', 'state', 'terrain', 'trait' 
       )"/>
   
+  <xsl:variable name="starterFile" select="/TEI/base-uri()"/>
+  
   <xsl:variable name="ogMap" as="item()*">
     <xsl:variable name="uris" 
       select="/TEI/text
@@ -127,6 +129,7 @@
     <xsl:variable name="distinctURIs" select="for $uri in distinct-values($uris) return $uri"/>
     <!-- 'Ography entries located in the local TEI document are always identified with 
       the prefix 'og0'. -->
+    <entry key="{$starterFile}">og0</entry>
     <xsl:for-each-group select="$distinctURIs" group-by="if ( . eq '' ) then 0 else 1">
       <xsl:sort select="current-grouping-key()"/>
       <xsl:for-each select="current-group()">
@@ -134,15 +137,17 @@
         <xsl:variable name="num" select="if ( $uri eq '' ) then 0 else position()"/>
         <!-- Only resolve entries where the document is local (the same TEI file as the 
           rest of the input), or if the document is TEI and available for parsing. -->
-        <xsl:if test="$uri eq '' or ( doc-available($uri) and doc($uri)/TEI )">
+        <xsl:if test="$uri ne '' or ( doc-available($uri) and doc($uri)[TEI] )">
+          <!--<xsl:variable name="useURI" select="if ( $uri eq '' ) then $starterFile else $uri"/>-->
           <entry key="{$uri}">og<xsl:value-of select="$num"/></entry>
         </xsl:if>
       </xsl:for-each>
     </xsl:for-each-group>
   </xsl:variable>
   
+  <!-- Retrieve external 'ography entries. -->
   <xsl:variable name="ogEntries" as="item()*">
-    <xsl:variable name="distinctURIs" select="$ogMap/@key"/>
+    <xsl:variable name="distinctURIs" select="$ogMap[text() ne 'og0']/@key"/>
     <xsl:variable name="pass1" as="item()*">
       <xsl:call-template name="get-entries">
         <xsl:with-param name="docs" select="$distinctURIs"/>
@@ -150,8 +155,6 @@
     </xsl:variable>
     <xsl:copy-of select="$pass1"/>
   </xsl:variable>
-  
-  <xsl:variable name="starterFile" select="base-uri(.)"/>
   
   <!-- FUNCTIONS -->
   
@@ -262,8 +265,8 @@
       <body style="width: 100%;">
         <div class="tapas-generic">
           <div>
-            <xsl:copy-of select="$ogEntries"/>
-            <!--<xsl:value-of select="$labelMap[@key eq 'bibl']"/>-->
+            <!--<xsl:copy-of select="$ogEntries"/>-->
+            <xsl:value-of select="$labelMap[@key eq 'bibl']"/>
           </div>
         </div>
       </body>
@@ -312,14 +315,13 @@
   </xsl:template>
   
   <xsl:template match="*[tps:is-og-entry(.)]" mode="og-gen">
-    <xsl:param name="doc-uri" as="xs:string" tunnel="yes"/>
     <xsl:param name="idrefs" as="xs:string*" tunnel="yes"/>
     <xsl:if test="count($idrefs) eq 0 or @xml:id = $idrefs">
       <div class="contextual-item {local-name()}">
         <xsl:call-template name="save-gi"/>
-        <xsl:apply-templates select="@*" mode="#current">
-          <xsl:with-param name="doc-uri" select="$doc-uri" tunnel="yes"/>
-        </xsl:apply-templates>
+        <xsl:call-template name="get-attributes"/>
+        <!--<xsl:apply-templates select="@*" mode="#current">
+        </xsl:apply-templates>-->
         <xsl:variable name="header">
           <xsl:call-template name="get-entry-header"/>
         </xsl:variable>
@@ -350,14 +352,14 @@
                                      else concat($ns,'-',$id)"/>
   </xsl:template>
   
-  <xsl:template match="@parts[parent::nym] | @ref | @target" mode="og-gen og-entry">
+  <!--<xsl:template match="@parts[parent::nym] | @ref | @target" mode="og-gen og-entry">
     <xsl:param name="doc-uri" as="xs:string" tunnel="yes"/>
-    <!-- Make a standard data attribute for the @ref. -->
+    <!-\- Make a standard data attribute for the @ref. -\->
     <xsl:call-template name="make-data-attr"/>
-    <!-- As a temporary (?) measure, don't resolve any nested 'ography references 
-      unless the current entry occurs within the input TEI document. -->
+    <!-\- As a temporary (?) measure, don't resolve any nested 'ography references 
+      unless the current entry occurs within the input TEI document. -\->
     <xsl:if test="$doc-uri eq ''">
-      <!-- If there's an 'ography mapped to the base URI, add @data-tapas-ogref. -->
+      <!-\- If there's an 'ography mapped to the base URI, add @data-tapas-ogref. -\->
       <xsl:variable name="ogRef" select="tps:generate-og-id(.)">
       </xsl:variable>
       <xsl:if test="$ogRef">
@@ -366,7 +368,7 @@
         </xsl:attribute>
       </xsl:if>
     </xsl:if>
-  </xsl:template>
+  </xsl:template>-->
   
   <xsl:template match="*[@xml:id or self::persName or self::analytic or self::monogr or self::imprint]/*" mode="og-entry" priority="-20">
     <xsl:param name="entryHeading" select="''" tunnel="yes"/>
@@ -709,21 +711,22 @@
           <!-- If @sex is one character long, test it for conformance to vCard's sex 
             property or ISO 5218:2004, the two gender/sex standards mentioned in the 
             TEI docs for <person>. -->
-          <xsl:when test=". = ('U','M','F','N','O')">
+          <xsl:when test="upper-case(.) = ('U','M','F','N','O')">
+            <xsl:variable name="meUppercased" select="upper-case(.)"/>
             <xsl:choose>
-              <xsl:when test=". eq 'U'">
+              <xsl:when test="$meUppercased eq 'U'">
                 <xsl:text>unknown</xsl:text>
               </xsl:when>
-              <xsl:when test=". eq 'M'">
+              <xsl:when test="$meUppercased eq 'M'">
                 <xsl:text>male</xsl:text>
               </xsl:when>
-              <xsl:when test=". eq 'F'">
+              <xsl:when test="$meUppercased eq 'F'">
                 <xsl:text>female</xsl:text>
               </xsl:when>
-              <xsl:when test=". eq 'N'">
+              <xsl:when test="$meUppercased eq 'N'">
                 <xsl:text>none or not applicable</xsl:text>
               </xsl:when>
-              <xsl:when test=". eq 'O'">
+              <xsl:when test="$meUppercased eq 'O'">
                 <xsl:text>unknown</xsl:text>
               </xsl:when>
             </xsl:choose>

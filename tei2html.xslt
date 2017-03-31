@@ -209,23 +209,26 @@
     </xsl:attribute>
   </xsl:template>
   
+  <!-- Resolve certain types of links only from within the same document. -->
   <xsl:template match="@parts[parent::nym] 
                       | @ref | @target" mode="work">
-    <xsl:variable name="ident" select="tps:generate-og-id(data(.))"/>
-    <xsl:attribute name="{local-name()}" select="concat('#',$ident)"/>
-    <xsl:variable name="gotoentry" select="$ogEntries[@id eq $ident] or key('IDs',$ident)"/>
-    <xsl:attribute name="data-tapas-gotoentry" select="$gotoentry"/>
-    <!-- If there *is* a valid 'ography entry and there is no user-supplied label, 
-      use a generated header. This template will create the content of an element, 
-      so it MUST be run after all other attributes have been added. -->
-    <xsl:if test="$gotoentry and parent::*[not(*) and not(text())]">
-      <xsl:variable name="ogMatch" as="node()" select="($ogEntries[@id eq $ident], key('IDs',$ident))[1]"/>
-      <xsl:variable name="heading">
-        <xsl:call-template name="get-entry-header">
-          <xsl:with-param name="element" select="$ogMatch"/>
-        </xsl:call-template>
-      </xsl:variable>
-      <xsl:value-of select="normalize-space($heading)"/>
+    <xsl:if test="base-uri(.) eq $starterFile">
+      <xsl:variable name="ident" select="tps:generate-og-id(data(.))"/>
+      <xsl:attribute name="{local-name()}" select="concat('#',$ident)"/>
+      <xsl:variable name="gotoentry" select="$ogEntries[@id eq $ident] or key('IDs',$ident)"/>
+      <xsl:attribute name="data-tapas-gotoentry" select="$gotoentry"/>
+      <!-- If there *is* a valid 'ography entry and there is no user-supplied label, 
+        use a generated header. This template will create the content of an element, 
+        so it MUST be run after all other attributes have been added. -->
+      <xsl:if test="$gotoentry and parent::*[not(*) and not(text())]">
+        <xsl:variable name="ogMatch" as="node()" select="($ogEntries[@id eq $ident], key('IDs',$ident))[1]"/>
+        <xsl:variable name="heading">
+          <xsl:call-template name="get-entry-header">
+            <xsl:with-param name="element" select="$ogMatch"/>
+          </xsl:call-template>
+        </xsl:variable>
+        <xsl:value-of select="normalize-space($heading)"/>
+      </xsl:if>
     </xsl:if>
   </xsl:template>
   
@@ -995,7 +998,7 @@
         </xsl:otherwise>
       </xsl:choose>
       <xsl:apply-templates select="* except head" mode="og-gen">
-        <xsl:with-param name="doc-uri" select="''" tunnel="yes"/>
+        <xsl:with-param name="doc-uri" select="base-uri()" tunnel="yes"/>
       </xsl:apply-templates>
     </div>
   </xsl:template>
