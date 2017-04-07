@@ -342,6 +342,7 @@
       <div class="contextual-item {local-name()}">
         <xsl:call-template name="save-gi"/>
         <xsl:call-template name="get-attributes"/>
+        <xsl:attribute name="data-tapas-tocme" select="true()"/>
         <xsl:variable name="header">
           <xsl:call-template name="get-entry-header"/>
         </xsl:variable>
@@ -353,7 +354,8 @@
           <div class="og-metadata">
             <xsl:apply-templates select="@*" mode="og-entry-att"/>
             <!-- Save nested lists and 'ography entries for the end of this entry. -->
-            <xsl:apply-templates select="*[not(tps:is-desc-like(.))][not(tps:is-list-like(.))][not(tps:is-og-entry(.))]" mode="og-entry">
+            <xsl:apply-templates 
+              select="*[not(tps:is-desc-like(.))][not(tps:is-list-like(.))][not(tps:is-og-entry(.))]" mode="og-entry">
               <xsl:with-param name="entryHeading" select="$header" tunnel="yes"/>
             </xsl:apply-templates>
           </div>
@@ -365,7 +367,7 @@
               <xsl:with-param name="idrefs" select="$idrefs" tunnel="yes"/>
             </xsl:apply-templates>
           </xsl:variable>
-          <xsl:if test="exists($nestedLists)">
+          <xsl:if test="$nestedLists">
             <div class="list-contextual">
               <xsl:copy-of select="$nestedLists"/>
             </div>
@@ -373,22 +375,6 @@
         </div>
       </div>
     </xsl:if>
-  </xsl:template>
-  
-  <xsl:template match="text()" mode="og-nested"/>
-  
-  <xsl:template match="*[tps:is-list-like(.) or tps:is-og-entry(.)]" mode="og-nested">
-    <xsl:choose>
-      <xsl:when test="tps:is-og-entry(.)">
-        <div class="list-contextual">
-          <xsl:attribute name="data-tapas-tocme" select="true()"/>
-          <xsl:apply-templates select="." mode="og-gen"/>
-        </div>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:apply-templates select="." mode="work"/>
-      </xsl:otherwise>
-    </xsl:choose>
   </xsl:template>
   
   <xsl:template match="@xml:id" mode="og-gen og-entry">
@@ -417,7 +403,9 @@
     </xsl:if>
   </xsl:template>-->
   
-  <xsl:template match="*[@xml:id or self::persName or self::analytic or self::monogr or self::imprint]/*" mode="og-entry" priority="-20">
+  <xsl:template match="*[@xml:id or tps:is-name-like(.) or self::analytic 
+                        or self::monogr or self::imprint]/*" 
+                mode="og-entry" priority="-20">
     <xsl:param name="entryHeading" select="''" tunnel="yes"/>
     <xsl:variable name="me" select="local-name(.)"/>
     <xsl:choose>
@@ -577,6 +565,23 @@
       <xsl:attribute name="data-tapas-anchored" select="'false'"/>
       <xsl:apply-templates mode="work"/>
     </xsl:element>
+  </xsl:template>
+  
+  
+  <!-- MODE: NESTED 'OGRAPHIES -->
+  
+  <xsl:template match="text()" mode="og-nested"/>
+  
+  <!-- Create new contextual list entries for nested 'ographies. -->
+  <xsl:template match="*[tps:is-list-like(.) or tps:is-og-entry(.)]" mode="og-nested">
+    <xsl:choose>
+      <xsl:when test="tps:is-og-entry(.)">
+        <xsl:apply-templates select="." mode="og-gen"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates select="." mode="work"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
   
