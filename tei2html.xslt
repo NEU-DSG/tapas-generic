@@ -984,7 +984,7 @@
       <xsl:call-template name="addID"/>
       <xsl:call-template name="addRend"/>
       <xsl:attribute name="class" select="'list-contextual'"/>
-      <xsl:attribute name="data-tapas-tocme" select="true()"/>
+      <xsl:attribute name="data-tapas-debug-consider-tocme" select="true()"/>
       <xsl:choose>
         <xsl:when test="head">
           <xsl:apply-templates select="head" mode="work"/>
