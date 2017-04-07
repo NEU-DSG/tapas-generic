@@ -10,6 +10,7 @@
   <file_types>
     <file_type>tei</file_type>
   </file_types>
+  <git_branch>develop</git_branch>
   <css_files>
     <css_file>css/tapasGdiplo.css</css_file>
     <css_file>css/tapasGnormal.css</css_file>

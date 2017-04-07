@@ -29,12 +29,12 @@ function initialize_tapas_g(){
 	jQuery(this).checked = false;
 	if (jQuery("#TOC").length > 0){
 		var toc = jQuery('#TOC').offset().top;
-		fixTOC(toc);
 		jQuery(window).scroll(function() {
-		    fixTOC(toc);
+			var toc = jQuery('#TOC').offset().top;
+		  fixTOC(toc);
 		});
 		jQuery(window).resize(function(){
-				fixTOC(toc);
+			fixTOC();
 		})
 	}
 }
@@ -43,18 +43,18 @@ function fixTOC(toc){
 	if (jQuery(window).width() > 1000){
 		var currentScroll = jQuery(window).scrollTop();
 		if (currentScroll >= toc) {
-      var navbarHeight = jQuery("#navbar").height();
-      var readerWidth = jQuery(".reader_tapas_generic").width();
+        var navbarHeight = jQuery("#navbar").height();
+        var readerWidth = jQuery(".reader_tapas_generic").width();
 				jQuery('#TOC').css({
-          position: 'fixed',
+            position: 'fixed',
 						top: navbarHeight === null ? '0' : navbarHeight + 40,
 						width: readerWidth === null ? '25%' : readerWidth * .25 - 15,
 						height: jQuery(window).height() - jQuery("#navbar").height() - 40
 				});
 		} else {
-				jQuery('#TOC').css({
-						position: 'static'
-				});
+			jQuery('#TOC').css({
+					position: 'static'
+			});
 		}
 	} else {
 		jQuery('#TOC').css({
