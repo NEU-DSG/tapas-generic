@@ -191,6 +191,16 @@
                                 )"/>
   </xsl:function>
   
+  <!--  -->
+  <xsl:function name="tps:is-list-like" as="xs:boolean">
+    <xsl:param name="element" as="node()"/>
+    <xsl:value-of select="exists($element[self::*]
+                                  [ self::castList | self::listBibl | self::listEvent
+                                  | self::listNym | self::listOrg | self::listPerson
+                                  | self::listPlace ]
+                                )"/>
+  </xsl:function>
+  
   <!-- Tests an element to see if it contains both elements and non-whitespace text. -->
   <xsl:function name="tps:is-mixed-content" as="xs:boolean">
     <xsl:param name="element" as="node()"/>
@@ -210,12 +220,24 @@
   <xsl:function name="tps:is-og-entry" as="xs:boolean">
     <xsl:param name="element" as="node()"/>
     <xsl:value-of select="exists($element[self::*]
-                                  [ (self::bibl | self::biblStruct)[parent::listBibl] 
-                                  | self::event[parent::listEvent]
-                                  | self::org[parent::listOrg]
-                                  | self::nym[parent::listNym]
-                                  | (self::person | self::personGrp)[parent::listPerson]
-                                  | self::place[parent::listPlace] ]
+                                  [ self::bibl
+                                      [ parent::event | parent::listBibl | parent::relatedItem 
+                                      | parent::org | parent::person | parent::personGrp 
+                                      | parent::place ]
+                                  | ( self::biblFull | self::biblStruct )
+                                      [ parent::listBibl | parent::relatedItem | parent::org 
+                                      | parent::person | parent::personGrp | parent::place] 
+                                  | self::event
+                                      [ parent::event | parent::listEvent | parent::org 
+                                      | parent::person | parent::personGrp | parent::place ]
+                                  | self::org
+                                      [ parent::listOrg | parent::listPerson | parent::org ]
+                                  | self::nym
+                                      [ parent::listNym | parent::nym ]
+                                  | ( self::person | self::personGrp )
+                                      [ parent::listPerson | parent::org ]
+                                  | self::place
+                                      [ parent::listPlace | parent::org | parent::place ] ]
                                 )"/>
   </xsl:function>
   
@@ -320,8 +342,6 @@
       <div class="contextual-item {local-name()}">
         <xsl:call-template name="save-gi"/>
         <xsl:call-template name="get-attributes"/>
-        <!--<xsl:apply-templates select="@*" mode="#current">
-        </xsl:apply-templates>-->
         <xsl:variable name="header">
           <xsl:call-template name="get-entry-header"/>
         </xsl:variable>
@@ -332,16 +352,43 @@
         <div class="og-entry">
           <div class="og-metadata">
             <xsl:apply-templates select="@*" mode="og-entry-att"/>
-            <xsl:apply-templates select="*[not(tps:is-desc-like(.))]" mode="og-entry">
+            <!-- Save nested lists and 'ography entries for the end of this entry. -->
+            <xsl:apply-templates select="*[not(tps:is-desc-like(.))][not(tps:is-list-like(.))][not(tps:is-og-entry(.))]" mode="og-entry">
               <xsl:with-param name="entryHeading" select="$header" tunnel="yes"/>
             </xsl:apply-templates>
           </div>
           <div class="og-context">
             <xsl:apply-templates select="*[tps:is-desc-like(.)]" mode="og-entry"/>
           </div>
+          <xsl:variable name="nestedLists">
+            <xsl:apply-templates mode="og-nested">
+              <xsl:with-param name="idrefs" select="$idrefs" tunnel="yes"/>
+            </xsl:apply-templates>
+          </xsl:variable>
+          <xsl:if test="exists($nestedLists)">
+            <div class="list-contextual">
+              <xsl:copy-of select="$nestedLists"/>
+            </div>
+          </xsl:if>
         </div>
       </div>
     </xsl:if>
+  </xsl:template>
+  
+  <xsl:template match="text()" mode="og-nested"/>
+  
+  <xsl:template match="*[tps:is-list-like(.) or tps:is-og-entry(.)]" mode="og-nested">
+    <xsl:choose>
+      <xsl:when test="tps:is-og-entry(.)">
+        <div class="list-contextual">
+          <xsl:attribute name="data-tapas-tocme" select="true()"/>
+          <xsl:apply-templates select="." mode="og-gen"/>
+        </div>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates select="." mode="work"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
   <xsl:template match="@xml:id" mode="og-gen og-entry">

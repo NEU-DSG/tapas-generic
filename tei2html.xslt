@@ -979,7 +979,7 @@
   <!-- ignore lists of contextual info when they occur in normal processing -->
   <!--<xsl:template match="nymList|listOrg|listPerson|placeList|nym|org|person|place" mode="work"/>-->
   
-  <xsl:template match="castList|listBibl|listEvent|listNym|listOrg|listPerson|listPlace" mode="work">
+  <xsl:template match="*[tps:is-list-like(.)]" mode="work">
     <div>
       <xsl:call-template name="addID"/>
       <xsl:call-template name="addRend"/>
