@@ -15,7 +15,7 @@ body {
   font-size: 1em;
 }
 .og-metadata {
-  margin: 0.5em 1.5em 1em;
+  margin: 0.5em 1.5em;
 }
 .og-metadata .og-label {
   color: #9699ae;
@@ -41,9 +41,6 @@ body {
   margin-bottom: 0;
   padding-bottom: 0.25em;
   line-height: 1em;
-}
-.og-context {
-  padding-bottom: 0.4em;
 }
 .og-context > * {
   margin-bottom: 0.5em;
@@ -265,6 +262,9 @@ body {
   border-bottom: 1px dotted #000000;
   background: #d3e5f7;
   cursor: pointer;
+}
+.tapas-generic .contextual-item .list-contextual {
+  margin: 0.2em 0;
 }
 .tapas-generic a[rend~="super"] {
   vertical-align: super;
@@ -671,26 +671,26 @@ body {
   margin-bottom: 1em;
 }
 .tapas-generic body > .heading {
-  font-size: 140%;
+  font-size: 150%;
 }
 .tapas-generic div > .heading {
-  font-size: 135%;
+  font-size: 142%;
 }
 .tapas-generic div > div > .heading {
-  font-size: 130%;
+  font-size: 136%;
 }
 .tapas-generic div > div > div > .heading {
-  font-size: 125%;
+  font-size: 128%;
 }
 .tapas-generic div > div > div > div > .heading,
 .tapas-generic list > head {
   font-size: 120%;
 }
 .tapas-generic div > div > div > div > div > .heading {
-  font-size: 115%;
+  font-size: 112%;
 }
 .tapas-generic div > div > div > div > div > div .heading {
-  font-size: 110%;
+  font-size: 106%;
 }
 .tapas-generic figure > .heading {
   display: block;
@@ -889,8 +889,23 @@ body {
   display: block;
 }
 .tapas-generic .list-contextual > .contextual-item {
-  margin: 1em 0 0.2em;
+  margin: 2em 0 1em;
   display: block;
+  /*&:last-child {
+        border-bottom: none;
+      }*/
+}
+.tapas-generic .list-contextual > .contextual-item:first-child {
+  margin-top: 1em;
+}
+.tapas-generic .list-contextual .list-contextual > .contextual-item {
+  margin: 0.5em 0;
+  /*border: thin solid @tapas-blue;
+        background-color: aliceblue;
+        
+        .contextual-item {
+          border-color: @vibrant-blue;
+        }*/
 }
 .tapas-generic .list-contextual > tei-head,
 .tapas-generic .list-contextual > span.heading-listtype {
@@ -1659,7 +1674,6 @@ body {
   text-align: center;
   border: dashed thin black;
   padding: 1ex 1ex 1ex 1ex;
-  background-color: rgba(0, 0, 0, 0);
 }
 .tapas-generic div#footer > p {
   text-align: center;

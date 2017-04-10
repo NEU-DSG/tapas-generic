@@ -13,6 +13,7 @@ margin: 0;
 
 /* Less variables */
 @tapas-blue: #D3E5F7;
+@vibrant-blue: #A7C7E6;
 @body-font-family: Georgia,Baskerville,Palatino,'Palatino Linotype','Book Antiqua','Times New Roman',serif;
 @body-font-size: 13pt;
 @body-line-height: 1.5;
@@ -49,7 +50,7 @@ margin: 0;
 
 
 .og-metadata {
-  margin: 0.5em 1.5em 1em;
+  margin: 0.5em 1.5em;
     
   .og-label {
     .tapas-label;
@@ -1016,19 +1017,19 @@ margin: 0;
 	}
 
 	body > .heading {
-	font-size: 140%;
+	font-size: 150%;
 	}
 
 	div > .heading {
-	font-size: 135%;
+	font-size: 142%;
 	}
 
 	div > div > .heading {
-	font-size: 130%;
+	font-size: 136%;
 	}
 
 	div > div > div > .heading {
-	font-size: 125%;
+	font-size: 128%;
 	}
 
 	div > div > div > div > .heading,
@@ -1037,11 +1038,11 @@ margin: 0;
 	}
 
 	div > div > div > div > div > .heading {
-	font-size: 115%;
+	font-size: 112%;
 	}
 
 	div > div > div > div > div > div .heading {
-	font-size: 110%;
+	font-size: 106%;
 	}
 
 	figure > .heading {
@@ -1369,9 +1370,33 @@ margin: 0;
     display: block;
     
     > .contextual-item {
-      margin: 1em 0 0.2em;
+      margin: 2em 0 1em;
+      //border-bottom: thin solid @vibrant-blue;
+      //border-radius: 0.2em;
+      //padding: 0.25em 0.5em;
       display: block;
+      
+      &:first-child {
+        margin-top: 1em;
+      }
+      
+      /*&:last-child {
+        border-bottom: none;
+      }*/
     }
+    
+    .list-contextual {
+      
+      > .contextual-item {
+        margin: 0.5em 0;
+        /*border: thin solid @tapas-blue;
+        background-color: aliceblue;
+        
+        .contextual-item {
+          border-color: @vibrant-blue;
+        }*/
+      }
+    } // .list-contextual .list-contextual
     
     > tei-head, 
     > span.heading-listtype {
