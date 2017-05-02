@@ -129,15 +129,20 @@
     <xsl:variable name="distinctURIs" select="for $uri in distinct-values($uris) return $uri"/>
     <!-- 'Ography entries located in the local TEI document are always identified with 
       the prefix 'og0'. -->
+    <entry key="">og0</entry>
     <entry key="{$starterFile}">og0</entry>
+    <entry key="{tokenize($starterFile,'/')[last()]}">og0</entry>
     <xsl:for-each-group select="$distinctURIs" group-by="if ( . eq '' ) then 0 else 1">
       <xsl:sort select="current-grouping-key()"/>
       <xsl:for-each select="current-group()">
         <xsl:variable name="uri" select="."/>
-        <xsl:variable name="num" select="if ( $uri eq '' ) then 0 else position()"/>
+        <xsl:variable name="isStarterFile" select="$uri eq '' or matches($uri, tokenize($starterFile,'/')[last()])"/>
+        <xsl:variable name="num" select="if ( $isStarterFile ) then 0 else position()"/>
         <!-- Only resolve entries where the document is local (the same TEI file as the 
           rest of the input), or if the document is TEI and available for parsing. -->
-        <xsl:if test="$uri ne '' or ( doc-available($uri) and doc($uri)[TEI] )">
+        <xsl:if test="not($isStarterFile) 
+                  and doc-available($uri) 
+                  and doc($uri)[TEI]">
           <!--<xsl:variable name="useURI" select="if ( $uri eq '' ) then $starterFile else $uri"/>-->
           <entry key="{$uri}">og<xsl:value-of select="$num"/></entry>
         </xsl:if>
@@ -339,10 +344,18 @@
   <xsl:template match="*[tps:is-og-entry(.)]" mode="og-gen">
     <xsl:param name="idrefs" as="xs:string*" tunnel="yes"/>
     <xsl:if test="count($idrefs) eq 0 or @xml:id = $idrefs">
+      <xsl:variable name="nestedLists" as="node()*">
+        <xsl:apply-templates mode="og-nested">
+          <xsl:with-param name="idrefs" select="$idrefs" tunnel="yes"/>
+        </xsl:apply-templates>
+      </xsl:variable>
       <div class="contextual-item {local-name()}">
         <xsl:call-template name="save-gi"/>
         <xsl:call-template name="get-attributes"/>
-        <xsl:attribute name="data-tapas-tocme" select="true()"/>
+        <!-- An 'ography entry is only considered TOCable if it has nested entries. -->
+        <xsl:if test="$nestedLists">
+          <xsl:attribute name="data-tapas-tocme" select="true()"/>
+        </xsl:if>
         <xsl:variable name="header">
           <xsl:call-template name="get-entry-header"/>
         </xsl:variable>
@@ -362,11 +375,6 @@
           <div class="og-context">
             <xsl:apply-templates select="*[tps:is-desc-like(.)]" mode="og-entry"/>
           </div>
-          <xsl:variable name="nestedLists">
-            <xsl:apply-templates mode="og-nested">
-              <xsl:with-param name="idrefs" select="$idrefs" tunnel="yes"/>
-            </xsl:apply-templates>
-          </xsl:variable>
           <xsl:if test="$nestedLists">
             <div class="list-contextual">
               <xsl:copy-of select="$nestedLists"/>
