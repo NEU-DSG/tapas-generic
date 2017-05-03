@@ -129,7 +129,7 @@ body {
   /* z */
 }
 .tapas-generic .head-font {
-  font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
+  font-family: ‘Palatino Linotype’, ‘Book Antiqua’, Palatino, serif;
   font-weight: normal;
 }
 .tapas-generic #TOC {
@@ -382,7 +382,7 @@ body {
   display: block;
   margin-top: 0;
   margin-bottom: 0;
-  font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
+  font-family: ‘Palatino Linotype’, ‘Book Antiqua’, Palatino, serif;
   font-weight: normal;
   margin-bottom: 1em;
 }
@@ -649,7 +649,7 @@ body {
   display: block;
   margin-top: 0.4em;
   margin-bottom: 0.4em;
-  font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
+  font-family: ‘Palatino Linotype’, ‘Book Antiqua’, Palatino, serif;
   font-weight: normal;
   /*&.heading-listtype {
       margin: 0.2em 0;
@@ -662,7 +662,7 @@ body {
   display: block;
   margin-top: 0.4em;
   margin-bottom: 0.4em;
-  font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
+  font-family: ‘Palatino Linotype’, ‘Book Antiqua’, Palatino, serif;
   font-weight: normal;
 }
 .tapas-generic TEI text front > .heading,
@@ -734,6 +734,9 @@ body {
 }
 .tapas-generic .heading[data-tapas-att-type="supplied"] {
   display: none;
+}
+.tapas-generic .heading.heading-og > .heading-sub {
+  font-size: 0.7em;
 }
 .tapas-generic ident {
   font-family: Courier,monospace;
@@ -1488,7 +1491,7 @@ body {
   display: block;
   margin-top: 0;
   margin-bottom: 0;
-  font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
+  font-family: ‘Palatino Linotype’, ‘Book Antiqua’, Palatino, serif;
   font-weight: normal;
   font-weight: bold !important;
   font-size: 150%;

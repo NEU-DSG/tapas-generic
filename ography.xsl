@@ -132,18 +132,21 @@
     <entry key="">og0</entry>
     <entry key="{$starterFile}">og0</entry>
     <entry key="{tokenize($starterFile,'/')[last()]}">og0</entry>
+    <!-- Only resolve pointers to 'ography entries when stored in an external TEI 
+      document that is available for parsing. -->
     <xsl:for-each-group select="$distinctURIs" group-by="if ( . eq '' ) then 0 else 1">
       <xsl:sort select="current-grouping-key()"/>
       <xsl:for-each select="current-group()">
         <xsl:variable name="uri" select="."/>
-        <xsl:variable name="isStarterFile" select="$uri eq '' or matches($uri, tokenize($starterFile,'/')[last()])"/>
+        <xsl:variable name="isStarterFile" 
+          select="$uri eq '' or matches($uri, tokenize($starterFile,'/')[last()])"/>
         <xsl:variable name="num" select="if ( $isStarterFile ) then 0 else position()"/>
-        <!-- Only resolve entries where the document is local (the same TEI file as the 
-          rest of the input), or if the document is TEI and available for parsing. -->
+        <!-- If the current 'ography pointer is actionable by the stylesheet, include a 
+          map entry for its prefix. Pointers have already been handled for the TEI file 
+          which started off the XSLT transformation. -->
         <xsl:if test="not($isStarterFile) 
                   and doc-available($uri) 
                   and doc($uri)[TEI]">
-          <!--<xsl:variable name="useURI" select="if ( $uri eq '' ) then $starterFile else $uri"/>-->
           <entry key="{$uri}">og<xsl:value-of select="$num"/></entry>
         </xsl:if>
       </xsl:for-each>
@@ -178,6 +181,22 @@
                           else ()"/>
   </xsl:function>
   
+  <!-- Using the map of element/attribute names to human-readable labels, get the 
+    label for a given name. -->
+  <xsl:function name="tps:get-readable-label" as="xs:string?">
+    <xsl:param name="name" as="xs:string" required="yes"/>
+    <xsl:choose>
+      <xsl:when test="$name ne ''">
+        <xsl:variable name="label" select="$labelMap[@key eq $name]/normalize-space(.)"/>
+        <xsl:value-of select="if ( $label ) then $label
+                              else $name"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="''"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
+  
   <!-- Using the map of ography keys, figure out the (generated) 'ography prefix 
     from a filename. -->
   <xsl:function name="tps:get-og-prefix" as="xs:string?">
@@ -196,7 +215,7 @@
                                 )"/>
   </xsl:function>
   
-  <!--  -->
+  <!-- Tests an element to see if it is a container for 'ography entries. -->
   <xsl:function name="tps:is-list-like" as="xs:boolean">
     <xsl:param name="element" as="node()"/>
     <xsl:value-of select="exists($element[self::*]
@@ -292,8 +311,8 @@
       <body style="width: 100%;">
         <div class="tapas-generic">
           <div>
-            <!--<xsl:copy-of select="$ogEntries"/>-->
-            <xsl:value-of select="$labelMap[@key eq 'bibl']"/>
+            <xsl:copy-of select="$ogEntries"/>
+            <!--<xsl:value-of select="$labelMap[@key eq 'bibl']"/>-->
           </div>
         </div>
       </body>
@@ -360,16 +379,18 @@
           <xsl:call-template name="get-entry-header"/>
         </xsl:variable>
         <span class="heading heading-og">
-          <xsl:value-of select="$header"/>
+          <xsl:copy-of select="$header"/>
         </span>
         <!-- Display metadata first, then contextual <note>s and <p>s. -->
         <div class="og-entry">
           <div class="og-metadata">
             <xsl:apply-templates select="@*" mode="og-entry-att"/>
             <!-- Save nested lists and 'ography entries for the end of this entry. -->
-            <xsl:apply-templates 
-              select="*[not(tps:is-desc-like(.))][not(tps:is-list-like(.))][not(tps:is-og-entry(.))]" mode="og-entry">
-              <xsl:with-param name="entryHeading" select="$header" tunnel="yes"/>
+            <xsl:apply-templates select="*[not(self::head)][not(self::label)]
+                                          [not(tps:is-desc-like(.))]
+                                          [not(tps:is-list-like(.))]
+                                          [not(tps:is-og-entry(.))]" mode="og-entry">
+              <xsl:with-param name="entryHeading" select="$header[1]" tunnel="yes"/>
             </xsl:apply-templates>
           </div>
           <div class="og-context">
@@ -411,8 +432,11 @@
     </xsl:if>
   </xsl:template>-->
   
-  <xsl:template match="*[@xml:id or tps:is-name-like(.) or self::analytic 
-                        or self::monogr or self::imprint]/*" 
+  <xsl:template match="*[@xml:id 
+                          or tps:is-name-like(.) 
+                          or self::analytic 
+                          or self::monogr 
+                          or self::imprint]/*" 
                 mode="og-entry" priority="-20">
     <xsl:param name="entryHeading" select="''" tunnel="yes"/>
     <xsl:variable name="me" select="local-name(.)"/>
@@ -575,6 +599,11 @@
     </xsl:element>
   </xsl:template>
   
+  <!-- Ensure that <figure> is handled as it is in the regular templates. -->
+  <xsl:template match="figure" mode="og-entry">
+    <xsl:apply-templates select="." mode="work"/>
+  </xsl:template>
+  
   
   <!-- MODE: NESTED 'OGRAPHIES -->
   
@@ -602,8 +631,28 @@
       <xsl:apply-templates select="$element/*" mode="og-head"/>
     </xsl:variable>
     <xsl:variable name="not-blank" as="item()*" select="$options[normalize-space(.) ne '']"/>
-    <xsl:copy-of select="if ( $not-blank[1] ) then $not-blank[1] 
-                         else $element/@xml:id/data(.)"/>
+    <!--<xsl:copy-of select="if ( $not-blank[1] ) then $not-blank[1] 
+                         else $element/@xml:id/data(.)"/>-->
+    <xsl:if test="count($not-blank) ge 1">
+      <xsl:choose>
+        <xsl:when test="$not-blank[@data-tapas-gi = ('head', 'label')]">
+          <xsl:variable name="headLabels" select="$not-blank[@data-tapas-gi = ('head', 'label')]"/>
+          <xsl:copy-of select="$headLabels[1]"/>
+          <xsl:if test="count($headLabels) gt 1">
+            <span class="heading heading-og heading-sub">
+              <xsl:copy-of select="subsequence($headLabels,2)"/>
+            </span>
+          </xsl:if>
+        </xsl:when>
+        <!--<xsl:when test="$element[@xml:id]">
+          <xsl:value-of select="$element/@xml:id"/>
+        </xsl:when>-->
+        <xsl:otherwise>
+          <!--<xsl:value-of select="tps:get-readable-label($element/local-name(.))"/>-->
+          <xsl:copy-of select="$not-blank[1]"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
   </xsl:template>
   
   <xsl:template match="* | text()" mode="og-head" priority="-30"/>
@@ -618,39 +667,51 @@
                       | person/persName[@type eq 'main' or position() eq 1][not(*)]
                       | place/*[local-name() = $model.nameLike][@type eq 'main']" mode="og-head">
                       <!--| place/placeName[@type eq 'main' or position() eq 1]" mode="og-head">-->
-    <xsl:value-of select="normalize-space(.)"/>
+    <span>
+      <xsl:call-template name="save-gi"/>
+      <xsl:value-of select="normalize-space(.)"/>
+    </span>
   </xsl:template>
   
   <xsl:template match="place/*[local-name() = $model.nameLike][position() eq 1]" mode="og-head" priority="-10">
     <xsl:variable name="text" select="normalize-space(.)"/>
     <!-- Give preference to any sibling name-like of @type 'main'.  -->
     <xsl:if test="not(../*[local-name() = $model.nameLike][@type eq 'main'])">
-      <xsl:choose>
-        <!-- If this name-like is a <placeName>, we have no more work to do. -->
-        <xsl:when test="self::placeName">
-          <xsl:value-of select="$text"/>
-        </xsl:when>
-        <!-- Give preference to the first of any sibling <placeName>s. -->
-        <xsl:when test="../placeName">
-          <xsl:value-of select="normalize-space(../placeName[1])"/>
-        </xsl:when>
-        <!-- If all other possibilities have been exhausted, output this element's 
-          text. -->
-        <xsl:otherwise>
-          <xsl:value-of select="$text"/>
-        </xsl:otherwise>
-      </xsl:choose>
+      <span>
+        <xsl:call-template name="save-gi"/>
+        <xsl:choose>
+          <!-- If this name-like is a <placeName>, we have no more work to do. -->
+          <xsl:when test="self::placeName">
+            <xsl:value-of select="$text"/>
+          </xsl:when>
+          <!-- Give preference to the first of any sibling <placeName>s. -->
+          <xsl:when test="../placeName">
+            <xsl:value-of select="normalize-space(../placeName[1])"/>
+          </xsl:when>
+          <!-- If all other possibilities have been exhausted, output this element's 
+            text. -->
+          <xsl:otherwise>
+            <xsl:value-of select="$text"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </span>
     </xsl:if>
   </xsl:template>
   
   <xsl:template match="analytic/title[@type eq 'main' or position() eq 1] 
                       | bibl/title[@level eq 'a']" mode="og-head" priority="11">
-    <xsl:value-of select="concat('“',normalize-space(.),'”')"/>
+    <span>
+      <xsl:call-template name="save-gi"/>
+      <xsl:value-of select="concat('“',normalize-space(.),'”')"/>
+    </span>
   </xsl:template>
   
   <xsl:template match="monogr[1]/title[@type eq 'main' or position() eq 1]
                       | bibl/title[@type eq 'main' or position() eq 1 or @level eq 'm']" mode="og-head" priority="30">
-    <xsl:value-of select="normalize-space(.)"/>
+    <span>
+      <xsl:call-template name="save-gi"/>
+      <xsl:value-of select="normalize-space(.)"/>
+    </span>
   </xsl:template>
   
   <!-- If the first relevant <persName> has child elements, test the naming 
@@ -666,7 +727,10 @@
       </xsl:apply-templates>
     </xsl:variable>
     <!-- Replace any whitespace introduced before a comma. -->
-    <xsl:value-of select="replace($header,'\s+(, )','$1')"/>
+    <span>
+      <xsl:call-template name="save-gi"/>
+      <xsl:value-of select="replace($header,'\s+(, )','$1')"/>
+    </span>
   </xsl:template>
   
   
@@ -883,13 +947,10 @@
     <xsl:param name="is-field-label" as="xs:boolean" select="true()"/>
     <xsl:param name="is-inner-label" as="xs:boolean" select="false()"/>
     <xsl:variable name="me" select="local-name()"/>
-    <xsl:variable name="label" select="$labelMap[@key eq $me]/normalize-space(.)"/>
-    <xsl:value-of 
-      select="if ( $label ) then
-                if ( $is-field-label ) then
-                  lower-case($label)
-                else $label
-              else $me"/>
+    <xsl:variable name="label" select="tps:get-readable-label($me)"/>
+    <xsl:value-of select="if ( $is-field-label ) then
+                            lower-case($label)
+                          else $label"/>
     <xsl:variable name="specializations" as="item()*">
       <xsl:variable name="lang" select="@xml:lang"/>
       <!-- XD: get description from IANA registry? 
