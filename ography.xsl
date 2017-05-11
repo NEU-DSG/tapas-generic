@@ -15,7 +15,6 @@
 
   <xsl:output method="xhtml"/>
   
-  
   <!-- PARAMETERS -->
   
   <xsl:param name="assets-base" select="'../'"/>
@@ -166,6 +165,9 @@
   
   <!-- FUNCTIONS -->
   
+  <!-- Include separately-defined date/time functions. -->
+  <xsl:include href="dates-and-times.xsl"/>
+  
   <!-- Given a reference pointer, create an 'ography identifier using a generated 
     prefix for the filename. Because this function may be used while making 'ography 
     entries, no testing is done on whether or not the referenced entry actually 
@@ -202,6 +204,15 @@
   <xsl:function name="tps:get-og-prefix" as="xs:string?">
     <xsl:param name="filename" as="xs:string"/>
     <xsl:value-of select="$ogMap[@key eq $filename]"/>
+  </xsl:function>
+  
+  <xsl:function name="tps:is-date-like-attr" as="xs:boolean">
+    <xsl:param name="attribute" as="attribute()"/>
+    <xsl:value-of select=" $attribute instance of attribute(when)
+                        or $attribute instance of attribute(from)
+                        or $attribute instance of attribute(to)
+                        or $attribute instance of attribute(notBefore)
+                        or $attribute instance of attribute(notAfter)"/>
   </xsl:function>
   
   <!-- Tests an element to see if it might function as narrative context for an 
@@ -628,7 +639,7 @@
   <xsl:template name="get-entry-header">
     <xsl:param name="element" select="." as="node()"/>
     <xsl:variable name="options" as="item()*">
-      <xsl:apply-templates select="$element/*" mode="og-head"/>
+      <xsl:apply-templates select="$element/@*, $element/*" mode="og-head"/>
     </xsl:variable>
     <xsl:variable name="not-blank" as="item()*" select="$options[normalize-space(.) ne '']"/>
     <!--<xsl:copy-of select="if ( $not-blank[1] ) then $not-blank[1] 
@@ -669,6 +680,21 @@
                       <!--| place/placeName[@type eq 'main' or position() eq 1]" mode="og-head">-->
     <span>
       <xsl:call-template name="save-gi"/>
+      <xsl:value-of select="normalize-space(.)"/>
+    </span>
+  </xsl:template>
+  
+  <xsl:template match="event/head[not(preceding-sibling::*)] 
+                      | event/label[not(preceding-sibling::*)]" mode="og-head" priority="30">
+    <span>
+      <xsl:call-template name="save-gi"/>
+      <xsl:if test="parent::event[@*[tps:is-date-like-attr(.)]]">
+        <span>
+          <!--<xsl:apply-templates select="parent::event/@*" mode="og-datelike"/>-->
+          <xsl:value-of select="tps:make-date-readable-w3c(parent::event/@*[tps:is-date-like-attr(.)][last()])"/>
+        </span>
+        <xsl:text>: </xsl:text>
+      </xsl:if>
       <xsl:value-of select="normalize-space(.)"/>
     </span>
   </xsl:template>
