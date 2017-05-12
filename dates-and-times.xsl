@@ -44,25 +44,54 @@
   
   <!-- FUNCTIONS -->
   
-  <xsl:function name="tps:replace-leading-zeroes" as="xs:string">
-    <xsl:param name="string" as="xs:string"/>
-    <xsl:value-of select="replace($string,'^0+','')"/>
+  <!-- Test if a given attribute is a date-like member of TEI's att.datable, 
+    excluding @calendar, @period, @datingPoint, and @datingMethod. -->
+  <xsl:function name="tps:is-date-like-attr" as="xs:boolean">
+    <xsl:param name="attribute" as="attribute()"/>
+    <xsl:value-of select="name($attribute) = $allDateAttrs"/>
   </xsl:function>
   
+  <!-- Test if a given attribute is a member of TEI's att.datable.custom. -->
+  <xsl:function name="tps:is-date-like-attr-custom" as="xs:boolean">
+    <xsl:param name="attribute" as="attribute()"/>
+    <xsl:value-of select="name($attribute) = $dateAttrsCustom"/>
+  </xsl:function>
+  
+  <!-- Test if a given attribute is a member of TEI's att.datable.iso. -->
+  <xsl:function name="tps:is-date-like-attr-iso" as="xs:boolean">
+    <xsl:param name="attribute" as="attribute()"/>
+    <xsl:value-of select="name($attribute) = $dateAttrsISO"/>
+  </xsl:function>
+  
+  <!-- Test if a given attribute is a member of TEI's att.datable.w3c. -->
+  <xsl:function name="tps:is-date-like-attr-w3c" as="xs:boolean">
+    <xsl:param name="attribute" as="attribute()"/>
+    <xsl:value-of select="name($attribute) = $dateAttrsW3C"/>
+  </xsl:function>
+  
+  <!-- Test if a given attribute both (A) belongs to TEI's att.datable model, and 
+    (B) is some variant of @when. -->
+  <xsl:function name="tps:is-when-like-attr" as="xs:boolean">
+    <xsl:param name="attribute" as="attribute()"/>
+    <xsl:value-of select="tps:is-date-like-attr($attribute) and matches(name($attribute),'^when')"/>
+  </xsl:function>
+  
+  <!-- Given an attribute presumed to belong to att.datable, return a human-readable 
+    version. -->
   <xsl:function name="tps:make-date-attribute-readable" as="xs:string?">
     <xsl:param name="attribute" as="attribute()"/>
     <!-- Proceed only if the attribute falls within a subset of TEI's att.datable. 
       (http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-att.datable.html) -->
-    <xsl:if test="name($attribute) = $allDateAttrs">
+    <xsl:if test="tps:is-date-like-attr($attribute)">
       <xsl:choose>
-        <xsl:when test="name($attribute) = $dateAttrsW3C">
+        <xsl:when test="tps:is-date-like-attr-w3c($attribute)">
           <xsl:value-of select="tps:make-date-readable-w3c(data($attribute))"/>
         </xsl:when>
-        <xsl:when test="name($attribute) = $dateAttrsISO">
-          
+        <xsl:when test="tps:is-date-like-attr-iso($attribute)">
+          <xsl:value-of select="data($attribute)"/> <!-- XD -->
         </xsl:when>
-        <xsl:when test="name($attribute) = $dateAttrsCustom">
-          
+        <xsl:when test="tps:is-date-like-attr-custom($attribute)">
+          <xsl:value-of select="data($attribute)"/>
         </xsl:when>
       </xsl:choose>
     </xsl:if>
@@ -131,5 +160,16 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:function>
+  
+  <!-- Remove leading zeroes from a string. This is useful for numeric strings 
+    representing dates, such as '0013-04'. -->
+  <xsl:function name="tps:replace-leading-zeroes" as="xs:string">
+    <xsl:param name="string" as="xs:string"/>
+    <xsl:value-of select="replace($string,'^0+','')"/>
+  </xsl:function>
+  
+  
+  <!-- TEMPLATES -->
+  
   
 </xsl:stylesheet>

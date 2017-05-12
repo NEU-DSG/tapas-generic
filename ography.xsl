@@ -206,15 +206,6 @@
     <xsl:value-of select="$ogMap[@key eq $filename]"/>
   </xsl:function>
   
-  <xsl:function name="tps:is-date-like-attr" as="xs:boolean">
-    <xsl:param name="attribute" as="attribute()"/>
-    <xsl:value-of select=" $attribute instance of attribute(when)
-                        or $attribute instance of attribute(from)
-                        or $attribute instance of attribute(to)
-                        or $attribute instance of attribute(notBefore)
-                        or $attribute instance of attribute(notAfter)"/>
-  </xsl:function>
-  
   <!-- Tests an element to see if it might function as narrative context for an 
     'ograpy entry. -->
   <xsl:function name="tps:is-desc-like" as="xs:boolean">
@@ -496,7 +487,7 @@
         <xsl:call-template name="save-gi"/>
         <xsl:apply-templates select="@* except (@when, @from, @to, @notBefore, @notAfter)" mode="#current"/>
         <xsl:attribute name="class" select="'og-labelled'"/>
-        <xsl:variable name="attrDates" select="@when | @from | @to | @notBefore | @notAfter" as="item()*"/>
+        <xsl:variable name="attrDates" select="@*[tps:is-date-like-attr(.)]" as="item()*"/>
         <xsl:variable name="content" as="item()*">
           <xsl:apply-templates mode="#current"/>
         </xsl:variable>
@@ -639,7 +630,10 @@
   <xsl:template name="get-entry-header">
     <xsl:param name="element" select="." as="node()"/>
     <xsl:variable name="options" as="item()*">
-      <xsl:apply-templates select="$element/@*, $element/*" mode="og-head"/>
+      <xsl:apply-templates select="$element/*" mode="og-head"/>
+      <!-- Make potential attribute headings after elements, so that they are only 
+        used if there are no relevant elements to be used as headers. -->
+      <xsl:apply-templates select="$element/@*" mode="og-head"/>
     </xsl:variable>
     <xsl:variable name="not-blank" as="item()*" select="$options[normalize-space(.) ne '']"/>
     <!--<xsl:copy-of select="if ( $not-blank[1] ) then $not-blank[1] 
@@ -802,19 +796,19 @@
   </xsl:template>
   
   
-  <!-- MODE: W3C DATES -->
+  <!-- MODE: DATES -->
   
-  <xsl:template match="@when" mode="og-datelike">
-    <xsl:value-of select="."/>
+  <xsl:template match="@*[tps:is-when-like-attr(.)]" mode="og-datelike" priority="45">
+    <xsl:value-of select="tps:make-date-attribute-readable(.)"/>
   </xsl:template>
   
-  <xsl:template match="@from | @to | @notBefore | @notAfter" mode="og-datelike">
+  <xsl:template match="@*[tps:is-date-like-attr(.)]" mode="og-datelike">
     <span class="og-label og-label-inner">
       <xsl:call-template name="set-label">
         <xsl:with-param name="is-inner-label" select="true()"/>
       </xsl:call-template>
     </span>
-    <xsl:value-of select="."/>
+    <xsl:value-of select="tps:make-date-attribute-readable(.)"/>
   </xsl:template>
   
   
