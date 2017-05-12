@@ -691,7 +691,7 @@
       <xsl:if test="parent::event[@*[tps:is-date-like-attr(.)]]">
         <span>
           <!--<xsl:apply-templates select="parent::event/@*" mode="og-datelike"/>-->
-          <xsl:value-of select="tps:make-date-readable-w3c(parent::event/@*[tps:is-date-like-attr(.)][last()])"/>
+          <xsl:value-of select="parent::event/@*[tps:is-date-like-attr(.)]/tps:make-date-readable-w3c(.)"/>
         </span>
         <xsl:text>: </xsl:text>
       </xsl:if>

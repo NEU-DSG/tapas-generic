@@ -68,7 +68,7 @@
     </xsl:if>
   </xsl:function>
   
-  <!-- Given a string presumed to be in the W3C date/time format, create a human 
+  <!-- Given a string presumed to be in a W3C date/time format, create a human 
     readable version. For example, "YYYY-MM-DD" would become "MONTH DAY, YEAR". -->
   <xsl:function name="tps:make-date-readable-w3c" as="xs:string?">
     <xsl:param name="w3cDate" as="xs:string"/>
@@ -81,8 +81,8 @@
         <xsl:value-of select="' BCE'"/>
       </xsl:if>
     </xsl:variable>
-    <xsl:variable name="timePicture" select="'[H01]:[m01]'"/>
-    <xsl:variable name="dateTimePicture" select="concat($datePicture,' ',$timePicture)"/>
+    <xsl:variable name="timePicture" select="'[H1]:[m01]'"/>
+    <xsl:variable name="dateTimePicture" select="concat($datePicture,', ',$timePicture)"/>
     <xsl:choose>
       <xsl:when test="$w3cDate castable as xs:dateTime">
         <xsl:value-of select="format-dateTime(xs:dateTime($w3cDate),$dateTimePicture)"/>
@@ -93,13 +93,11 @@
       <xsl:when test="$w3cDate castable as xs:time">
         <xsl:value-of select="format-time(xs:time($w3cDate),$timePicture)"/>
       </xsl:when>
-      <!-- YYYY -->
-      <!-- YYYY-MM -->
-      <!-- -\-MM -->
-      <!-- -\-MM-DD -->
-      <!-- -\-\-DD -->
-      <xsl:when test="matches($w3cDate,'^(-?\d\d\d\d|-)(-\d\d){0,2}')"> 
-          <!-- XD: a better test might be to see if $w3cDate is castable as gYear, gMonth, gDay, gYearMonth, or gMonthDay. -->
+      <xsl:when test=" $w3cDate castable as xs:gYearMonth 
+                    or $w3cDate castable as xs:gMonthDay
+                    or $w3cDate castable as xs:gMonth
+                    or $w3cDate castable as xs:gDay
+                    or $w3cDate castable as xs:gYear">
         <xsl:variable name="month">
           <xsl:analyze-string select="$w3cDate" regex="^(-?\d\d\d\d|-)-(\d\d)">
             <xsl:matching-substring>
@@ -118,18 +116,14 @@
         <xsl:variable name="year">
           <xsl:analyze-string select="$w3cDate" regex="^-?(\d\d\d\d)">
             <xsl:matching-substring>
-              <xsl:value-of select="regex-group(1)"/>
+              <xsl:value-of select="tps:replace-leading-zeroes(regex-group(1))"/>
               <xsl:if test="$isBCE">
                 <xsl:text> BCE</xsl:text>
               </xsl:if>
             </xsl:matching-substring>
           </xsl:analyze-string>
         </xsl:variable>
-        <xsl:variable name="usableDay" 
-          select="if ( exists($day) and $day ne '' and exists($year) and $year ne '' ) then 
-                    concat($day,',') 
-                  else $day"/>
-        <xsl:value-of select="string-join(($month, $usableDay, $year)[exists(.) and . ne ''], ' ')"/>
+        <xsl:value-of select="string-join(($month, $day, $year)[exists(.) and . ne ''], ' ')"/>
       </xsl:when>
       <!-- If all else fails, just output the string unchanged. -->
       <xsl:otherwise>
