@@ -649,11 +649,7 @@
             </span>
           </xsl:if>
         </xsl:when>
-        <!--<xsl:when test="$element[@xml:id]">
-          <xsl:value-of select="$element/@xml:id"/>
-        </xsl:when>-->
         <xsl:otherwise>
-          <!--<xsl:value-of select="tps:get-readable-label($element/local-name(.))"/>-->
           <xsl:copy-of select="$not-blank[1]"/>
         </xsl:otherwise>
       </xsl:choose>
@@ -684,8 +680,8 @@
       <xsl:call-template name="save-gi"/>
       <xsl:if test="parent::event[@*[tps:is-date-like-attr(.)]]">
         <span>
-          <!--<xsl:apply-templates select="parent::event/@*" mode="og-datelike"/>-->
-          <xsl:value-of select="parent::event/@*[tps:is-date-like-attr(.)]/tps:make-date-readable-w3c(.)"/>
+          <xsl:apply-templates select="parent::event/@*[tps:is-date-like-attr(.)]" mode="og-datelike"/>
+          <!--<xsl:value-of select="parent::event/@*[tps:is-date-like-attr(.)]/tps:make-date-readable-w3c(.)"/>-->
         </span>
         <xsl:text>: </xsl:text>
       </xsl:if>
@@ -807,8 +803,12 @@
       <xsl:call-template name="set-label">
         <xsl:with-param name="is-inner-label" select="true()"/>
       </xsl:call-template>
+      <xsl:text> </xsl:text>
     </span>
     <xsl:value-of select="tps:make-date-attribute-readable(.)"/>
+    <xsl:if test="position() ne last()">
+      <xsl:text> </xsl:text>
+    </xsl:if>
   </xsl:template>
   
   

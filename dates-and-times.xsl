@@ -168,8 +168,4 @@
     <xsl:value-of select="replace($string,'^0+','')"/>
   </xsl:function>
   
-  
-  <!-- TEMPLATES -->
-  
-  
 </xsl:stylesheet>
