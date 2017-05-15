@@ -26,6 +26,8 @@
       javascript and other features from the html/browser environment.</xd:p>
       <xd:p><xd:b>change log:</xd:b></xd:p>
       <xd:ul>
+        <xd:li>2017-05-15 by Ashley: Renamed the 'body' element so browsers 
+          don't eat it.</xd:li>
         <xd:li>2015-10-12 by Syd: Created from tei2html_1 and tei2html_2</xd:li>
       </xd:ul>
     </xd:desc>
@@ -357,6 +359,19 @@
       <xsl:call-template name="addID"/>
       <xsl:apply-templates select="@*|node()" mode="#current"/>
     </tei-title>
+  </xsl:template>
+
+  <xd:doc>
+    <xd:desc>
+      <xd:p>Rename the &lt;body> so that the HTML-ified version isn't eaten 
+        by browsers.</xd:p>
+    </xd:desc>
+  </xd:doc>
+  <xsl:template match="body" mode="work">
+    <tei-body>
+      <xsl:call-template name="addID"/>
+      <xsl:apply-templates select="@*|node()" mode="#current"/>
+    </tei-body>
   </xsl:template>
 
   <xd:doc>

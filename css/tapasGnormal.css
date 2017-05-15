@@ -442,7 +442,7 @@ body {
   margin-top: 0;
   margin-bottom: 0;
 }
-.tapas-generic body {
+.tapas-generic tei-body {
   color: inherit;
   background-color: inherit;
 }
@@ -666,11 +666,11 @@ body {
   font-weight: normal;
 }
 .tapas-generic TEI text front > .heading,
-.tapas-generic TEI text body > .heading,
+.tapas-generic TEI text tei-body > .heading,
 .tapas-generic TEI text back > .heading {
   margin-bottom: 1em;
 }
-.tapas-generic body > .heading {
+.tapas-generic tei-body > .heading {
   font-size: 150%;
 }
 .tapas-generic div > .heading {
