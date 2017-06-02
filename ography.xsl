@@ -650,13 +650,15 @@
                          else $element/@xml:id/data(.)"/>-->
     <xsl:if test="count($not-blank) ge 1">
       <xsl:choose>
-        <xsl:when test="$not-blank[@data-tapas-gi = ('head', 'label')]">
-          <xsl:variable name="headLabels" select="$not-blank[@data-tapas-gi = ('head', 'label')]"/>
+        <xsl:when test="$not-blank[@data-tapas-gi = ('head', 'label') or @class eq 'og-head-like']">
+          <xsl:variable name="headLabels" select="$not-blank[@data-tapas-gi = ('head', 'label') or @class eq 'og-head-like']"/>
           <xsl:copy-of select="$headLabels[1]"/>
           <xsl:if test="count($headLabels) gt 1">
-            <span class="heading heading-og heading-sub">
-              <xsl:copy-of select="subsequence($headLabels,2)"/>
-            </span>
+            <xsl:for-each select="subsequence($headLabels,2)">
+              <span class="heading heading-og heading-sub">
+                <xsl:copy-of select="."/>
+              </span>
+            </xsl:for-each>
           </xsl:if>
         </xsl:when>
         <xsl:otherwise>
@@ -684,19 +686,18 @@
     </span>
   </xsl:template>
   
-  <xsl:template match="event/head[not(preceding-sibling::*)] 
-                      | event/label[not(preceding-sibling::*)]" mode="og-head" priority="30">
+  <xsl:template match="event/head[not(following-sibling::head)][not(following-sibling::label)] 
+                      | event/label[not(following-sibling::label)]" mode="og-head" priority="30">
     <span>
       <xsl:call-template name="save-gi"/>
-      <xsl:if test="parent::event[@*[tps:is-date-like-attr(.)]]">
-        <span>
-          <xsl:apply-templates select="parent::event/@*[tps:is-date-like-attr(.)]" mode="og-datelike"/>
-          <!--<xsl:value-of select="parent::event/@*[tps:is-date-like-attr(.)]/tps:make-date-readable-w3c(.)"/>-->
-        </span>
-        <xsl:text>: </xsl:text>
-      </xsl:if>
       <xsl:value-of select="normalize-space(.)"/>
     </span>
+    <xsl:if test="parent::event[@*[tps:is-date-like-attr(.)]]">
+      <span class="og-head-like">
+        <xsl:apply-templates select="parent::event/@*[tps:is-date-like-attr(.)]" mode="og-datelike"/>
+        <!--<xsl:value-of select="parent::event/@*[tps:is-date-like-attr(.)]/tps:make-date-readable-w3c(.)"/>-->
+      </span>
+    </xsl:if>
   </xsl:template>
   
   <xsl:template match="place/*[local-name() = $model.nameLike][position() eq 1]" mode="og-head" priority="-10">
