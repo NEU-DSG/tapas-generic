@@ -686,18 +686,11 @@
     </span>
   </xsl:template>
   
-  <xsl:template match="event/head[not(following-sibling::head)][not(following-sibling::label)] 
-                      | event/label[not(following-sibling::label)]" mode="og-head" priority="30">
-    <span>
-      <xsl:call-template name="save-gi"/>
-      <xsl:value-of select="normalize-space(.)"/>
+  <xsl:template match="event/@*[tps:is-date-like-attr(.)][1]" mode="og-head">
+    <span class="og-head-like">
+      <xsl:apply-templates select="parent::event/@*[tps:is-date-like-attr(.)]" mode="og-datelike"/>
+      <!--<xsl:value-of select="parent::event/@*[tps:is-date-like-attr(.)]/tps:make-date-readable-w3c(.)"/>-->
     </span>
-    <xsl:if test="parent::event[@*[tps:is-date-like-attr(.)]]">
-      <span class="og-head-like">
-        <xsl:apply-templates select="parent::event/@*[tps:is-date-like-attr(.)]" mode="og-datelike"/>
-        <!--<xsl:value-of select="parent::event/@*[tps:is-date-like-attr(.)]/tps:make-date-readable-w3c(.)"/>-->
-      </span>
-    </xsl:if>
   </xsl:template>
   
   <xsl:template match="place/*[local-name() = $model.nameLike][position() eq 1]" mode="og-head" priority="-10">
