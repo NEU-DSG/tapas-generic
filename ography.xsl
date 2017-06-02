@@ -644,6 +644,16 @@
       <!-- Make potential attribute headings after elements, so that they are only 
         used if there are no relevant elements to be used as headers. -->
       <xsl:apply-templates select="$element/@*" mode="og-head"/>
+      <!-- Last, create a heading to serve as a placeholder if no other heading is 
+        available. This defaults to the name of the element. -->
+      <span>
+        <xsl:call-template name="set-label">
+          <xsl:with-param name="element" select="$element"/>
+          <xsl:with-param name="is-field-label" select="false()"/>
+        </xsl:call-template>
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="count($element/preceding-sibling::*)"/>
+      </span>
     </xsl:variable>
     <xsl:variable name="not-blank" as="item()*" select="$options[normalize-space(.) ne '']"/>
     <!--<xsl:copy-of select="if ( $not-blank[1] ) then $not-blank[1] 
@@ -689,7 +699,6 @@
   <xsl:template match="event/@*[tps:is-date-like-attr(.)][1]" mode="og-head">
     <span class="og-head-like">
       <xsl:apply-templates select="parent::event/@*[tps:is-date-like-attr(.)]" mode="og-datelike"/>
-      <!--<xsl:value-of select="parent::event/@*[tps:is-date-like-attr(.)]/tps:make-date-readable-w3c(.)"/>-->
     </span>
   </xsl:template>
   
@@ -968,23 +977,24 @@
   <!-- Generate a metadata label using the current element context. No wrapper is 
     added, so that this template can be used to create 'ography headings as well. -->
   <xsl:template name="set-label">
+    <xsl:param name="element"        as="node()"     select="."/>
     <xsl:param name="is-field-label" as="xs:boolean" select="true()"/>
     <xsl:param name="is-inner-label" as="xs:boolean" select="false()"/>
-    <xsl:variable name="me" select="local-name()"/>
+    <xsl:variable name="me" select="local-name($element)"/>
     <xsl:variable name="label" select="tps:get-readable-label($me)"/>
     <xsl:value-of select="if ( $is-field-label ) then
                             lower-case($label)
                           else $label"/>
     <xsl:variable name="specializations" as="item()*">
-      <xsl:variable name="lang" select="@xml:lang"/>
+      <xsl:variable name="lang" select="$element/@xml:lang"/>
       <!-- XD: get description from IANA registry? 
         http://www.iana.org/assignments/language-subtag-registry/language-subtag-registry -->
-      <xsl:copy-of select="@type | @unit"/>
+      <xsl:copy-of select="$element/@type | $element/@unit"/>
       <xsl:copy-of select="$lang"/>
     </xsl:variable>
     <xsl:for-each select="$specializations">
       <xsl:text>, </xsl:text>
-      <xsl:value-of select="."/>
+      <xsl:value-of select="$element"/>
     </xsl:for-each>
     <xsl:if test="$is-field-label and not($is-inner-label)">
       <xsl:text>: </xsl:text>
