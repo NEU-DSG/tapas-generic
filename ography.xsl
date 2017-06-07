@@ -341,17 +341,9 @@
         has no child elements), suppress it. -->
       <xsl:when test="$entryHeading ne '' and $entryHeading eq normalize-space(.) and not(*)"/>
       <xsl:otherwise>
-        <div class="og-metadata-item">
-          <span class="og-label">
-            <xsl:call-template name="set-label"/>
-          </span>
-          <xsl:element name="tei-{local-name()}">
-            <xsl:call-template name="get-attributes">
-              <xsl:with-param name="labelled" select="true()"/>
-            </xsl:call-template>
-            <xsl:apply-templates mode="#current"/>
-          </xsl:element>
-        </div>
+        <xsl:call-template name="build-metadata-body">
+          
+        </xsl:call-template>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -396,14 +388,16 @@
         <!-- Display metadata first, then contextual <note>s and <p>s. -->
         <div class="og-entry">
           <div class="og-metadata">
-            <xsl:apply-templates select="@*" mode="og-entry-att"/>
-            <!-- Save nested lists and 'ography entries for the end of this entry. -->
-            <xsl:apply-templates select="*[not(self::head)][not(self::label)]
-                                          [not(tps:is-desc-like(.))]
-                                          [not(tps:is-list-like(.))]
-                                          [not(tps:is-og-entry(.))]" mode="og-entry">
-              <xsl:with-param name="entryHeading" select="$header[1]" tunnel="yes"/>
-            </xsl:apply-templates>
+            <table>
+              <xsl:apply-templates select="@*" mode="og-entry-att"/>
+              <!-- Save nested lists and 'ography entries for the end of this entry. -->
+              <xsl:apply-templates select="*[not(self::head)][not(self::label)]
+                                            [not(tps:is-desc-like(.))]
+                                            [not(tps:is-list-like(.))]
+                                            [not(tps:is-og-entry(.))]" mode="og-entry">
+                <xsl:with-param name="entryHeading" select="$header[1]" tunnel="yes"/>
+              </xsl:apply-templates>
+            </table>
           </div>
           <div class="og-context">
             <xsl:apply-templates select="*[tps:is-desc-like(.)]" mode="og-entry"/>
@@ -444,8 +438,7 @@
     </xsl:if>
   </xsl:template>-->
   
-  <xsl:template match="*[@xml:id 
-                          or tps:is-name-like(.) 
+  <xsl:template match="*[@xml:id  
                           or self::analytic 
                           or self::monogr 
                           or self::imprint]/*" 
@@ -456,51 +449,84 @@
       <!-- If the current node exactly matches the heading of an 'ography entry (and 
         has no child elements), suppress it. -->
       <xsl:when test="$entryHeading ne '' and $entryHeading eq normalize-space(.) and not(*)"/>
+      <xsl:when test="text()[normalize-space(.) ne '']">
+        <xsl:call-template name="build-metadata-body">
+          <xsl:with-param name="labelled">
+            <xsl:apply-templates mode="work"/>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:when>
       <xsl:otherwise>
-        <div class="og-metadata-item">
-          <span class="og-label">
-            <xsl:call-template name="set-label"/>
-          </span>
-          <xsl:element name="{$me}">
-            <xsl:call-template name="get-attributes">
-              <xsl:with-param name="labelled" select="true()"/>
-            </xsl:call-template>
-            <xsl:apply-templates mode="#current"/>
-          </xsl:element>
-        </div>
+        <xsl:call-template name="build-metadata-body"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
+  <!--<xsl:template match="*[tps:is-og-entry(.)]/*[tps:is-name-like(.)]" mode="og-entry">
+    <xsl:param name="entryHeading" select="''" tunnel="yes"/>
+    <xsl:choose>
+      <!-\- If the current node exactly matches the heading of an 'ography entry (and 
+        has no child elements), suppress it. -\->
+      <xsl:when test="$entryHeading ne '' and $entryHeading eq normalize-space(.) and not(*)"/>
+      <xsl:when test="text()[normalize-space(.) ne '']">
+        <xsl:apply-templates select="." mode="work"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates mode="#current"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>-->
+  
+  <xsl:template match="*[tps:is-name-like(.)]/*" priority="-10" mode="og-entry">
+    <xsl:choose>
+      <xsl:when test="text()[normalize-space(.) ne '']">
+        <xsl:call-template name="build-metadata-body">
+          <xsl:with-param name="addWrapper" select="false()"/>
+          <xsl:with-param name="labelled">
+            <xsl:apply-templates select="." mode="work"/>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="build-metadata-body">
+          <xsl:with-param name="addWrapper" select="false()"/>
+        </xsl:call-template>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
   
   <xsl:template match="respStmt" mode="og-entry">
-    <div class="og-metadata-item">
-      <span class="og-label">
-        <xsl:variable name="respRoles" select="string-join(resp/normalize-space(.)[not(. eq '')],', ')"/>
-        <!-- If there is no usable content in $respRoles, use the generic term "contributor". -->
-        <xsl:value-of select="if ( $respRoles ne '' ) then $respRoles
-                              else 'contributor'"/>
-        <xsl:text>:</xsl:text>
-      </span>
-      <xsl:call-template name="passthru-og-element"/>
-    </div>
+    <xsl:variable name="respRoles" select="string-join(resp/normalize-space(.)[not(. eq '')],', ')"/>
+    <tbody class="og-metadata-item">
+      <xsl:call-template name="build-metadata-body">
+        <xsl:with-param name="label">
+          <!-- If there is no usable content in $respRoles, use the generic term "contributor". -->
+          <xsl:value-of select="if ( $respRoles ne '' ) then $respRoles
+                                else 'contributor'"/>
+        </xsl:with-param>
+        <xsl:with-param name="labelled">
+          <xsl:call-template name="passthru-og-element"/>
+        </xsl:with-param>
+      </xsl:call-template>
+    </tbody>
   </xsl:template>
   
   <!-- On elements serving as indicators of events, W3C-datable attributes should 
     come before any field content. -->
   <xsl:template match="birth | date | death | floruit | residence" mode="og-entry"> <!-- XD -->
-    <div>
-      <xsl:attribute name="class" select="'og-metadata-item'"/>
-      <span class="og-label">
-        <xsl:call-template name="set-label"/>
-      </span>
-      <xsl:element name="{local-name()}">
-        <xsl:call-template name="save-gi"/>
-        <xsl:apply-templates select="@* except (@when, @from, @to, @notBefore, @notAfter)" mode="#current"/>
-        <xsl:attribute name="class" select="'og-labelled'"/>
-        <xsl:variable name="attrDates" select="@*[tps:is-date-like-attr(.)]" as="item()*"/>
-        <xsl:variable name="content" as="item()*">
+    <xsl:variable name="attrDates" select="@*[tps:is-date-like-attr(.)]" as="item()*"/>
+    <xsl:variable name="content" as="item()*">
+      <xsl:choose>
+        <xsl:when test="text()[normalize-space(.) ne '']">
+          <xsl:apply-templates mode="work"/>
+        </xsl:when>
+        <xsl:otherwise>
           <xsl:apply-templates mode="#current"/>
-        </xsl:variable>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:call-template name="build-metadata-body">
+      <xsl:with-param name="labelled">
         <xsl:if test="$attrDates">
           <!-- Create a regex using the years listed in attributes. -->
           <xsl:variable name="yearsPattern">
@@ -528,8 +554,8 @@
           </xsl:if>
         </xsl:if>
         <xsl:copy-of select="$content"/>
-      </xsl:element>
-    </div>
+      </xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
   
   <!-- Places mentioned inside event-like elements are given an label " in ". -->
@@ -549,43 +575,39 @@
   </xsl:template>
   
   <xsl:template match="biblScope | citedRange" mode="og-entry">
-    <div class="og-metadata-item">
-      <span class="og-label">
-        <xsl:choose>
-          <xsl:when test="self::biblScope and @unit">
-            <xsl:value-of select="@unit"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:call-template name="set-label"/>
-          </xsl:otherwise>
-        </xsl:choose>
-      </span>
+    <xsl:variable name="label">
+      <xsl:choose>
+        <xsl:when test="self::biblScope and @unit">
+          <xsl:value-of select="@unit"/>
+          <xsl:text>:</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:call-template name="set-label"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="content">
       <xsl:choose>
         <xsl:when test=".[not(normalize-space(.) eq '')][@from or @to]">
-          <xsl:element name="{local-name()}">
-            <xsl:call-template name="get-attributes">
-              <xsl:with-param name="labelled" select="true()"/>
-            </xsl:call-template>
-            <xsl:value-of select="@from"/>
-            <xsl:if test="not(@to) or .[@from][@to[not(. eq ../@from)]]">
-              <xsl:text>-</xsl:text>
-              <xsl:value-of select="@to"/>
-            </xsl:if>
-          </xsl:element>
+          <xsl:value-of select="@from"/>
+          <xsl:if test="not(@to) or .[@from][@to[not(. eq ../@from)]]">
+            <xsl:text>-</xsl:text>
+            <xsl:value-of select="@to"/>
+          </xsl:if>
         </xsl:when>
         <xsl:otherwise>
           <xsl:call-template name="passthru-og-element"/>
         </xsl:otherwise>
       </xsl:choose>
-    </div>
+    </xsl:variable>
+    <xsl:call-template name="build-metadata-body">
+      <xsl:with-param name="label" select="$label"/>
+      <xsl:with-param name="labelled" select="$content"/>
+    </xsl:call-template>
   </xsl:template>
   
   <xsl:template match="idno" mode="og-entry">
-    <div class="og-metadata-item">
-      <xsl:call-template name="get-attributes"/>
-      <span class="og-label">
-        <xsl:call-template name="set-label"/>
-      </span>
+    <xsl:variable name="content">
       <xsl:choose>
         <xsl:when test="@type eq 'URI' or starts-with(normalize-space(),'http')">
           <xsl:variable name="uri" select="normalize-space()"/>
@@ -598,7 +620,12 @@
           <xsl:apply-templates mode="#current"/>
         </xsl:otherwise>
       </xsl:choose>
-    </div>
+    </xsl:variable>
+    <tbody class="og-metadata-item">
+      <xsl:call-template name="build-metadata-body">
+        <xsl:with-param name="labelled" select="$content"/>
+      </xsl:call-template>
+    </tbody>
   </xsl:template>
   
   <xsl:template match="desc 
@@ -830,44 +857,118 @@
   <xsl:template match="@*" mode="og-entry-att"/>
   
   <xsl:template match="@copyOf | @corresp | @next | @prev | @sameAs | @sync" mode="og-entry-att">
-    <div class="og-metadata-item">
+    <xsl:variable name="content">
+      <xsl:call-template name="og-referrer">
+        <xsl:with-param name="onAttribute" select="true()"/>
+      </xsl:call-template>
+    </xsl:variable>
+    <xsl:call-template name="build-metadata-body">
+      <xsl:with-param name="labelled">
+        <xsl:copy-of select="$content"/>
+      </xsl:with-param>
+    </xsl:call-template>
+    <!--<div class="og-metadata-item">
       <span class="og-label">
         <xsl:call-template name="set-label"/>
       </span>
       <span class="og-labelled">
-        <xsl:call-template name="og-referrer">
-          <xsl:with-param name="onAttribute" select="true()"/>
-        </xsl:call-template>
       </span>
-    </div>
+    </div>-->
   </xsl:template>
   
   <xsl:template match="person/@age | person/@role" mode="og-entry-att">
-    <div class="og-metadata-item">
+    <xsl:variable name="content">
+      <xsl:value-of select="."/>
+    </xsl:variable>
+    <xsl:call-template name="build-metadata-body">
+      <xsl:with-param name="labelled">
+        <xsl:copy-of select="$content"/>
+      </xsl:with-param>
+    </xsl:call-template>
+    <!--<div class="og-metadata-item">
       <span class="og-label">
         <xsl:call-template name="set-label"/>
       </span>
       <span class="og-labelled">
         <xsl:value-of select="."/>
       </span>
-    </div>
+    </div>-->
   </xsl:template>
   
   <xsl:template match="person/@sex" mode="og-entry-att">
-    <div class="og-metadata-item">
+    <xsl:variable name="content">
+      <xsl:choose>
+        <!-- If @sex consists of more than one character (read: words), output the 
+          user's data. -->
+        <xsl:when test="string-length() gt 1">
+          <xsl:value-of select="."/>
+        </xsl:when>
+        <!-- If @sex is one character long, test it for conformance to vCard's sex 
+          property or ISO 5218:2004, the two gender/sex standards mentioned in the 
+          TEI docs for <person>. -->
+        <xsl:when test="upper-case(.) = ('U','M','F','N','O')">
+          <xsl:variable name="meUppercased" select="upper-case(.)"/>
+          <xsl:choose>
+            <xsl:when test="$meUppercased eq 'U'">
+              <xsl:text>unknown</xsl:text>
+            </xsl:when>
+            <xsl:when test="$meUppercased eq 'M'">
+              <xsl:text>male</xsl:text>
+            </xsl:when>
+            <xsl:when test="$meUppercased eq 'F'">
+              <xsl:text>female</xsl:text>
+            </xsl:when>
+            <xsl:when test="$meUppercased eq 'N'">
+              <xsl:text>none or not applicable</xsl:text>
+            </xsl:when>
+            <xsl:when test="$meUppercased eq 'O'">
+              <xsl:text>unknown</xsl:text>
+            </xsl:when>
+          </xsl:choose>
+        </xsl:when>
+        <xsl:when test=". = ('0','1','2','9')">
+          <xsl:choose>
+            <xsl:when test=". eq '0'">
+              <xsl:text>unknown</xsl:text>
+            </xsl:when>
+            <xsl:when test=". eq '1'">
+              <xsl:text>male</xsl:text>
+            </xsl:when>
+            <xsl:when test=". eq '2'">
+              <xsl:text>female</xsl:text>
+            </xsl:when>
+            <xsl:when test=". eq '9'">
+              <xsl:text>not applicable</xsl:text>
+            </xsl:when>
+          </xsl:choose>
+        </xsl:when>
+        <!-- If all other avenues have failed, just output the contents of the 
+          attribute. -->
+        <xsl:otherwise>
+          <xsl:value-of select="."/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:call-template name="build-metadata-body">
+      <xsl:with-param name="labelled">
+        <xsl:copy-of select="$content"/>
+      </xsl:with-param>
+    </xsl:call-template>
+    
+    <!--<div class="og-metadata-item">
       <span class="og-label">
         <xsl:call-template name="set-label"/>
       </span>
       <span class="og-labelled">
         <xsl:choose>
-          <!-- If @sex consists of more than one character (read: words), output the 
-            user's data. -->
+          <!-\- If @sex consists of more than one character (read: words), output the 
+            user's data. -\->
           <xsl:when test="string-length() gt 1">
             <xsl:value-of select="."/>
           </xsl:when>
-          <!-- If @sex is one character long, test it for conformance to vCard's sex 
+          <!-\- If @sex is one character long, test it for conformance to vCard's sex 
             property or ISO 5218:2004, the two gender/sex standards mentioned in the 
-            TEI docs for <person>. -->
+            TEI docs for <person>. -\->
           <xsl:when test="upper-case(.) = ('U','M','F','N','O')">
             <xsl:variable name="meUppercased" select="upper-case(.)"/>
             <xsl:choose>
@@ -904,18 +1005,60 @@
               </xsl:when>
             </xsl:choose>
           </xsl:when>
-          <!-- If all other avenues have failed, just output the contents of the 
-            attribute. -->
+          <!-\- If all other avenues have failed, just output the contents of the 
+            attribute. -\->
           <xsl:otherwise>
             <xsl:value-of select="."/>
           </xsl:otherwise>
         </xsl:choose>
       </span>
-    </div>
+    </div>-->
   </xsl:template>
   
   
   <!-- SUPPLEMENTAL TEMPLATES -->
+  
+  <!--  -->
+  <xsl:template name="build-metadata-body">
+    <xsl:param name="label">
+      <xsl:call-template name="set-label"/>
+    </xsl:param>
+    <xsl:param name="labelled">
+      <xsl:apply-templates mode="#current"/>
+    </xsl:param>
+    <xsl:param name="addWrapper" select="true()" as="xs:boolean"/>
+    <xsl:variable name="me" select="local-name(.)"/>
+    <xsl:variable name="hasRowDescendants" select="exists($labelled[descendant::*:tr])"/>
+    <xsl:variable name="rows">
+      <tr>
+        <td class="og-label">
+          <xsl:copy-of select="$label"/>
+        </td>
+        <xsl:if test="not($hasRowDescendants)">
+          <td class="og-labelled">
+            <span data-tapas-gi="{$me}">
+              <xsl:call-template name="get-attributes"/>
+              <xsl:copy-of select="$labelled"/>
+            </span>
+          </td>
+        </xsl:if>
+      </tr>
+      <xsl:if test="$hasRowDescendants">
+        <xsl:copy-of select="$labelled"/>
+      </xsl:if>
+    </xsl:variable>
+    
+    <xsl:choose>
+      <xsl:when test="$addWrapper">
+        <tbody class="og-metadata-item">
+          <xsl:copy-of select="$rows"/>
+        </tbody>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy-of select="$rows"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
   
   <!-- Apply templates on attributes. -->
   <xsl:template name="get-attributes">
