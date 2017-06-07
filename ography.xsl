@@ -989,12 +989,13 @@
       <xsl:variable name="lang" select="$element/@xml:lang"/>
       <!-- XD: get description from IANA registry? 
         http://www.iana.org/assignments/language-subtag-registry/language-subtag-registry -->
-      <xsl:copy-of select="$element/@type | $element/@unit"/>
+      <xsl:copy-of select="$element/@type"/>
+      <xsl:copy-of select="$element/@unit"/>
       <xsl:copy-of select="$lang"/>
     </xsl:variable>
     <xsl:for-each select="$specializations">
       <xsl:text>, </xsl:text>
-      <xsl:value-of select="$element"/>
+      <xsl:value-of select="data(.)"/>
     </xsl:for-each>
     <xsl:if test="$is-field-label and not($is-inner-label)">
       <xsl:text>: </xsl:text>
