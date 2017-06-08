@@ -17,12 +17,21 @@ body {
 .og-metadata {
   margin: 0.5em 1.5em;
 }
+.og-metadata table {
+  margin: 0.75em 0 !important;
+  font-size: 0.95em !important;
+}
+.og-metadata table td {
+  vertical-align: bottom;
+}
+.og-metadata table td.og-label {
+  width: 80px;
+}
 .og-metadata .og-label {
   color: #9699ae;
   font-style: italic;
   margin-right: 0.5em;
   display: inline-block;
-  width: 115px;
   text-align: right;
   font-size: .9em;
 }
@@ -67,7 +76,7 @@ body {
 .tapas-generic {
   /* teibp classes */
   /* Choice elements */
-  /* 'Ography things */
+  /* 'Ography things (inside .tapas-generic) */
   /* A */
   /* add */
   /* B */
@@ -239,6 +248,19 @@ body {
     padding-right: 0;
   }
 }
+.tapas-generic table {
+  display: block;
+  margin-top: 0;
+  margin-bottom: 0;
+  border-collapse: separate;
+  border-spacing: 2px;
+  margin-top: 2em;
+  margin-bottom: 2em;
+  font-size: 12pt;
+}
+.tapas-generic table > head {
+  text-align: center;
+}
 .tapas-generic .table-border {
   border: 1px dotted #333333;
 }
@@ -262,6 +284,9 @@ body {
   border-bottom: 1px dotted #000000;
   background: #d3e5f7;
   cursor: pointer;
+}
+.tapas-generic .contextual-item .og-entry .og-metadata table td.og-label {
+  width: 115px;
 }
 .tapas-generic .contextual-item .list-contextual {
   margin: 0.2em 0;
@@ -1428,19 +1453,6 @@ body {
   display: block;
   margin-top: 0;
   margin-bottom: 0;
-}
-.tapas-generic table {
-  display: block;
-  margin-top: 0;
-  margin-bottom: 0;
-  border-collapse: separate;
-  border-spacing: 2px;
-  margin-top: 2em;
-  margin-bottom: 2em;
-  font-size: 12pt;
-}
-.tapas-generic table > head {
-  text-align: center;
 }
 .tapas-generic #tei_contextual {
   display: none;

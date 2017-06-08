@@ -388,7 +388,7 @@
         <!-- Display metadata first, then contextual <note>s and <p>s. -->
         <div class="og-entry">
           <div class="og-metadata">
-            <table>
+            <xsl:variable name="tableContents">
               <xsl:apply-templates select="@*" mode="og-entry-att"/>
               <!-- Save nested lists and 'ography entries for the end of this entry. -->
               <xsl:apply-templates select="*[not(self::head)][not(self::label)]
@@ -397,7 +397,12 @@
                                             [not(tps:is-og-entry(.))]" mode="og-entry">
                 <xsl:with-param name="entryHeading" select="$header[1]" tunnel="yes"/>
               </xsl:apply-templates>
-            </table>
+            </xsl:variable>
+            <xsl:if test="$tableContents//*:tr">
+              <table>
+                <xsl:copy-of select="$tableContents"/>
+              </table>
+            </xsl:if>
           </div>
           <div class="og-context">
             <xsl:apply-templates select="*[tps:is-desc-like(.)]" mode="og-entry"/>
@@ -513,7 +518,7 @@
   
   <!-- On elements serving as indicators of events, W3C-datable attributes should 
     come before any field content. -->
-  <xsl:template match="birth | date | death | floruit | residence" mode="og-entry"> <!-- XD -->
+  <xsl:template match="affiliation | birth | date | death | floruit | residence" mode="og-entry"> <!-- XD -->
     <xsl:variable name="attrDates" select="@*[tps:is-date-like-attr(.)]" as="item()*"/>
     <xsl:variable name="content" as="item()*">
       <xsl:choose>
@@ -550,12 +555,20 @@
           <xsl:if test="( $yearsPattern eq '()' or not( matches(normalize-space(), $yearsPattern) ) ) 
                         and not(descendant::date)">
             <xsl:apply-templates select="$attrDates" mode="og-datelike"/>
+            <xsl:if test="$content">
+              <xsl:text>,</xsl:text>
+            </xsl:if>
             <xsl:text> </xsl:text>
           </xsl:if>
         </xsl:if>
         <xsl:copy-of select="$content"/>
       </xsl:with-param>
     </xsl:call-template>
+  </xsl:template>
+  
+  <!-- <title>s are only notable (label-able) if they occur inside <bibl>-likes. -->
+  <xsl:template match="title[not(ancestor::bibl | ancestor::biblStruct | ancestor::biblFull)]" priority="20" mode="og-entry">
+    <xsl:apply-templates select="." mode="work"/>
   </xsl:template>
   
   <!-- Places mentioned inside event-like elements are given an label " in ". -->
@@ -867,13 +880,6 @@
         <xsl:copy-of select="$content"/>
       </xsl:with-param>
     </xsl:call-template>
-    <!--<div class="og-metadata-item">
-      <span class="og-label">
-        <xsl:call-template name="set-label"/>
-      </span>
-      <span class="og-labelled">
-      </span>
-    </div>-->
   </xsl:template>
   
   <xsl:template match="person/@age | person/@role" mode="og-entry-att">
@@ -885,14 +891,6 @@
         <xsl:copy-of select="$content"/>
       </xsl:with-param>
     </xsl:call-template>
-    <!--<div class="og-metadata-item">
-      <span class="og-label">
-        <xsl:call-template name="set-label"/>
-      </span>
-      <span class="og-labelled">
-        <xsl:value-of select="."/>
-      </span>
-    </div>-->
   </xsl:template>
   
   <xsl:template match="person/@sex" mode="og-entry-att">
@@ -954,65 +952,6 @@
         <xsl:copy-of select="$content"/>
       </xsl:with-param>
     </xsl:call-template>
-    
-    <!--<div class="og-metadata-item">
-      <span class="og-label">
-        <xsl:call-template name="set-label"/>
-      </span>
-      <span class="og-labelled">
-        <xsl:choose>
-          <!-\- If @sex consists of more than one character (read: words), output the 
-            user's data. -\->
-          <xsl:when test="string-length() gt 1">
-            <xsl:value-of select="."/>
-          </xsl:when>
-          <!-\- If @sex is one character long, test it for conformance to vCard's sex 
-            property or ISO 5218:2004, the two gender/sex standards mentioned in the 
-            TEI docs for <person>. -\->
-          <xsl:when test="upper-case(.) = ('U','M','F','N','O')">
-            <xsl:variable name="meUppercased" select="upper-case(.)"/>
-            <xsl:choose>
-              <xsl:when test="$meUppercased eq 'U'">
-                <xsl:text>unknown</xsl:text>
-              </xsl:when>
-              <xsl:when test="$meUppercased eq 'M'">
-                <xsl:text>male</xsl:text>
-              </xsl:when>
-              <xsl:when test="$meUppercased eq 'F'">
-                <xsl:text>female</xsl:text>
-              </xsl:when>
-              <xsl:when test="$meUppercased eq 'N'">
-                <xsl:text>none or not applicable</xsl:text>
-              </xsl:when>
-              <xsl:when test="$meUppercased eq 'O'">
-                <xsl:text>unknown</xsl:text>
-              </xsl:when>
-            </xsl:choose>
-          </xsl:when>
-          <xsl:when test=". = ('0','1','2','9')">
-            <xsl:choose>
-              <xsl:when test=". eq '0'">
-                <xsl:text>unknown</xsl:text>
-              </xsl:when>
-              <xsl:when test=". eq '1'">
-                <xsl:text>male</xsl:text>
-              </xsl:when>
-              <xsl:when test=". eq '2'">
-                <xsl:text>female</xsl:text>
-              </xsl:when>
-              <xsl:when test=". eq '9'">
-                <xsl:text>not applicable</xsl:text>
-              </xsl:when>
-            </xsl:choose>
-          </xsl:when>
-          <!-\- If all other avenues have failed, just output the contents of the 
-            attribute. -\->
-          <xsl:otherwise>
-            <xsl:value-of select="."/>
-          </xsl:otherwise>
-        </xsl:choose>
-      </span>
-    </div>-->
   </xsl:template>
   
   

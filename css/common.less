@@ -49,11 +49,23 @@ margin: 0;
 
 .og-metadata {
   margin: 0.5em 1.5em;
+  
+  table {
+    margin: 0.75em 0 !important;
+    font-size: 0.95em !important;
     
+    td {
+      vertical-align: bottom;
+      
+      &.og-label {
+        width: 80px;
+      }
+    }
+  }
+  
   .og-label {
     .tapas-label;
     display: inline-block;
-    width: 115px;
     //line-height: 1.2em;
     text-align: right;
     font-size: .9em;
@@ -121,7 +133,7 @@ margin: 0;
   font-weight: normal;
   }
   
-  #TOC{
+  #TOC {
     width:25%;
     float:left;
     position:static;
@@ -267,7 +279,20 @@ margin: 0;
 		}
 	}
 
-	.table-border {
+	table {
+	.block;
+	border-collapse: separate;
+	border-spacing: 2px;
+	margin-top:2em;
+	margin-bottom:2em;
+	font-size:12pt;
+	}
+
+	table > head {
+	text-align:center;
+	}
+  
+  .table-border {
 	border:@darkunderline;
 	}
 
@@ -278,7 +303,7 @@ margin: 0;
 		}
 	}
   
-  /* 'Ography things */
+  /* 'Ography things (inside .tapas-generic) */
   
   *[data-tapas-gotoentry="true"] {
   	border-bottom: @hoverunderline;
@@ -294,6 +319,15 @@ margin: 0;
     
     .og-entry {
       
+      .og-metadata {
+        
+        table {
+          
+          td.og-label {
+            width: 115px;
+          }
+        }
+      }
     }
     
     .list-contextual {
@@ -2213,19 +2247,6 @@ margin: 0;
 
 	TEI {
 	.block;
-	}
-
-	table {
-	.block;
-	border-collapse: separate;
-	border-spacing: 2px;
-	margin-top:2em;
-	margin-bottom:2em;
-	font-size:12pt;
-	}
-
-	table > head {
-	text-align:center;
 	}
 
 	tag {}
