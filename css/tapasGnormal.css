@@ -271,10 +271,10 @@ body {
 }
 .tapas-generic .contextual-item::after {
   content: '⬥';
-  margin-bottom: 0.5em;
+  margin-top: 0.5em;
   display: block;
-  color: #d3e5f7;
-  font-size: 0.85em;
+  color: #808080;
+  font-size: 0.75em;
   text-align: center;
 }
 .tapas-generic .contextual-item:last-child::after,
@@ -929,7 +929,7 @@ body {
   display: block;
 }
 .tapas-generic .list-contextual > .contextual-item {
-  margin: 2em 0 1em;
+  margin: 1.5em 0 1em;
   display: block;
   /*&:last-child {
         border-bottom: none;
