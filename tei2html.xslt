@@ -999,12 +999,26 @@
       <xsl:call-template name="addID"/>
       <xsl:call-template name="addRend"/>
       <xsl:attribute name="class" select="'list-contextual'"/>
-      <xsl:attribute name="data-tapas-tocme" select="true()"/>
       <xsl:choose>
+        <!-- Prefer headings that are the direct children of the 'ography. -->
         <xsl:when test="head">
+          <xsl:attribute name="data-tapas-tocme" select="true()"/>
           <xsl:apply-templates select="head" mode="work"/>
         </xsl:when>
+        <!-- Accept <head> when it occurs immediately before an 'ography, and there 
+          are no following siblings of the 'ography to which the <head> might refer. 
+          These have already been processed. -->
+        <xsl:when test="preceding-sibling::*[1][self::head] and 
+          ( not(following-sibling::*) or following-sibling::*[1][self::head] )">
+          <!-- This list is only TOC-able if there are other preceding siblings 
+            which are not <head>. -->
+          <xsl:if test="preceding-sibling::*[not(self::head)]">
+            <xsl:attribute name="data-tapas-tocme" select="true()"/>
+          </xsl:if>
+        </xsl:when>
+        <!-- If there is no user-created <head>, generate one. -->
         <xsl:otherwise>
+          <xsl:attribute name="data-tapas-tocme" select="true()"/>
           <span class="heading heading-listtype">
             <xsl:call-template name="set-label">
               <xsl:with-param name="is-field-label" select="false()"/>
@@ -1020,7 +1034,16 @@
   
   <!-- 'ographies and entries we are currently not equipped to handle. -->
   <xsl:template match="custodialHist|listRef|listRelation|listTranspose" mode="work"/>
-
+  
+  <xsl:template match="head[following-sibling::*[not(self::head)][1][tps:is-list-like(.)]]" priority="30" mode="work">
+    <tei-head class="heading heading-listtype">
+      <xsl:call-template name="addID"/>
+      <xsl:call-template name="addRend"/>
+      <xsl:attribute name="data-tapas-tocme" select="true()"/>
+      <xsl:apply-templates mode="#current"/>
+    </tei-head>
+  </xsl:template>
+  
   <xd:doc>
     <xd:desc>Generate an entry for the separate "contextual information" block</xd:desc>
   </xd:doc>

@@ -9,25 +9,59 @@ body {
   margin: 0;
 }
 /* Less variables */
+/* Less mixins */
+.block {
+  display: block;
+}
+.clearfix:before,
+.clearfix:after {
+  content: " ";
+  display: table;
+}
+.clearfix:after {
+  clear: both;
+}
+/* teibp classes */
+.-teibp-thumbnail {
+  max-height: 60px;
+}
 /* Rules for the popup dialog box */
 .ui-dialog .ui-dialog-title {
   font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
   font-size: 1em;
 }
-.og-metadata {
+/* TAPAS-generated labels */
+.tapas-label {
+  color: #9699ae;
+  font-style: italic;
+  margin-right: 0.5em;
+}
+/* Default styles for both the TAPAS Generic reader, and for the pop-up. */
+.tapas-generic .heading-og,
+#tapas-ref-dialog .heading-og {
+  display: block;
+  font-family: ‘Palatino Linotype’, ‘Book Antiqua’, Palatino, serif;
+  font-weight: normal;
+}
+.tapas-generic .og-metadata,
+#tapas-ref-dialog .og-metadata {
   margin: 0.5em 1.5em;
 }
-.og-metadata table {
+.tapas-generic .og-metadata table,
+#tapas-ref-dialog .og-metadata table {
   margin: 0.75em 0 !important;
   font-size: 0.95em !important;
 }
-.og-metadata table td {
+.tapas-generic .og-metadata table td,
+#tapas-ref-dialog .og-metadata table td {
   vertical-align: bottom;
 }
-.og-metadata table td.og-label {
+.tapas-generic .og-metadata table td.og-label,
+#tapas-ref-dialog .og-metadata table td.og-label {
   width: 80px;
 }
-.og-metadata .og-label {
+.tapas-generic .og-metadata .og-label,
+#tapas-ref-dialog .og-metadata .og-label {
   color: #9699ae;
   font-style: italic;
   margin-right: 0.5em;
@@ -35,26 +69,31 @@ body {
   text-align: right;
   font-size: .9em;
 }
-.og-metadata .og-label.og-label-inner {
+.tapas-generic .og-metadata .og-label.og-label-inner,
+#tapas-ref-dialog .og-metadata .og-label.og-label-inner {
   margin: 0 0.4em;
   display: inline;
   width: auto;
   line-height: inherit;
   text-align: inherit;
 }
-.og-metadata .og-metadata-item {
+.tapas-generic .og-metadata .og-metadata-item,
+#tapas-ref-dialog .og-metadata .og-metadata-item {
   margin-bottom: 0.5em;
   display: block;
 }
-.og-metadata .og-metadata-item .og-metadata-item {
+.tapas-generic .og-metadata .og-metadata-item .og-metadata-item,
+#tapas-ref-dialog .og-metadata .og-metadata-item .og-metadata-item {
   margin-bottom: 0;
   padding-bottom: 0.25em;
   line-height: 1em;
 }
-.og-context > * {
+.tapas-generic .og-context > *,
+#tapas-ref-dialog .og-context > * {
   margin-bottom: 0.5em;
   display: block;
 }
+/* Rules for the pop-up box. */
 #tapas-ref-dialog {
   padding: 0.5em 1em;
   background: none;
@@ -66,15 +105,8 @@ body {
 #tapas-ref-dialog .og-metadata {
   margin: 0.5em;
 }
-/* TAPAS-generated labels */
-.tapas-label {
-  color: #9699ae;
-  font-style: italic;
-  margin-right: 0.5em;
-}
 /* Rules for the Tapas Generic reader */
 .tapas-generic {
-  /* teibp classes */
   /* Choice elements */
   /* 'Ography things (inside .tapas-generic) */
   /* A */
@@ -164,42 +196,6 @@ body {
     position: static;
   }
 }
-.tapas-generic .block {
-  display: block;
-}
-.tapas-generic .clearfix:before,
-.tapas-generic .clearfix:after {
-  content: " ";
-  display: table;
-}
-.tapas-generic .clearfix:after {
-  clear: both;
-}
-.tapas-generic .block-margins {
-  display: block;
-  margin-top: 1em;
-  margin-bottom: 1em;
-}
-.tapas-generic .hide {
-  display: none;
-}
-.tapas-generic .inline {
-  display: inline;
-}
-.tapas-generic .list-item {
-  display: list-item;
-}
-.tapas-generic .italic {
-  font-style: italic;
-}
-.tapas-generic .mono {
-  font-family: Courier,monospace;
-}
-.tapas-generic .box-shadow {
-  -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
-  -moz-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
-  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
-}
 .tapas-generic .note-like {
   display: block;
   margin-top: 0;
@@ -219,18 +215,6 @@ body {
   -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
   -moz-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
-}
-.tapas-generic .quotesUS {
-  quotes: "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d";
-}
-.tapas-generic .quotesUK {
-  quotes: "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019";
-}
-.tapas-generic .quotes {
-  quotes: "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d";
-}
-.tapas-generic .-teibp-thumbnail {
-  max-height: 60px;
 }
 .tapas-generic .page-setup {
   font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
@@ -284,6 +268,19 @@ body {
   border-bottom: 1px dotted #000000;
   background: #d3e5f7;
   cursor: pointer;
+}
+.tapas-generic .contextual-item::after {
+  content: '⬥';
+  margin-bottom: 0.5em;
+  display: block;
+  color: #d3e5f7;
+  font-size: 0.85em;
+  text-align: center;
+}
+.tapas-generic .contextual-item:last-child::after,
+.tapas-generic .contextual-item .contextual-item::after {
+  content: '';
+  margin-top: 0;
 }
 .tapas-generic .contextual-item .og-entry .og-metadata table td.og-label {
   width: 115px;
@@ -682,6 +679,11 @@ body {
       font-size: 1.25em;
     }*/
 }
+.tapas-generic .heading.heading-listtype {
+  margin: 1em 0 0;
+  font-size: 1.5em;
+  text-align: center;
+}
 .tapas-generic .heading .og-label-inner {
   color: #9699ae;
   font-style: italic;
@@ -945,8 +947,7 @@ body {
           border-color: @vibrant-blue;
         }*/
 }
-.tapas-generic .list-contextual > tei-head,
-.tapas-generic .list-contextual > span.heading-listtype {
+.tapas-generic .list-contextual > tei-head {
   font-size: 1.5em;
   text-align: center;
 }

@@ -38,6 +38,104 @@ margin: 0;
 @greybackground: #CCCCCC;
 @boxpadding: 5px;
 
+/* Less mixins */
+.head-font() {
+  font-family: ‘Palatino Linotype’, ‘Book Antiqua’, Palatino, serif;//@body-font-family;
+  font-weight: normal;
+}
+
+.block {
+  display:block;
+}
+.clearfix{
+  &:before,
+  &:after {
+    content: " ";
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+.block(@margins: 0) {
+  display:block;
+  margin-top:@margins;
+  margin-bottom:@margins;
+}
+
+.block-margins() {
+  .block(1em);
+}
+
+.hide() {
+  display:none;
+}
+
+.inline() {
+  display:inline;
+}
+
+.list-item() {
+  display:list-item;
+}
+
+.italic() {
+  font-style: italic;
+}
+
+.mono() {
+  font-family:Courier,monospace;
+}
+
+.box-shadow() {
+  -webkit-box-shadow: 0px 1px 3px rgba(0,0,0,0.25);
+  -moz-box-shadow: 0px 1px 3px rgba(0,0,0,0.25);
+  box-shadow: 0px 1px 3px rgba(0,0,0,0.25);
+}
+
+.quotesUS() {
+  quotes: "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d";
+}
+
+.quotesUK() {
+  quotes: "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019";
+}
+
+.quotes() {
+	.quotesUS;
+}
+
+/* teibp classes */
+
+.-teibp-thumbnail {
+max-height: 60px;
+}
+
+.-teibp-pbFacs {
+// .hide;
+}
+
+
+.label (@content: "") {
+	&:before{
+		font-weight: bold;
+		content: @content;
+	}
+}
+
+.surround (@before, @after){
+	&:before{
+	content: @before;
+	}
+	&:after{
+		content: @after;
+	}
+}
+
+.messageReplace (@message){}
+
+
 /* Rules for the popup dialog box */
 .ui-dialog {
   
@@ -47,63 +145,82 @@ margin: 0;
   }
 }
 
-.og-metadata {
-  margin: 0.5em 1.5em;
+/* TAPAS-generated labels */
+
+.tapas-label {
+  color: @metalabel;
+  font-style: italic;
+  margin-right: 0.5em;
+}
+
+/* Default styles for both the TAPAS Generic reader, and for the pop-up. */
+.tapas-generic,
+#tapas-ref-dialog {
   
-  table {
-    margin: 0.75em 0 !important;
-    font-size: 0.95em !important;
-    
-    td {
-      vertical-align: bottom;
-      
-      &.og-label {
-        width: 80px;
-      }
-    }
-  }
-  
-  .og-label {
-    .tapas-label;
-    display: inline-block;
-    //line-height: 1.2em;
-    text-align: right;
-    font-size: .9em;
-    
-    &.og-label-inner {
-      margin: 0 0.4em;
-      display: inline;
-      width: auto;
-      line-height: inherit;
-      text-align: inherit;
-      
-      &:first-child {
-        //margin-left: 0;
-      }
-    }
-  }
-  
-  .og-metadata-item {
-    margin-bottom: 0.5em;
+  .heading-og {
     display: block;
+    .head-font;
+  }
+  
+  .og-metadata {
+    margin: 0.5em 1.5em;
+    
+    table {
+      margin: 0.75em 0 !important;
+      font-size: 0.95em !important;
+    
+      td {
+        vertical-align: bottom;
+      
+        &.og-label {
+          width: 80px;
+        }
+      }
+    }
+    
+    .og-label {
+      .tapas-label;
+      display: inline-block;
+      //line-height: 1.2em;
+      text-align: right;
+      font-size: .9em;
+    
+      &.og-label-inner {
+        margin: 0 0.4em;
+        display: inline;
+        width: auto;
+        line-height: inherit;
+        text-align: inherit;
+      
+        &:first-child {
+          //margin-left: 0;
+        }
+      }
+    }
     
     .og-metadata-item {
-      margin-bottom: 0;
-      padding-bottom: 0.25em;
-      line-height: 1em;
+      margin-bottom: 0.5em;
+      display: block;
+    
+      .og-metadata-item {
+        margin-bottom: 0;
+        padding-bottom: 0.25em;
+        line-height: 1em;
+      }
+    }
+  } // .og-metadata
+
+  .og-context {
+    //padding-bottom: 0.4em;
+  
+    > * {
+      margin-bottom: 0.5em;
+      display: block;
     }
   }
-}
+} // .tapas-generic, #tapas-ref-dialog
 
-.og-context {
-  //padding-bottom: 0.4em;
-  
-  > * {
-    margin-bottom: 0.5em;
-    display: block;
-  }
-}
-
+/* Rules for the pop-up box. */
 #tapas-ref-dialog {
   padding: 0.5em 1em;
 	background: none;
@@ -115,14 +232,6 @@ margin: 0;
   .og-metadata {
     margin: 0.5em;
   }
-}
-
-/* TAPAS-generated labels */
-
-.tapas-label {
-  color: @metalabel;
-  font-style: italic;
-  margin-right: 0.5em;
 }
 
 /* Rules for the Tapas Generic reader */
@@ -155,56 +264,6 @@ margin: 0;
     }
   }
 
-	.block {
-	  display:block;
-	}
-	.clearfix{
-	  &:before,
-	  &:after {
-	    content: " ";
-	    display: table;
-	  }
-	  &:after {
-	    clear: both;
-	  }
-	}
-
-	.block(@margins: 0) {
-	display:block;
-	margin-top:@margins;
-	margin-bottom:@margins;
-	}
-
-	.block-margins {
-	.block(1em);
-	}
-
-	.hide {
-	display:none;
-	}
-
-	.inline {
-	display:inline;
-	}
-
-	.list-item {
-	display:list-item;
-	}
-
-	.italic {
-	font-style: italic;
-	}
-
-	.mono {
-	font-family:Courier,monospace;
-	}
-
-	.box-shadow {
-	-webkit-box-shadow: 0px 1px 3px rgba(0,0,0,0.25);
-	-moz-box-shadow: 0px 1px 3px rgba(0,0,0,0.25);
-	box-shadow: 0px 1px 3px rgba(0,0,0,0.25);
-	}
-
 	.note-like {
 	.block;
 	margin:1.5em auto 1.5em auto;
@@ -221,47 +280,6 @@ margin: 0;
 	text-align:justify;
 	.box-shadow;
 	}
-
-	.quotesUS {
-	quotes: "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d";
-	}
-
-	.quotesUK {
-	quotes: "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019";
-	}
-
-	.quotes {
-		.quotesUS;
-	}
-
-	/* teibp classes */
-
-	.-teibp-thumbnail {
-	max-height: 60px;
-	}
-
-	.-teibp-pbFacs {
-	// .tapas-generic .hide;
-	}
-
-
-	.label (@content: "") {
-		&:before{
-			font-weight: bold;
-			content: @content;
-		}
-	}
-
-	.surround (@before, @after){
-		&:before{
-		content: @before;
-		}
-		&:after{
-			content: @after;
-		}
-	}
-
-	.messageReplace (@message){}
 
 	.page-setup {
 	font-family: @body-font-family;
@@ -312,6 +330,21 @@ margin: 0;
   }
   
   .contextual-item {
+    
+    &::after {
+      content: '⬥';
+      margin-bottom: 0.5em;
+      display: block;
+      color: @tapas-blue;
+      font-size: 0.85em;
+      text-align: center;
+    }
+    
+    &:last-child::after,
+    .contextual-item::after {
+      content: '';
+      margin-top: 0;
+    }
     
     .heading-og {
       //font-weight: bold;
@@ -575,7 +608,7 @@ margin: 0;
 	c {}
 
 	cRefPattern {
-	.tapas-generic .hide;
+	.hide;
 	}
 
 	caesura {}
@@ -862,7 +895,7 @@ margin: 0;
 	}
 
 	encodingDesc {
-	.tapas-generic .hide;
+	.hide;
 	}
 
 	entry {}
@@ -893,7 +926,7 @@ margin: 0;
 	explicit {}
 
 	fileDesc > extent {
-	.tapas-generic .hide;
+	.hide;
 	}
 
 	/* f */
@@ -1012,7 +1045,7 @@ margin: 0;
 	}
 
 	graphic {
-	.tapas-generic .hide;
+	.hide;
 	}
 	group {}
 
@@ -1035,6 +1068,11 @@ margin: 0;
       .tapas-label;
       font-size: 1.25em;
     }*/
+    &.heading-listtype {
+      margin: 1em 0 0;
+      font-size: 1.5em;
+      text-align: center;
+    }
     
     .og-label-inner {
       .tapas-label;
@@ -1114,7 +1152,7 @@ margin: 0;
 	}
 
 	.heading[data-tapas-att-type="supplied"] {
-	.tapas-generic .hide;
+	.hide;
 	}
   
   .heading.heading-og > .heading-sub {
@@ -1335,7 +1373,7 @@ margin: 0;
 	}
 
 	text list[type=ordered] label {
-	.tapas-generic .hide;
+	.hide;
 	}
 
 	text list[type=ordered] > item {
@@ -1444,10 +1482,8 @@ margin: 0;
       }
     } // .list-contextual .list-contextual
     
-    > tei-head, 
-    > span.heading-listtype {
+    > tei-head, {
       font-size: 1.5em;
-      //display: unset;
       text-align: center;
     }
   } // .list-contextual
@@ -1574,7 +1610,7 @@ margin: 0;
 	nationality {}
 
 	node {
-	.tapas-generic .hide
+	.hide
 	}
 
 	normalization {}
@@ -1583,7 +1619,7 @@ margin: 0;
     display: block;
     
     &[data-tapas-anchored="true"] {
-    	.tapas-generic .hide;
+    	.hide;
     }
 	
   	&[place~="foot"],
@@ -1622,7 +1658,7 @@ margin: 0;
 	}
 
 	notesStmt {
-	.tapas-generic .hide;
+	.hide;
 	}
 
 	num {}
@@ -1638,7 +1674,7 @@ margin: 0;
 	oRef {}
 
 	oVar {
-	.tapas-generic .italic;
+	.italic;
 	}
 
 	objectDesc {}
@@ -1788,7 +1824,7 @@ margin: 0;
 	}
 
 	profileDesc {
-	.tapas-generic .hide;
+	.hide;
 	}
 
 	projectDesc {}
@@ -1810,7 +1846,7 @@ margin: 0;
 	}
 
 	publicationStmt > * {
-	.tapas-generic .hide;
+	.hide;
 	}
 
 	publicationStmt {
@@ -1818,13 +1854,13 @@ margin: 0;
 	}
 
 	publicationStmt > date {
-	.tapas-generic .hide;
+	.hide;
 	}
 
 	publisher {}
 
 	publicationStmt > publisher {
-	.tapas-generic .hide;
+	.hide;
 	}
 
 	purpose {}
@@ -1971,7 +2007,7 @@ margin: 0;
 	restore {}
 
 	revisionDesc {
-	.tapas-generic .hide;
+	.hide;
 	}
 
 	rhyme {}
@@ -2050,7 +2086,7 @@ margin: 0;
 	series {}
 
 	seriesStmt {
-	.tapas-generic .hide;
+	.hide;
 	}
 
 	set {}
@@ -2109,7 +2145,7 @@ margin: 0;
 	socecStatus {}
 
 	sound {
-	.tapas-generic .italic;
+	.italic;
 	}
 
 	source {
@@ -2117,7 +2153,7 @@ margin: 0;
 	}
 
 	sourceDesc {
-	.tapas-generic .hide;
+	.hide;
 	}
 
 	sp {}
@@ -2151,7 +2187,7 @@ margin: 0;
 
 	stage {
 	.block-margins;
-	.tapas-generic .italic;
+	.italic;
 	}
 
 	stamp {
@@ -2176,7 +2212,7 @@ margin: 0;
 	surname {}
 
 	surplus {
-	.tapas-generic .hide
+	.hide
 	}
 
 	surrogates {}
@@ -2209,7 +2245,7 @@ margin: 0;
 	}
 
 	#tapasToolbox h1 {
-	.tapas-generic .hide;
+	.hide;
 	}
 
 	#tapasToolbox label {
@@ -2262,7 +2298,7 @@ margin: 0;
 	teiCorpus {}
 
 	#tei_contextual {
-	.tapas-generic .hide
+	.hide
 	}
 
 	teiHeader {
@@ -2281,11 +2317,11 @@ margin: 0;
 	}
 
 	textClass {
-	.tapas-generic .hide;
+	.hide;
 	}
 
 	textDesc {
-	.tapas-generic .hide;
+	.hide;
 	}
 
 	textLang {}
@@ -2297,13 +2333,13 @@ margin: 0;
 	timeline {}
 
 	TEI teiHeader + tapas_metadata {
-	 .tapas-generic .hide;
+	 .hide;
 	}
 
 	TEI tapas_metadata contributor,
 	TEI tapas_metadata rights,
 	TEI tapas_metadata source {
-	.tapas-generic .hide;
+	.hide;
 	}
 
 	TEI tapas_metadata date, TEI tapas_metadata creator {
@@ -2328,7 +2364,7 @@ margin: 0;
 	TEI title[level=a][prev]:before {content: "" !important;}
 
 	title[level=m] {
-	    .tapas-generic .italic;
+	    .italic;
 	}
 
 	/* We transformed teiHeader//title to tei.title  */
@@ -2391,7 +2427,7 @@ margin: 0;
 	triangle {}
 
 	typeDesc {
-	.tapas-generic .hide;
+	.hide;
 	}
 
 	typeNote {}
@@ -2450,7 +2486,7 @@ margin: 0;
 	variantEncoding {}
 
 	view {
-	.tapas-generic .italic;
+	.italic;
 	}
 
 	vocal {}
@@ -2538,7 +2574,7 @@ margin: 0;
 	background: @note-background-color;
 	font-family: Arvo, Verdana, sans-serif;
 	text-align:justify;
-	.tapas-generic .box-shadow;
+	.box-shadow;
 	width:12em;
 	}
 
@@ -2569,7 +2605,7 @@ margin: 0;
 
 	/* loading animation */
 	#loading {
-	.tapas-generic .hide;
+	.hide;
 	position:fixed;
 	left:0;
 	top:0;
