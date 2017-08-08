@@ -376,7 +376,7 @@
         <xsl:call-template name="save-gi"/>
         <xsl:call-template name="get-attributes"/>
         <!-- An 'ography entry is only considered TOCable if it has nested entries. -->
-        <xsl:if test="$nestedLists">
+        <xsl:if test="count($nestedLists) gt 1 or $nestedLists[tps:is-list-like(.)]">
           <xsl:attribute name="data-tapas-tocme" select="true()"/>
         </xsl:if>
         <xsl:variable name="header">

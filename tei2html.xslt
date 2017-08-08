@@ -1039,7 +1039,7 @@
     <tei-head class="heading heading-listtype">
       <xsl:call-template name="addID"/>
       <xsl:call-template name="addRend"/>
-      <xsl:attribute name="data-tapas-tocme" select="true()"/>
+      <!--<xsl:attribute name="data-tapas-tocme" select="true()"/>-->
       <xsl:apply-templates mode="#current"/>
     </tei-head>
   </xsl:template>
@@ -1461,7 +1461,7 @@
   <xd:doc>
     <xd:desc>Generate a table of contents, if needed</xd:desc>
   </xd:doc>
-  <xsl:template match="html:div[ @class eq 'tapas-generic']" mode="TOCer">
+  <xsl:template match="html:div[ @class eq 'tapas-generic' ]" mode="TOCer">
     <xsl:copy>
       <xsl:apply-templates mode="TOCer" select="@*"/>
       <xsl:apply-templates mode="TOCer"
@@ -1484,7 +1484,7 @@
     <xsl:variable name="maxlen" select="34"/>
     <li>
       <xsl:variable name="label">
-        <xsl:number level="multiple" count="html:div[@data-tapas-tocme]|html:lg[@data-tapas-tocme]"
+        <xsl:number level="multiple" count="html:*[@data-tapas-tocme]"
           format="I. 1. A. 1. a. 1. i. "/>
       </xsl:variable>
       <xsl:attribute name="data-tapas-toc-depth" select="count( tokenize( normalize-space( $label ),' '))"/>

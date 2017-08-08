@@ -76,6 +76,46 @@
     <xsl:value-of select="tps:is-date-like-attr($attribute) and matches(name($attribute),'^when')"/>
   </xsl:function>
   
+  <!-- Given a string, determine if it can be cast into one of the W3C date/time 
+    formats. -->
+  <xsl:function name="tps:is-date-w3c-castable" as="xs:boolean">
+    <xsl:param name="date" as="xs:string"/>
+    <xsl:value-of select=" $date castable as xs:dateTime
+                        or $date castable as xs:date
+                        or $date castable as xs:time
+                        or $date castable as xs:gYearMonth
+                        or $date castable as xs:gMonthDay
+                        or $date castable as xs:gMonth
+                        or $date castable as xs:gDay
+                        or $date castable as xs:gYear"/>
+  </xsl:function>
+  
+  <!-- Given a att.datable attribute, return a human-readable label for the 
+    attribute's name. -->
+  <xsl:function name="tps:get-date-like-attr-label" as="xs:string?">
+    <xsl:param name="attribute" as="attribute()" required="yes"/>
+    <xsl:if test="not(tps:is-date-like-attr($attribute))">
+      <xsl:message>tps:get-date-like-attr-label() requires a date-like attribute as input!</xsl:message>
+    </xsl:if>
+    <xsl:choose>
+      <xsl:when test="starts-with($attribute,'when')">
+        <xsl:text/>
+      </xsl:when>
+      <xsl:when test="starts-with($attribute,'from')">
+        <xsl:text>from</xsl:text>
+      </xsl:when>
+      <xsl:when test="starts-with($attribute,'to')">
+        <xsl:text>to</xsl:text>
+      </xsl:when>
+      <xsl:when test="starts-with($attribute,'notBefore')">
+        <xsl:text>not before</xsl:text>
+      </xsl:when>
+      <xsl:when test="starts-with($attribute,'notAfter')">
+        <xsl:text>not after</xsl:text>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:function>
+  
   <!-- Given an attribute presumed to belong to att.datable, return a human-readable 
     version. -->
   <xsl:function name="tps:make-date-attribute-readable" as="xs:string?">
@@ -95,20 +135,6 @@
         </xsl:when>
       </xsl:choose>
     </xsl:if>
-  </xsl:function>
-  
-  <!-- Given a string, determine if it can be cast into one of the W3C date/time 
-    formats. -->
-  <xsl:function name="tps:is-date-w3c-castable" as="xs:boolean">
-    <xsl:param name="date" as="xs:string"/>
-    <xsl:value-of select=" $date castable as xs:dateTime
-                        or $date castable as xs:date
-                        or $date castable as xs:time
-                        or $date castable as xs:gYearMonth
-                        or $date castable as xs:gMonthDay
-                        or $date castable as xs:gMonth
-                        or $date castable as xs:gDay
-                        or $date castable as xs:gYear"/>
   </xsl:function>
   
   <!-- Given a string presumed to be in a W3C date/time format, create a human 
