@@ -147,6 +147,7 @@
     <xsl:variable name="pass1">
       <div class="tapas-generic">
         <xsl:call-template name="toolbox"/>
+        <xsl:call-template name="toc"/>
         <xsl:call-template name="dialog"/>
         <xsl:call-template name="wrapper"/>
         <xsl:call-template name="contextual"/>
@@ -293,6 +294,17 @@
       <xsl:call-template name="rendition2style"/>
       <xsl:call-template name="generate-title"/>
     </head>
+  </xsl:template>
+  
+  <xsl:template name="toc">
+    <div id="TOC">
+      <xsl:variable name="title" as="node()">
+        <xsl:call-template name="generate-title"/>
+      </xsl:variable>
+      <span>
+        <xsl:value-of select="substring-after(normalize-space($title), $tapasTitle)"/>
+      </span>
+    </div>
   </xsl:template>
   
   <xsl:template name="toolbox">
@@ -1461,7 +1473,17 @@
   <xd:doc>
     <xd:desc>Generate a table of contents, if needed</xd:desc>
   </xd:doc>
-  <xsl:template match="html:div[ @class eq 'tapas-generic' ]" mode="TOCer">
+  <xsl:template match="html:div[ @id eq 'TOC' ]" mode="TOCer">
+    <xsl:copy>
+      <xsl:apply-templates mode="TOCer" select="@*"/>
+      <xsl:apply-templates mode="TOCer"/>
+      <ol type="I">
+        <xsl:apply-templates mode="makeTOCentry" 
+          select="parent::*/html:div[ @id eq 'tei_wrapper' ]//*[@data-tapas-tocme]"/>
+      </ol>
+    </xsl:copy>
+  </xsl:template>
+  <!--<xsl:template match="html:div[ @class eq 'tapas-generic' ]" mode="TOCer">
     <xsl:copy>
       <xsl:apply-templates mode="TOCer" select="@*"/>
       <xsl:apply-templates mode="TOCer"
@@ -1474,7 +1496,7 @@
       <xsl:apply-templates mode="TOCer"
                            select="html:div[ @id = ('tei_wrapper','tei_contextual') ]"/>
     </xsl:copy>
-  </xsl:template>
+  </xsl:template>-->
   
   <xd:doc>
     <xd:desc>Create TOC entry</xd:desc>
