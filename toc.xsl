@@ -28,8 +28,8 @@
         <style>
 <![CDATA[ ol { margin-left: 2em; color: gray; }
           li ol { margin-left: 0; }
-          li { list-style-position: outside; }
-          li span.toc-item { padding-left: 0.5em; color: black; } ]]>
+          li { margin-top: 0.25em; list-style-position: outside; }
+          li span.toc-item { padding-left: 0.5em; display: block; color: black; } ]]>
         </style>
       </head>
       <body>
@@ -38,7 +38,10 @@
         <xsl:variable name="headersMarked">
           <xsl:apply-templates select="TEI/text"/>
         </xsl:variable>
-        <xsl:apply-templates select="$headersMarked" mode="toc"/>
+        <xsl:variable name="toc">
+          <xsl:apply-templates select="$headersMarked" mode="toc"/>
+        </xsl:variable>
+        <xsl:copy-of select="$toc"/>
       </body>
     </html>
   </xsl:template>
@@ -50,7 +53,7 @@
     </xsl:copy>
   </xsl:template>
   
-  <xsl:template match="*[head]">
+  <xsl:template match="*[ dateline | head | opener ]" priority="-5">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <xsl:attribute name="data-tapas-tocme" select="true()"/>
@@ -58,58 +61,107 @@
     </xsl:copy>
   </xsl:template>
   
+  <xsl:template match="docTitle | titlePage">
+    <xsl:copy-of select="."/>
+  </xsl:template>
+  
   <!-- TOC mode -->
   
-  <xsl:template match="*" priority="-10" mode="toc">
+  <xsl:template match="*" priority="-10" mode="toc toc-outer">
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
-  <xsl:template match="text()" mode="toc"/>
+  <xsl:template match="text()" mode="toc toc-outer"/>
   
-  <xsl:template name="tocList" match="*[@data-tapas-tocme][1]" mode="toc" priority="-5">
-    <xsl:param name="depth" select="0" as="xs:integer" tunnel="yes"/>
-    <xsl:param name="otherMembers" select="following-sibling::*[@data-tapas-tocme]" as="node()*"/>
+  <xsl:template match="/text" mode="toc">
+    <xsl:variable name="tocMes" 
+      select="descendant::*[@data-tapas-tocme][not(ancestor::*[@data-tapas-tocme])]"/>
+    <xsl:variable name="typeAttr" as="attribute()">
+      <xsl:call-template name="list-type">
+        <xsl:with-param name="depth" select="0"/>
+      </xsl:call-template>
+    </xsl:variable>
     <xsl:choose>
-      <!-- If this is the outermost item, and there are no other items on this level, 
-        suppress the heading and continue applying templates using a $depth of 0. -->
-      <xsl:when test="$depth eq 0 and not(exists($otherMembers))">
-        <xsl:apply-templates select="*" mode="toc">
-          <xsl:with-param name="suppress-heading" select="true()"/>
-        </xsl:apply-templates>
+      <xsl:when test="count($tocMes) eq 0"/>
+      <xsl:when test="count($tocMes) eq 1">
+        <ol>
+          <xsl:copy-of select="$typeAttr"/>
+          <xsl:apply-templates select="$tocMes/*" mode="toc-outer">
+            <xsl:with-param name="depth" select="1" tunnel="yes"/>
+          </xsl:apply-templates>
+        </ol>
       </xsl:when>
       <xsl:otherwise>
         <ol>
-          <xsl:attribute name="type">
-            <xsl:variable name="numberType" select="('I', '1', 'A', '1', 'a', '1', 'i')"/>
-            <xsl:variable name="useIndex" select="($depth + 1) mod count($numberType)"/>
-            <xsl:value-of select="$numberType[$useIndex]"/>
-          </xsl:attribute>
-          <li>
-            <xsl:apply-templates mode="#current">
-              <xsl:with-param name="depth" select="$depth + 1" tunnel="yes"/>
+          <xsl:copy-of select="$typeAttr"/>
+          <xsl:for-each select="( 1 to count($tocMes) )">
+            <xsl:variable name="index" select="."/>
+            <xsl:variable name="textChild" select="$tocMes[$index]"/>
+            <xsl:variable name="following" select="subsequence($tocMes, $index + 1)"/>
+            <xsl:apply-templates select="$textChild" mode="toc-outer">
+              <xsl:with-param name="depth" select="1" tunnel="yes"/>
+              <xsl:with-param name="other-members" select="$following"/>
             </xsl:apply-templates>
-          </li>
-          <xsl:if test="exists($otherMembers)">
-            <xsl:for-each select="$otherMembers">
-              <li>
-                <xsl:apply-templates select="*" mode="toc">
-                  <xsl:with-param name="depth" select="$depth + 1" tunnel="yes"/>
-                </xsl:apply-templates>
-              </li>
-            </xsl:for-each>
-          </xsl:if>
+          </xsl:for-each>
         </ol>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
   
+  <xsl:template match="*[@data-tapas-tocme]" mode="toc-outer">
+    <xsl:param name="other-members" select="following-sibling::*[@data-tapas-tocme]" as="node()*"/>
+    <li>
+      <xsl:apply-templates select="*" mode="toc"/>
+    </li>
+  </xsl:template>
+  
+  <xsl:template match="*[@data-tapas-tocme][1]" mode="toc" priority="-5">
+    <xsl:param name="depth" select="0" as="xs:integer" tunnel="yes"/>
+    <xsl:param name="other-members" select="following-sibling::*[@data-tapas-tocme]" as="node()*"/>
+    <ol>
+      <li>
+        <xsl:apply-templates mode="#current">
+          <xsl:with-param name="depth" select="$depth + 1" tunnel="yes"/>
+        </xsl:apply-templates>
+      </li>
+      <xsl:if test="exists($other-members)">
+        <xsl:for-each select="$other-members">
+          <li>
+            <xsl:apply-templates select="*" mode="toc">
+              <xsl:with-param name="depth" select="$depth + 1" tunnel="yes"/>
+            </xsl:apply-templates>
+          </li>
+        </xsl:for-each>
+      </xsl:if>
+    </ol>
+  </xsl:template>
+  
   <xsl:template match="*[@data-tapas-tocme][position() ne 1]" mode="toc"/>
   
-  <xsl:template match="*[@data-tapas-tocme]/head | titleStmt/title" mode="toc">
+  <xsl:template match="titleStmt/title
+                    | *[@data-tapas-tocme]/dateline
+                    | *[@data-tapas-tocme]/head
+                    | *[@data-tapas-tocme]/opener
+                    | *[@data-tapas-tocme]/opener/dateline" mode="toc">
     <xsl:param name="suppress-heading" select="false()" as="xs:boolean"/>
-    <xsl:if test="not($suppress-heading)">
-      <span class="toc-item"><xsl:value-of select="."/></span>
-    </xsl:if>
+    <xsl:choose>
+      <xsl:when test="$suppress-heading"/>
+      <xsl:when test="self::opener[dateline]">
+        <xsl:apply-templates mode="toc"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <span class="toc-item"><xsl:value-of select="."/></span>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template name="list-type">
+    <xsl:param name="depth" as="xs:integer" required="yes"/>
+    <xsl:attribute name="type">
+      <xsl:variable name="numberType" select="('I', '1', 'A', '1', 'a', '1', 'i')"/>
+      <xsl:variable name="useIndex" select="($depth + 1) mod count($numberType)"/>
+      <xsl:value-of select="$numberType[$useIndex]"/>
+    </xsl:attribute>
   </xsl:template>
   
 </xsl:stylesheet>
