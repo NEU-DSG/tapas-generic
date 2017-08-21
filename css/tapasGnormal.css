@@ -801,6 +801,7 @@ body {
   display: inline-block;
   min-width: 1.5em;
   float: right;
+  color: gray;
 }
 .tapas-generic label + item {
   list-style: none;
