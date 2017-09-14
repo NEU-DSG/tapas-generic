@@ -60,6 +60,12 @@ body {
 #tapas-ref-dialog .og-metadata table td.og-label {
   width: 80px;
 }
+.tapas-generic .og-metadata table thead td.og-label,
+#tapas-ref-dialog .og-metadata table thead td.og-label {
+  padding: 0.25em 0;
+  color: black;
+  font-size: inherit;
+}
 .tapas-generic .og-metadata .og-label,
 #tapas-ref-dialog .og-metadata .og-label {
   color: #9699ae;
@@ -86,7 +92,7 @@ body {
 #tapas-ref-dialog .og-metadata .og-metadata-item .og-metadata-item {
   margin-bottom: 0;
   padding-bottom: 0.25em;
-  line-height: 1em;
+  line-height: 1.4em;
 }
 .tapas-generic .og-context > *,
 #tapas-ref-dialog .og-context > * {

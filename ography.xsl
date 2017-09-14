@@ -196,7 +196,7 @@
   <!-- Using the map of element/attribute names to human-readable labels, get the 
     label for a given name. -->
   <xsl:function name="tps:get-readable-label" as="xs:string?">
-    <xsl:param name="name" as="xs:string" required="yes"/>
+    <xsl:param name="name" as="xs:string"/>
     <xsl:choose>
       <xsl:when test="$name ne ''">
         <xsl:variable name="label" select="$labelMap[@key eq $name]/normalize-space(.)"/>
@@ -388,7 +388,7 @@
         <!-- Display metadata first, then contextual <note>s and <p>s. -->
         <div class="og-entry">
           <div class="og-metadata">
-            <xsl:variable name="tableContents">
+            <xsl:variable name="tableContents" as="node()*">
               <xsl:apply-templates select="@*" mode="og-entry-att"/>
               <!-- Save nested lists and 'ography entries for the end of this entry. -->
               <xsl:apply-templates select="*[not(self::head)][not(self::label)]
@@ -398,11 +398,37 @@
                 <xsl:with-param name="entryHeading" select="$header[1]" tunnel="yes"/>
               </xsl:apply-templates>
             </xsl:variable>
-            <xsl:if test="$tableContents//*:tr">
-              <table>
-                <xsl:copy-of select="$tableContents"/>
-              </table>
-            </xsl:if>
+            <xsl:choose>
+              <xsl:when test="$tableContents/self::*:table">
+                <xsl:variable name="contentsByGi" select="$tableContents/local-name(.)"/>
+                <xsl:variable name="tableIndices" 
+                  select="index-of($contentsByGi, 'table')"/>
+                <xsl:for-each select="1 to count($contentsByGi)">
+                  <xsl:variable name="index" select="."/>
+                  <xsl:choose>
+                    <xsl:when test="$contentsByGi[$index] ne 'table' 
+                                and $index gt 1 
+                                and $contentsByGi[$index - 1] ne 'table'"/>
+                    <xsl:when test="$contentsByGi[$index] ne 'table'">
+                      <xsl:variable name="nextTable" select="$tableIndices[. gt $index][1]"/>
+                      <xsl:variable name="seqLength" select="$nextTable - $index"/>
+                      <table>
+                        <xsl:copy-of select="subsequence($tableContents, $index, $seqLength)"/>
+                      </table>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <xsl:copy-of select="$tableContents[$index]"/>
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </xsl:for-each>
+              </xsl:when>
+              <xsl:when test="$tableContents//*:tr">
+                <table>
+                  <xsl:copy-of select="$tableContents"/>
+                </table>
+              </xsl:when>
+              <xsl:otherwise/>
+            </xsl:choose>
           </div>
           <div class="og-context">
             <xsl:apply-templates select="*[tps:is-desc-like(.)]" mode="og-entry"/>
@@ -419,10 +445,10 @@
   
   <xsl:template match="@xml:id" mode="og-gen og-entry">
     <xsl:param name="doc-uri" as="xs:string" tunnel="yes"/>
-    <xsl:variable name="id" select="data(.)"/>
+    <xsl:variable name="ident" select="data(.)"/>
     <xsl:variable name="ns" select="tps:get-og-prefix($doc-uri)"/>
-    <xsl:attribute name="id" select="if ( $ns eq 'og0' ) then $id 
-                                     else concat($ns,'-',$id)"/>
+    <xsl:attribute name="id" select="if ( $ns eq 'og0' ) then $ident 
+                                     else concat($ns,'-',$ident)"/>
   </xsl:template>
   
   <!--<xsl:template match="@parts[parent::nym] | @ref | @target" mode="og-gen og-entry">
@@ -442,6 +468,22 @@
       </xsl:if>
     </xsl:if>
   </xsl:template>-->
+  
+  <xsl:template match="analytic | monogr | imprint | series" mode="og-entry">
+    <xsl:param name="entryHeading" select="''" tunnel="yes"/>
+    <xsl:variable name="me" select="local-name(.)"/>
+    <table class="og-metadata-item">
+      <thead>
+        <tr>
+          <td class="og-label">
+            <xsl:call-template name="set-label"/>
+          </td>
+          <td></td>
+        </tr>
+      </thead>
+      <xsl:apply-templates mode="#current"/>
+    </table>
+  </xsl:template>
   
   <xsl:template match="*[@xml:id  
                           or self::analytic 
@@ -506,11 +548,13 @@
       <xsl:call-template name="build-metadata-body">
         <xsl:with-param name="label">
           <!-- If there is no usable content in $respRoles, use the generic term "contributor". -->
-          <xsl:value-of select="if ( $respRoles ne '' ) then $respRoles
-                                else 'contributor'"/>
+          <xsl:variable name="content" 
+            select="if ( $respRoles ne '' ) then $respRoles
+                    else 'contributor'"/>
+          <xsl:value-of select="concat($content,':')"/>
         </xsl:with-param>
         <xsl:with-param name="labelled">
-          <xsl:call-template name="passthru-og-element"/>
+          <xsl:apply-templates select="* except resp" mode="#current"/>
         </xsl:with-param>
       </xsl:call-template>
     </tbody>
@@ -870,13 +914,13 @@
   <xsl:template match="@*" mode="og-entry-att"/>
   
   <xsl:template match="@copyOf | @corresp | @next | @prev | @sameAs | @sync" mode="og-entry-att">
-    <xsl:variable name="content">
+    <xsl:variable name="content" as="attribute()">
       <xsl:call-template name="og-referrer">
         <xsl:with-param name="onAttribute" select="true()"/>
       </xsl:call-template>
     </xsl:variable>
     <xsl:call-template name="build-metadata-body">
-      <xsl:with-param name="labelled">
+      <xsl:with-param name="labelled" as="attribute()">
         <xsl:copy-of select="$content"/>
       </xsl:with-param>
     </xsl:call-template>
