@@ -15,12 +15,12 @@
   <css_files>
     <css_file>css/tapasGdiplo.css</css_file>
     <css_file>css/tapasGnormal.css</css_file>
-    <css_file>css/jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css</css_file>
+    <css_file>js/jquery-ui-1.12.1/jquery-ui.css</css_file>
   </css_files>
   <js_files>
-    <js_file>js/jquery/jquery.min.js</js_file>
-    <js_file>js/jquery-ui/ui/minified/jquery-ui.min.js</js_file>
-    <js_file>js/jquery/plugins/jquery.blockUI.js</js_file>
+    <js_file>js/jquery/jquery-3.2.1.min.js</js_file>
+    <js_file>js/jquery-ui-1.12.1/jquery-ui.min.js</js_file>
+    <js_file>js/jquery/plugins/jquery.blockUI.min.js</js_file>
     <js_file>js/contextualItems.js</js_file>
     <js_file>js/tapas-generic.js</js_file>
   </js_files>

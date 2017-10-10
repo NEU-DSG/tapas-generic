@@ -46,10 +46,10 @@
   <xsl:param name="assets-base" select="'../'"/>
   <xsl:param name="view.diplo" select="concat($assets-base,'css/tapasGdiplo.css')"/>
   <xsl:param name="view.norma" select="concat($assets-base,'css/tapasGnormal.css')"/>
-  <xsl:param name="jqueryUIcss"    select="concat($assets-base,'css/jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css')"/>
-  <xsl:param name="jqueryJS"   select="concat($assets-base,'js/jquery/jquery.min.js')"/>
-  <xsl:param name="jqueryUIJS" select="concat($assets-base,'js/jquery-ui/ui/minified/jquery-ui.min.js')"/>
-  <xsl:param name="jqueryBlockUIJS" select="concat($assets-base,'js/jquery/plugins/jquery.blockUI.js')"/>
+  <xsl:param name="jqueryUIcss"    select="concat($assets-base,'js/jquery-ui-1.12.1/jquery-ui.css')"/>
+  <xsl:param name="jqueryJS"   select="concat($assets-base,'js/jquery/jquery-3.2.1.min.js')"/>
+  <xsl:param name="jqueryUIJS" select="concat($assets-base,'js/jquery-ui-1.12.1/jquery-ui.min.js')"/>
+  <xsl:param name="jqueryBlockUIJS" select="concat($assets-base,'js/jquery/plugins/jquery.blockUI.min.js')"/>
   <xsl:param name="contextualJS" select="concat($assets-base,'js/contextualItems.js')"/>
   <xsl:param name="teibpJS"    select="concat($assets-base,'js/tapas-generic.js')"/>
   <xsl:param name="fullHTML"   select="'false'"/> <!-- set to 'true' to get browsable output for debugging -->

@@ -40,7 +40,7 @@ Tapas.displayRefData = function(e) {
     if (  aTarget.length !== 0  ) {
         //bop back up to the enclosing p@class='contextualItem'. it looks like that's the most reliable container
         //var parentTarget = aTarget.parent("[class='contextualItem']");
-
+        
         //new version, go to the parent div
         //var parentTarget = aTarget.parent("div");
         //console.log(parentTarget);
@@ -50,7 +50,7 @@ Tapas.displayRefData = function(e) {
             //html += Tapas.ographyToHtml(parentTarget);
             html += aTarget.children('div.og-entry').html();
             //console.log("ref data is " + html);
-
+            
             //send the parentTarget (the ography element to the dialog so it can
             //dig up the identifier text
             Tapas.refreshDialog(html, aTarget, coords);
@@ -65,19 +65,20 @@ Tapas.displayRefData = function(e) {
 Tapas.refreshDialog = function(html, target, coords) {
     jQuery("#tapas-ref-dialog").dialog('close');
     var ogHeader = target.children('.heading-og'),
-        headerTitle = ogHeader.length === 0 ? jQuery(target).text() : jQuery(ogHeader).text(),
-        hasEntry = $(html).text() !== '',
+        headerTitle = ogHeader.length === 0 ? $(target).text() : $(ogHeader).text(),
+        hasEntry = html.length > 0 || $(html).text() !== '',
         useTitle = hasEntry ? headerTitle : null,
         useHTML = hasEntry ? html : headerTitle;
-    console.log("tapas ref dialog text is '"+useHTML+"'");
-    //placing the dialog for data display in the big white space currently there. Adjust position via jQueryUI rules for different behavior
-    // jQuery("#tapas-ref-dialog").dialog( "option", "position", { my: "right top+"+coords[0]/2, at: "right top+"+coords[0]/2, of: window });
-    jQuery("#tapas-ref-dialog").dialog( "option", "position", { my: "left+10 top+150", at: "left+10 top+150", of: window });
+    //console.log("tapas ref dialog text is '"+useHTML+"'");
+    // Set the position of the dialog.
+    $('#tapas-ref-dialog').dialog('option', 'position', {
+      my:"left top",
+      at: "left+10 top+150",
+      of: window
+    });
     //console.log(target);
     jQuery("#tapas-ref-dialog").html(useHTML);
-    if ( !hasEntry ) {
-      jQuery("#tapas-ref-dialog").dialog( "option", "title", useTitle);
-    }
+    jQuery("#tapas-ref-dialog").dialog( "option", "title", useTitle);
     jQuery("#tapas-ref-dialog").dialog('open');
 }
 
@@ -89,7 +90,7 @@ Tapas.displayNoteData = function(e) {
     var note = jQuery(".tapas-generic note[data-tapas-note-num = '" + tapasNoteNum + "']");
     html = note.html();
     Tapas.refreshDialog(html, target, coords);
-    console.log("note data is " + html);
+    console.log("note data is: " + html);
 }
 
 // Tapas.displayRefNoteData = function(e) {
