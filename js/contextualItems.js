@@ -46,8 +46,6 @@ Tapas.displayRefData = function(e) {
         //console.log(parentTarget);
         //if (aTarget) {
             //html += "<p class='tei-element'>TEI element: " + e.target.nodeName + "</p>";
-            //desperate effort to produce a consistent, non-code duplicating way to build HTML for the info dialog
-            //html += Tapas.ographyToHtml(parentTarget);
             html += aTarget.children('div.og-entry').html();
             //console.log("ref data is " + html);
             
@@ -144,46 +142,6 @@ Tapas.linkifyExternalRef = function(el) {
     });
     return aEl;
 }
-
-/**
- * Produce the HTML to stuff into the modal (popup) for displaying more data
- * Branch around the "ography" type passed in to get to the right nodes, and the right data within them
- *
- * Currently this is half-built. it might be abandoned, depending on the needs and complexity for data display in the modal
- */
-
-Tapas.ographyToHtml = function(ography) {
-    //designers will want to watch the classes assigned here. dialog, ography, and ographyType to customize the jQueryUi elements
-    //themeroller might be our friend here
-    var wrapperHtml = "<div class='wrapper dialog ography '>";
-
-    var html = '';
-    var children = ography.children("[data-tapas-label]");
-    children.each(function(index, child) {
-        switch(jQuery(child).data('tapasLabel')) {
-
-            default:
-                var childHtml = jQuery(child).html();
-                if (childHtml) {
-                    html += "<p>" + "<span class='ography-data'>" + jQuery(child).data('tapasLabel') + ": </span> " + childHtml + "</p>";
-                }
-            break;
-        }
-    });
-    if ( html == '' ) {
-        html = "<p>No additional data</p>";
-    }
-    return wrapperHtml + html + "</div>";
-}
-
-Tapas.closeDialog = function() {
-   jQuery("#tapas-ref-dialog").dialog('close');
-}
-
-Tapas.findOgraphyType = function(ography) {
-    //console.log(ography);
-}
-
 
 function initialize_tapas_generic(){
   var refs = jQuery(".tapas-generic [ref]");
