@@ -217,7 +217,7 @@
   </xsl:function>
   
   <!-- Tests an element to see if it might function as narrative context for an 
-    'ograpy entry. -->
+    'ography entry. -->
   <xsl:function name="tps:is-desc-like" as="xs:boolean">
     <xsl:param name="element" as="node()"/>
     <xsl:value-of select="exists($element[self::*]
@@ -233,7 +233,9 @@
     <xsl:value-of select="exists($element[self::*]
                                   [ self::castList | self::listBibl | self::listEvent
                                   | self::listNym | self::listOrg | self::listPerson
-                                  | self::listPlace ]
+                                  | self::listPlace
+                                  | self::relatedItem[*[tps:is-og-entry(.)]]
+                                  ]
                                 )"/>
   </xsl:function>
   
@@ -334,7 +336,8 @@
   <!-- Modify the names of <head> and <title>, since HTML has different expectations 
     for elements with those names. -->
   <xsl:template match="head[not(ancestor::*[tps:is-desc-like(.)])] 
-                     | title[not(ancestor::*[tps:is-desc-like(.)])]" mode="og-entry">
+                     | title[not(parent::analytic or parent::monogr)]
+                            [not(ancestor::*[tps:is-desc-like(.)])]" mode="og-entry">
     <xsl:param name="entryHeading" select="''" tunnel="yes"/>
     <xsl:choose>
       <!-- If the current node exactly matches the heading of an 'ography entry (and 
@@ -342,10 +345,26 @@
       <xsl:when test="$entryHeading ne '' and $entryHeading eq normalize-space(.) and not(*)"/>
       <xsl:otherwise>
         <xsl:call-template name="build-metadata-body">
-          
+          <xsl:with-param name="labelled">
+            <xsl:element name="tei-{local-name(.)}">
+              <xsl:call-template name="get-attributes"/>
+              <xsl:apply-templates mode="#current"/>
+            </xsl:element>
+          </xsl:with-param>
         </xsl:call-template>
       </xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="title[parent::analytic or parent::monogr]" mode="og-entry">
+    <xsl:call-template name="build-metadata-body">
+      <xsl:with-param name="labelled">
+        <tei-title>
+          <xsl:call-template name="get-attributes"/>
+          <xsl:apply-templates mode="work"/>
+        </tei-title>
+      </xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
   
   
@@ -413,6 +432,7 @@
                       <xsl:variable name="nextTable" select="$tableIndices[. gt $index][1]"/>
                       <xsl:variable name="seqLength" select="$nextTable - $index"/>
                       <table>
+                        <xsl:message select="$header"></xsl:message>
                         <xsl:copy-of select="subsequence($tableContents, $index, $seqLength)"/>
                       </table>
                     </xsl:when>
@@ -469,7 +489,7 @@
     </xsl:if>
   </xsl:template>-->
   
-  <xsl:template match="analytic | monogr | imprint | series" mode="og-entry">
+  <xsl:template match="analytic | monogr | imprint | series | relatedItem" mode="og-entry">
     <xsl:param name="entryHeading" select="''" tunnel="yes"/>
     <xsl:variable name="me" select="local-name(.)"/>
     <table class="og-metadata-item">
@@ -481,6 +501,7 @@
           <td></td>
         </tr>
       </thead>
+      <xsl:apply-templates select="@*" mode="og-entry-att"/>
       <xsl:apply-templates mode="#current"/>
     </table>
   </xsl:template>
@@ -562,7 +583,8 @@
   
   <!-- On elements serving as indicators of events, W3C-datable attributes should 
     come before any field content. -->
-  <xsl:template match="affiliation | birth | date | death | floruit | residence" mode="og-entry"> <!-- XD -->
+  <xsl:template match="affiliation | birth | date | death | floruit | residence" 
+    mode="og-entry"> <!-- XD -->
     <xsl:variable name="attrDates" select="@*[tps:is-date-like-attr(.)]" as="item()*"/>
     <xsl:variable name="content" as="item()*">
       <xsl:choose>
