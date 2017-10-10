@@ -49,7 +49,7 @@ Tapas.displayRefData = function(e) {
             //desperate effort to produce a consistent, non-code duplicating way to build HTML for the info dialog
             //html += Tapas.ographyToHtml(parentTarget);
             html += aTarget.children('div.og-entry').html();
-            console.log("ref data is " + html);
+            //console.log("ref data is " + html);
 
             //send the parentTarget (the ography element to the dialog so it can
             //dig up the identifier text
@@ -64,19 +64,19 @@ Tapas.displayRefData = function(e) {
 
 Tapas.refreshDialog = function(html, target, coords) {
     jQuery("#tapas-ref-dialog").dialog('close');
-    jQuery("#tapas-ref-dialog").html(html);
-    console.log("tapas ref dialog html is "+html);
+    var ogHeader = target.children('.heading-og'),
+        headerTitle = ogHeader.length === 0 ? jQuery(target).text() : jQuery(ogHeader).text(),
+        hasEntry = $(html).text() !== '',
+        useTitle = hasEntry ? headerTitle : null,
+        useHTML = hasEntry ? html : headerTitle;
+    console.log("tapas ref dialog text is '"+useHTML+"'");
     //placing the dialog for data display in the big white space currently there. Adjust position via jQueryUI rules for different behavior
     // jQuery("#tapas-ref-dialog").dialog( "option", "position", { my: "right top+"+coords[0]/2, at: "right top+"+coords[0]/2, of: window });
     jQuery("#tapas-ref-dialog").dialog( "option", "position", { my: "left+10 top+150", at: "left+10 top+150", of: window });
-    var ogHeader = target.children('.heading-og');
-    console.log(target);
-    if ( ogHeader.length === 0 ) {
-        //dialog title by mouseovered text, where the mouseovered element is passed as target, usually a note
-        jQuery("#tapas-ref-dialog").dialog( "option", "title", jQuery(target).text());
-    } else {
-        //dialog title by identifier, usually an ography
-        jQuery("#tapas-ref-dialog").dialog( "option", "title", jQuery(ogHeader).text());
+    //console.log(target);
+    jQuery("#tapas-ref-dialog").html(useHTML);
+    if ( !hasEntry ) {
+      jQuery("#tapas-ref-dialog").dialog( "option", "title", useTitle);
     }
     jQuery("#tapas-ref-dialog").dialog('open');
 }
