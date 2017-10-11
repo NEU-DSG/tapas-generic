@@ -187,9 +187,11 @@ body {
   border-radius: 3px;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
+  background-color: #ffffff;
   font-size: 11.5pt;
   border-color: #AAA;
-  width: 24%;
+  padding: 0 1em;
+  width: 22.5%;
   float: left;
   position: fixed;
   overflow-y: auto;
@@ -198,7 +200,7 @@ body {
   list-style-type: none;
   -webkit-margin-before: 0px;
   -webkit-padding-start: 0;
-  padding-left: 1em;
+  padding-left: 0;
 }
 .tapas-generic #TOC ol .toc-entry-label {
   margin-right: 5px;
@@ -1387,16 +1389,17 @@ body {
   border-radius: 3px;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
+  background-color: #ffffff;
   font-size: 11.5pt;
   position: relative;
   top: 20px;
-  left: 80%;
-  background: transparent;
+  left: 82.5%;
   padding: 5px 10px 8px;
+  display: table;
   line-height: 1.5;
-  text-transform: uppercase;
   font-size: 10pt;
-  width: 180px;
+  text-transform: uppercase;
+  max-width: 180px;
 }
 @media (max-width: 767px) {
   .tapas-generic #tapasToolbox {
@@ -1414,7 +1417,10 @@ body {
   display: inline;
   margin-right: .5em;
 }
-.tapas-generic .toolboxinput {
+.tapas-generic #tapasToolbox > div {
+  display: table-row;
+}
+.tapas-generic #tapasToolbox input {
   border: 1px solid #4d88cd;
   border-radius: 0px;
   background: transparent;
@@ -1423,32 +1429,18 @@ body {
   -webkit-border-radius: 0em;
   display: inline-block;
 }
+.tapas-generic #tapasToolbox input[type=select] {
+  padding: .25em;
+}
 .tapas-generic #tapasToolbox input[type=checkbox] {
-  border: 1px solid #4d88cd;
-  border-radius: 0px;
-  background: transparent;
-  -webkit-appearance: none;
-  -webkit-box-shadow: none;
-  -webkit-border-radius: 0em;
-  display: inline-block;
   width: 14px;
   height: 14px;
   line-height: normal;
   padding: 0;
   vertical-align: text-bottom;
 }
-.tapas-generic #tapasToolbox input[type=checkbox]:checked {
+.tapas-generic #tapasToolbox input[type=checkbox] :checked {
   background: #337dd3;
-}
-.tapas-generic #tapasToolbox input[type=select] {
-  border: 1px solid #4d88cd;
-  border-radius: 0px;
-  background: transparent;
-  -webkit-appearance: none;
-  -webkit-box-shadow: none;
-  -webkit-border-radius: 0em;
-  display: inline-block;
-  padding: .25em;
 }
 .tapas-generic TEI {
   display: block;

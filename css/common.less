@@ -111,6 +111,7 @@ margin: 0;
   border-radius: 3px;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
+  background-color: @whitebackground;
   font-size: 11.5pt;
 }
 
@@ -266,7 +267,8 @@ max-height: 60px;
   #TOC {
     .widget-base;
     border-color: #AAA;
-    width:24%;
+    padding: 0 1em;
+    width:22.5%;
     float:left;
     position:fixed;
     overflow-y:auto;
@@ -275,7 +277,7 @@ max-height: 60px;
       list-style-type: none;
       -webkit-margin-before: 0px;
       -webkit-padding-start: 0;
-      padding-left: 1em;
+      padding-left: 0;
       
       .toc-entry-label {
         margin-right: 5px;
@@ -2253,13 +2255,13 @@ max-height: 60px;
     .widget-base();
     position: relative;
     top: 20px;
-    left: 80%;
-    background: @background-color;
+    left: 82.5%;
     padding: 5px 10px 8px;
+    display: table;
     line-height: 1.5;
-    text-transform: uppercase;
     font-size: 10pt;
-    width:180px;
+    text-transform: uppercase;
+    max-width:180px;
   
 		@media(max-width:767px){
 			clear: both;
@@ -2268,44 +2270,46 @@ max-height: 60px;
 			top: 0;
 			left: 0;
 		}
+    
+    h1 {
+      .hide;
+  	}
+    
+    label {
+    	.inline;
+    	margin-right:.5em;
+  	}
+    
+    > div {
+      display: table-row;
+    }
+    
+    input {
+    	border: 1px solid @border-color;
+    	border-radius: 0px;
+    	background: @background-color;
+    	-webkit-appearance:none;
+    	-webkit-box-shadow:none;
+    	-webkit-border-radius:0em;
+    	display: inline-block;
+      
+      &[type=select] {
+      	padding: .25em;
+      }
+      
+      &[type=checkbox] {
+      	width: 14px;
+      	height: 14px;
+      	line-height:normal;
+      	padding:0;
+      	vertical-align: text-bottom;
+        
+        :checked {
+        	background: @link-color;
+        }
+      } // input[type=checkbox]
+    } // input
   } // #tapasToolbox
-
-	#tapasToolbox h1 {
-	.hide;
-	}
-
-	#tapasToolbox label {
-	.inline;
-	margin-right:.5em;
-	}
-
-	.toolboxinput {
-	border: 1px solid @border-color;
-	border-radius: 0px;
-	background: @background-color;
-	-webkit-appearance:none;
-	-webkit-box-shadow:none;
-	-webkit-border-radius:0em;
-	display: inline-block;
-	}
-
-	#tapasToolbox input[type=checkbox] {
-	.toolboxinput;
-	width: 14px;
-	height: 14px;
-	line-height:normal;
-	padding:0;
-	vertical-align: text-bottom;
-	}
-
-	#tapasToolbox input[type=checkbox]:checked {
-	background: @link-color;
-	}
-
-	#tapasToolbox input[type=select] {
-	.toolboxinput;
-	padding: .25em;
-	}
 
 	TEI {
 	.block;
