@@ -235,6 +235,16 @@
   </xsl:template>
   
   <xd:doc>
+    <xd:desc>Resolve attributes for a given element.</xd:desc>
+  </xd:doc>
+  <xsl:template name="set-reliable-attributes">
+    <xsl:call-template name="addID"/>
+    <xsl:call-template name="addRend"/>
+    <xsl:apply-templates select="@* except ( @rend, @rendition, @style, @ref, @target )" mode="#current"/>
+    <xsl:apply-templates select="@ref | @target" mode="#current"/>
+  </xsl:template>
+  
+  <xd:doc>
     <xd:desc>Template for elements, main "work" mode
         <xd:ul>
           <xd:li>ensure there is an <xd:i>id</xd:i> to every element (copy existing <xd:i>xml:id</xd:i> or add new)</xd:li>
@@ -247,10 +257,7 @@
   </xd:doc>
   <xsl:template match="*" mode="work">
     <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
-      <xsl:call-template name="addID"/>
-      <xsl:call-template name="addRend"/>
-      <xsl:apply-templates select="@* except ( @rend, @rendition, @style, @ref, @target )" mode="#current"/>
-      <xsl:apply-templates select="@ref | @target" mode="#current"/>
+      <xsl:call-template name="set-reliable-attributes"/>
       <xsl:apply-templates select="node()" mode="#current"/>
     </xsl:element>
   </xsl:template>
@@ -356,8 +363,8 @@
   </xd:doc>
   <xsl:template match="title" mode="work">
     <tei-title>
-      <xsl:call-template name="addID"/>
-      <xsl:apply-templates select="@*|node()" mode="#current"/>
+      <xsl:call-template name="set-reliable-attributes"/>
+      <xsl:apply-templates mode="#current"/>
     </tei-title>
   </xsl:template>
 
@@ -369,8 +376,8 @@
   </xd:doc>
   <xsl:template match="body" mode="work">
     <tei-body>
-      <xsl:call-template name="addID"/>
-      <xsl:apply-templates select="@*|node()" mode="#current"/>
+      <xsl:call-template name="set-reliable-attributes"/>
+      <xsl:apply-templates mode="#current"/>
     </tei-body>
   </xsl:template>
 
@@ -413,13 +420,19 @@
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <a href="{$target}" class="{$class}" target="_blank">
-      <xsl:apply-templates select="@* except @target" mode="#current"/>
+    <a class="{$class}" target="_blank">
+      <xsl:call-template name="set-reliable-attributes"/>
       <xsl:apply-templates select="node()" mode="#current"/>
       <xsl:if test="$gi eq 'ptr'">
         <xsl:value-of select="$target"/>
       </xsl:if>
     </a>
+  </xsl:template>
+  
+  <xsl:template match="ref/@target|ptr/@target" mode="work">
+    <xsl:attribute name="href">
+      <xsl:value-of select="."/>
+    </xsl:attribute>
   </xsl:template>
 
   <xd:doc>
@@ -430,7 +443,7 @@
       <xsl:call-template name="addID"/>
       <xsl:apply-templates select="@*" mode="#current"/>
       <!-- special-case to handle P5 used to use rend= for type= of <list> -->
-      <xsl:variable name="rend" select="normalize-space( @rend )"/>
+      <xsl:variable name="rend" select="normalize-space( @rend )"/><!-- TODO: reliable attr.s -->
       <xsl:choose>
         <xsl:when test="not( @type )  and  $rend = ('bulleted','ordered','simple','gloss')">
           <xsl:attribute name="type" select="$rend"/>
@@ -497,7 +510,7 @@
         <xsl:otherwise> display: inline; </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <xsl:element name="{$gi}">
+    <xsl:element name="{$gi}"> <!-- TODO: reliable attr.s -->
       <xsl:apply-templates select="@* except @style" mode="#current"/>
       <xsl:attribute name="style" select="concat( replace( @style,';\s*$',''), $style )"/>
       <xsl:apply-templates select="node()" mode="#current"/>
@@ -539,10 +552,8 @@
           <xsl:attribute name="data-tapas-tocme" select="true()"/>
         </xsl:if>
       </xsl:if>
-      <xsl:call-template name="addID"/>
-      <xsl:call-template name="addRend"/>
-      <xsl:apply-templates select="@* except ( @rend, @rendition, @style )" mode="#current"/>
-      <xsl:apply-templates select="node()" mode="#current"/>
+      <xsl:call-template name="set-reliable-attributes"/>
+      <xsl:apply-templates mode="#current"/>
     </xsl:element>
   </xsl:template>
   
@@ -574,11 +585,9 @@
       <xsl:attribute name="data-tapas-note-num">
         <xsl:value-of select="$noteNum"/>
       </xsl:attribute>
-      <xsl:call-template name="addID"/>
-      <xsl:call-template name="addRend"/>
-      <xsl:apply-templates select="@* except ( @rend, @rendition, @style )" mode="#current"/>
       <xsl:attribute name="data-tapas-anchored" select="'true'"/>
-      <xsl:apply-templates select="node()" mode="#current"/>
+      <xsl:call-template name="set-reliable-attributes"/>
+      <xsl:apply-templates mode="#current"/>
     </xsl:element>
   </xsl:template>
   
@@ -597,8 +606,7 @@
     <!-- due to version duplication, I think) that have multiple -->
     <!-- <figDesc> children. -->
     <xsl:element name="{local-name(.)}">
-      <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:call-template name="addID"/>
+      <xsl:call-template name="set-reliable-attributes"/>
       <img src="{graphic/@url}">
         <xsl:if test="figDesc">
           <xsl:attribute name="alt" select="wfn:mult_to_1(figDesc)"/>
@@ -820,7 +828,7 @@
       </xsl:choose>
     </xsl:variable>
     <span class="-teibp-pb">
-      <xsl:call-template name="addID"/>
+      <xsl:call-template name="set-reliable-attributes"/>
       <a class="-teibp-pageNum" data-tapas-n="{$pn}">
         <xsl:if test="@n">
           <xsl:attribute name="data-tei-n">
@@ -848,8 +856,7 @@
 
   <xsl:template match="eg:egXML" mode="work">
     <xsl:element name="{local-name()}">
-      <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:call-template name="addID"/>
+      <xsl:call-template name="set-reliable-attributes"/>
       <xsl:call-template name="xml-to-string">
         <xsl:with-param name="node-set">
           <xsl:copy-of select="node()"/>
@@ -955,8 +962,8 @@
   
   <xsl:template match="head" mode="work">
     <tei-head class="heading">
-      <xsl:call-template name="get-attributes"/>
-      <xsl:apply-templates select="*|text()"/>
+      <xsl:call-template name="set-reliable-attributes"/>
+      <xsl:apply-templates mode="#current"/>
     </tei-head>
   </xsl:template>
 
@@ -970,9 +977,8 @@
         [ ancestor::lg[ not( ancestor::lg ) ] is current()/ancestor::lg[ not( ancestor::lg ) ] ]
       ) +1"/>
     <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
-      <xsl:call-template name="addRend"/>
-      <xsl:apply-templates select="@* except ( @rend, @rendition, @style )" mode="#current"/>
-      <xsl:apply-templates select="node()" mode="#current"/>
+      <xsl:call-template name="set-reliable-attributes"/>
+      <xsl:apply-templates mode="#current"/>
       <xsl:if test="( $cnt mod 5 ) eq 0">
         <xsl:text>&#xA0;</xsl:text>
         <span class="poem-line-count">
@@ -996,9 +1002,8 @@
   
   <xsl:template match="*[tps:is-list-like(.)]" mode="work">
     <div>
-      <xsl:call-template name="addID"/>
-      <xsl:call-template name="addRend"/>
       <xsl:attribute name="class" select="'list-contextual'"/>
+      <xsl:call-template name="set-reliable-attributes"/>
       <xsl:choose>
         <!-- Prefer headings that are the direct children of the 'ography. -->
         <xsl:when test="head">
@@ -1037,8 +1042,7 @@
   
   <xsl:template match="head[following-sibling::*[not(self::head)][1][tps:is-list-like(.)]]" priority="30" mode="work">
     <tei-head class="heading heading-listtype">
-      <xsl:call-template name="addID"/>
-      <xsl:call-template name="addRend"/>
+      <xsl:call-template name="set-reliable-attributes"/>
       <!--<xsl:attribute name="data-tapas-tocme" select="true()"/>-->
       <xsl:apply-templates mode="#current"/>
     </tei-head>
