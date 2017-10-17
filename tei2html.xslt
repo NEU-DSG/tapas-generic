@@ -239,6 +239,7 @@
   </xd:doc>
   <xsl:template name="set-reliable-attributes">
     <xsl:call-template name="addID"/>
+    <xsl:call-template name="save-gi"/>
     <xsl:call-template name="addRend"/>
     <xsl:apply-templates select="@* except ( @rend, @rendition, @style, @ref, @target )" mode="#current"/>
     <xsl:apply-templates select="@ref | @target" mode="#current"/>
