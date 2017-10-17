@@ -440,18 +440,12 @@
   </xd:doc>
   <xsl:template match="list" mode="work">
     <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
-      <xsl:call-template name="addID"/>
-      <xsl:apply-templates select="@*" mode="#current"/>
       <!-- special-case to handle P5 used to use rend= for type= of <list> -->
-      <xsl:variable name="rend" select="normalize-space( @rend )"/><!-- TODO: reliable attr.s -->
-      <xsl:choose>
-        <xsl:when test="not( @type )  and  $rend = ('bulleted','ordered','simple','gloss')">
-          <xsl:attribute name="type" select="$rend"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:call-template name="addRend"/>
-        </xsl:otherwise>
-      </xsl:choose>
+      <xsl:variable name="rend" select="normalize-space( @rend )"/>
+      <xsl:if test="not( @type )  and  $rend = ('bulleted','ordered','simple','gloss')">
+        <xsl:attribute name="type" select="$rend"/>
+      </xsl:if>
+      <xsl:call-template name="set-reliable-attributes"/>
       <xsl:attribute name="data-tapas-list-type">
         <xsl:variable name="labels" select="count( label )"/>
         <xsl:variable name="items"  select="count( item  )"/>
@@ -511,8 +505,11 @@
       </xsl:choose>
     </xsl:variable>
     <xsl:element name="{$gi}"> <!-- TODO: reliable attr.s -->
-      <xsl:apply-templates select="@* except @style" mode="#current"/>
-      <xsl:attribute name="style" select="concat( replace( @style,';\s*$',''), $style )"/>
+      <!--<xsl:apply-templates select="@* except @style" mode="#current"/>
+      <xsl:attribute name="style" select="concat( replace( @style,';\s*$',''), $style )"/>-->
+      <xsl:call-template name="set-reliable-attributes">
+        <xsl:with-param name="additional-styles" select="$style" tunnel="yes"/>
+      </xsl:call-template>
       <xsl:apply-templates select="node()" mode="#current"/>
     </xsl:element>
   </xsl:template>
@@ -630,13 +627,7 @@
     <xsl:apply-templates select="@rendition" mode="#current"/>
     <xsl:if test="@rend | @html:style | @style">
       <xsl:attribute name="style">
-        <xsl:variable name="rend">
-          <xsl:apply-templates select="@rend" mode="rendition2style"/>
-        </xsl:variable>
-        <xsl:value-of select="$rend"/>
-        <xsl:if test="$rend  and  substring($rend,string-length($rend),1) ne ';'">
-          <xsl:text>; </xsl:text>
-        </xsl:if>
+        <xsl:apply-templates select="@rend" mode="rendition2style"/>
         <xsl:apply-templates select="@style" mode="#current"/>
         <xsl:apply-templates select="@html:style" mode="#current"/>
       </xsl:attribute>
@@ -650,98 +641,141 @@
     </xsl:if>
   </xsl:template>
   <xsl:template match="@rend" mode="rendition2style">
-    <xsl:variable name="rend" select="normalize-space(.)"/>
-    <xsl:variable name="css">
+    <xsl:param name="additional-styles" as="xs:string*" tunnel="yes"/>
+    <xsl:variable name="rendVal" select="normalize-space(.)"/>
+    <!-- Try to categorize the use of @rend:
+            * CSS,
+            * rendition ladder, or
+            * keyword.
+    -->
+    <xsl:variable name="rendType"
+      select="if ( contains($rendVal, ':') ) then 'css'
+              else if ( matches($rendVal, '[\w-]+\(.+\)') ) then 'rendladder'
+              else 'keyword'"/>
+    <xsl:variable name="rendSplit" 
+      select="if ( $rendType eq 'rendladder' ) then 
+                tokenize($rendVal, ') ?')
+              else tokenize($rendVal, ' ')" as="xs:string*"/>
+    <xsl:variable name="css" as="xs:string*">
       <xsl:choose>
-        <xsl:when test="contains( $rend, ':' )"><xsl:value-of select="."/></xsl:when>   <!-- 30937 -->
-        <xsl:when test="$rend eq 'italic'"           >font-style: italic;</xsl:when>     <!-- 24857 -->
-        <xsl:when test="$rend eq 'italics'"          >font-style: italic;</xsl:when>     <!--     0 -->
-        <xsl:when test="$rend eq 'visible'"          ></xsl:when>                        <!--  1673 -->
-        <xsl:when test="$rend eq 'superscript'"      >vertical-align: super;</xsl:when>  <!--  1175 -->
-        <xsl:when test="$rend eq 'bold'"             >font-weight: bold;</xsl:when>      <!--   920 -->
-        <xsl:when test="$rend eq 'ti-1'"             ></xsl:when>                        <!--   741 -->
-        <xsl:when test="$rend eq 'center'"           >text-align: center;</xsl:when>     <!--   657 -->
-        <xsl:when test="$rend eq 'rectangle'"        ></xsl:when>                        <!--   639 -->
-        <xsl:when test="$rend eq 'right'"            >text-align: right;</xsl:when>      <!--   617 -->
-        <xsl:when test="$rend eq 'i'"                >font-style: italic;</xsl:when>     <!--   449 -->
-        <xsl:when test="$rend eq 'ul'"               >text-decoration: underline;</xsl:when> <!--   381 -->
-        <xsl:when test="$rend eq 'align(center)'"    >text-align: center;</xsl:when>     <!--   301 -->
-        <xsl:when test="$rend eq ''"                 ></xsl:when>                        <!--   207 -->
-        <xsl:when test="$rend eq 'align(CENTER)'"    >text-align: center;</xsl:when>     <!--   202 -->
-        <xsl:when test="$rend eq 'headerlike'"       ></xsl:when>                        <!--   189 -->
-        <xsl:when test="$rend eq 'super'"            >vertical-align: super;</xsl:when>  <!--   161 -->
-        <xsl:when test="$rend eq 'align(RIGHT)'"     >text-align: right;</xsl:when>      <!--   111 -->
-        <xsl:when test="$rend eq 'valign(bottom)'"   >vertical-align: bottom;</xsl:when> <!--   104 -->
-        <xsl:when test="$rend eq 'align(right)'"     >text-align: right;</xsl:when>      <!--   101 -->
-        <xsl:when test="$rend eq 'blockquote'"       >display: block; padding: 0em 1em;</xsl:when>                        <!--    85 -->
-        <xsl:when test="$rend eq 'ti-3'"             ></xsl:when>                        <!--    84 -->
-        <xsl:when test="$rend eq 'run-in'"           >display: run-in;</xsl:when>        <!--    80 -->
-        <xsl:when test="$rend eq 'valign(TOP)'"      >vertical-align: top;</xsl:when>    <!--    78 -->
-        <xsl:when test="$rend eq 'distinct'"         ></xsl:when>                        <!--    78 -->
-        <xsl:when test="$rend eq 'valign(top)'"      >vertical-align: top;</xsl:when>    <!--    77 -->
-        <xsl:when test="$rend eq 'ti-2'"             ></xsl:when>                        <!--    73 -->
-        <xsl:when test="$rend eq '+'"                ></xsl:when>                        <!--    63 -->
-        <xsl:when test="$rend eq 'valign(BOTTOM)'"   >vertical-align: bottom;</xsl:when> <!--    55 -->
-        <xsl:when test="$rend eq 'large b'"          >font-size: larger;font-weight: bold;</xsl:when> <!--    55 -->
-        <xsl:when test="$rend eq 'frame'"            ></xsl:when>                        <!--    44 -->
-        <xsl:when test="$rend eq 'ti-4'"             ></xsl:when>                        <!--    29 -->
-        <xsl:when test="$rend eq 'sup'"              >vertical-align: super;</xsl:when>  <!--    27 -->
-        <xsl:when test="$rend eq 'b'"                >font-weight: bold;</xsl:when>      <!--    27 -->
-        <xsl:when test="$rend eq 'vertical'"         ></xsl:when>                        <!--    21 -->
-        <xsl:when test="$rend eq 'LHLineStart'"      ></xsl:when>                        <!--    15 -->
-        <xsl:when test="$rend eq 'indent'"           ></xsl:when>                        <!--    15 -->
-        <xsl:when test="$rend eq 'sc'"               >font-variant: small-caps;</xsl:when> <!--    10 -->
-        <xsl:when test="$rend eq 'overstrike'"       >text-decoration: overline;</xsl:when> <!--    10 -->
-        <xsl:when test="$rend eq 'spaced'"           >font-stretch: wider;</xsl:when>    <!--     8 -->
-        <xsl:when test="$rend eq 'left'"             >text-align: left;</xsl:when>       <!--     8 -->
-        <xsl:when test="$rend eq 'AboveCenter'"      ></xsl:when>                        <!--     7 -->
-        <xsl:when test="$rend eq 'subscript'"        >vertical-align: sub;</xsl:when>    <!--     6 -->
-        <xsl:when test="$rend eq 'sc center'"        >font-variant: small-caps;text-align: center;</xsl:when> <!--     6 -->
-        <xsl:when test="$rend eq 'underline'"        >text-decoration: underline;</xsl:when> <!--     5 -->
-        <xsl:when test="$rend eq 'printed'"          ></xsl:when>                        <!--     5 -->
-        <xsl:when test="$rend eq 'hidden'"           >display: none;</xsl:when>          <!--     5 -->
-        <xsl:when test="$rend eq 'continued'"        ></xsl:when>                        <!--     5 -->
-        <xsl:when test="$rend eq 'c'"                ></xsl:when>                        <!--     5 -->
-        <xsl:when test="$rend eq 'inline'"           ></xsl:when>                        <!--     4 -->
-        <xsl:when test="$rend eq 'typescript'"       ></xsl:when>                        <!--     3 -->
-        <xsl:when test="$rend eq 'sc right'"         >font-variant: small-caps;text-align: right;</xsl:when> <!--     3 -->
-        <xsl:when test="$rend eq 'LHMargin'"         ></xsl:when>                        <!--     3 -->
-        <xsl:when test="$rend eq 'foot'"             ></xsl:when>                        <!--     3 -->
-        <xsl:when test="$rend eq 'strikethrough'"    >text-decoration: line-through;</xsl:when> <!--     2 -->
-        <xsl:when test="$rend eq 'small caps'"       >font-variant: small-caps;</xsl:when> <!--     2 -->
-        <xsl:when test="$rend eq 'gothic'"           ></xsl:when>                        <!--     2 -->
-        <xsl:when test="$rend eq 'font-size; 225%'"  ></xsl:when>                        <!--     2 -->
-        <xsl:when test="$rend eq 'font-size; 200%'"  ></xsl:when>                        <!--     2 -->
-        <xsl:when test="$rend eq 'chapter'"          ></xsl:when>                        <!--     2 -->
-        <xsl:when test="$rend eq 'center i'"         >text-align: center;font-style: italic;</xsl:when> <!--     2 -->
-        <xsl:when test="$rend eq 'uc'"               >text-transform: uppercase;</xsl:when> <!--     1 -->
-        <xsl:when test="$rend eq 'ti-5'"             ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend eq 'ti=3'"             ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend eq 'ti=2'"             ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend eq 'text-align-left;'" ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend eq 'noborder center'"  ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend eq 'margin-bottom;'"   ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend eq 'italic bold'"      ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend eq 'i distinct'"       ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend eq 'font-size;225%'"   ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend eq 'font-size;150%'"   ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend eq 'font-size; 150%'"  ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend eq 'center ti-8'"      ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend eq 'center b'"         ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend eq 'Center'"           ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend eq 'above'"            ></xsl:when>                        <!--     1 -->
-        <xsl:when test="$rend eq '20'"               ></xsl:when>                        <!--     1 -->
-        <!-- above from profiling data; below from elsewhere or my head -->
-        <xsl:when test="$rend eq 'case(upper)'"      >text-transform: uppercase;</xsl:when>
-        <xsl:when test="$rend eq 'align(center)case(upper)'"      >text-align:center; text-transform:uppercase;</xsl:when>
-        <xsl:when test="$rend eq 'case(upper)align(center)'"      >text-align:center; text-transform:uppercase;</xsl:when>
-        <xsl:otherwise>
-          <!-- xsl:message>WARNING: I don't know what to do with rend="<xsl:value-of select="."/>"</xsl:message -->
+        <!-- @rend as CSS rule(s): output the rules without further intervention. -->
+        <xsl:when test="$rendType eq 'css'">
           <xsl:value-of select="."/>
+        </xsl:when>
+        <!-- @rend as rendition ladder: resolve the most common keywords and 
+          keywords' values. -->
+        <!--<xsl:when test="$rendType eq 'rendladder'">
+          <xsl:for-each select="$rendSplit">
+            <!-\- Normalize casing on the current value, and remove insignificant 
+              hyphens. -\->
+            <xsl:variable name="thisVal">
+              <xsl:variable name="lowercased" select="lower-case(.)"/>
+              <xsl:value-of select="replace($lowercased, '(\w)-(\w)', '$1$2')"/>
+            </xsl:variable>
+            <xsl:variable name="ladderKey" select="substring-before($thisVal,'(')"/>
+            <xsl:variable name="ladderVal" select="substring-after($thisVal,'(')"/>
+            <xsl:choose><!-\- TODO -\->
+              <xsl:when test="$ladderKey = ('align', 'textalign')"/>
+              <xsl:when test="$ladderKey = ('case')"/>
+              <xsl:when test="$ladderKey = ('color')"/>
+              <xsl:when test="$ladderKey = ('columns')"/>
+              <!-\-<xsl:when test="$ladderKey = ('firstindent')"></xsl:when>-\->
+              <xsl:when test="$ladderKey = ('float')"/>
+              <xsl:when test="$ladderKey = ('image')"/>
+              <!-\-<xsl:when test="$ladderKey = ('indent')"></xsl:when>-\->
+              <xsl:when test="$ladderKey = ('pos', 'position')"/>
+              <xsl:when test="$ladderKey = ('slant')"/>
+              <xsl:when test="$ladderKey = ('valign', 'verticalalign')"/>
+              <xsl:otherwise/>
+            </xsl:choose>
+          </xsl:for-each>
+        </xsl:when>-->
+              <!--<xsl:when test="$rendVal eq 'align(center)'"    >text-align: center;</xsl:when>
+              <xsl:when test="$rendVal eq 'align(CENTER)'"    >text-align: center;</xsl:when>
+              <xsl:when test="$rendVal eq 'align(RIGHT)'"     >text-align: right;</xsl:when>
+              <xsl:when test="$rendVal eq 'valign(bottom)'"   >vertical-align: bottom;</xsl:when>
+              <xsl:when test="$rendVal eq 'align(right)'"     >text-align: right;</xsl:when>
+              <xsl:when test="$rendVal eq 'valign(TOP)'"      >vertical-align: top;</xsl:when>
+              <xsl:when test="$rendVal eq 'valign(top)'"      >vertical-align: top;</xsl:when>
+              <xsl:when test="$rendVal eq 'valign(BOTTOM)'"   >vertical-align: bottom;</xsl:when>
+              <xsl:when test="$rendVal eq 'case(upper)'"      >text-transform: uppercase;</xsl:when>
+              <xsl:when test="$rendVal eq 'align(center)case(upper)'"      >text-align:center; text-transform:uppercase;</xsl:when>
+              <xsl:when test="$rendVal eq 'case(upper)align(center)'"      >text-align:center; text-transform:uppercase;</xsl:when>-->
+        
+        <!-- @rend as keyword: resolve basic keywords. -->
+        <xsl:otherwise>
+          <xsl:for-each select="$rendSplit">
+            <!-- Normalize casing on the current value, and remove insignificant hyphens. -->
+            <xsl:variable name="thisVal">
+              <xsl:variable name="lowercased" select="lower-case(.)"/>
+              <xsl:value-of select="if ( $lowercased eq '-' ) then $lowercased
+                                    else translate($lowercased, '-', '')"/>
+            </xsl:variable>
+            <xsl:choose>
+              <xsl:when test="$thisVal = ('above', 'over', 'sup', 'super', 'supralinear', 'superscript')"
+                >vertical-align: super; font-size: 0.85em;</xsl:when>
+              <xsl:when test="$thisVal = ('ac', 'allcaps', 'lgcaps')"
+                >text-transform: uppercase;</xsl:when>
+              <xsl:when test="$thisVal = ('aligncenter', 'alignedcenter', 'center', 'centered', 'textaligncenter')"
+                >text-align: center;</xsl:when>
+              <xsl:when test="$thisVal = ('alignleft', 'alignedleft', 'left', 'textalignleft')"
+                >text-align: left;</xsl:when>
+              <xsl:when test="$thisVal = ('alignright', 'alignedright', 'right', 'textalignright')"
+                >text-align: right;</xsl:when>
+              <xsl:when test="$thisVal = ('b', 'bold', 'bolded')"
+                >font-weight: bold;</xsl:when>
+              <xsl:when test="$thisVal = ('below', 'sub', 'sublinear', 'subscript', 'under')"
+                >vertical-align: sub; font-size: 0.85em;</xsl:when>
+              <xsl:when test="$thisVal = ('block')"
+                >display: block;</xsl:when> <!-- 'blockquote'? -->
+              <!--<xsl:when test="$thisVal = ('border', 'bordered')"
+                >border: thin solid gray;</xsl:when>-->
+              <xsl:when test="$thisVal = ('crossout', 'strike', 'strikethrough')"
+                >text-decoration: line-through;</xsl:when>
+              <!-- distinct? -->
+              <xsl:when test="$thisVal = ('hidden')"
+                >display: none;</xsl:when>
+              <xsl:when test="$thisVal = ('i', 'ital', 'italic', 'italics', 'italicized')"
+                >font-style: italic;</xsl:when>
+              <xsl:when test="$thisVal = ('inline')"
+                >display: inline;</xsl:when>
+              <xsl:when test="$thisVal = ('large', 'larger', '+')"
+                >font-size: large;</xsl:when>
+              <!-- overstrike, overwrite, overwritten... strikethrough? -->
+              <!-- quote, quotes, quoted -->
+              <xsl:when test="$thisVal = ('regular')"
+                >font-weight: normal;</xsl:when>
+              <xsl:when test="$thisVal = ('sc', 'smallcap', 'smallcaps', 'smcaps')"
+                >font-variant: small-caps;</xsl:when>
+              <xsl:when test="$thisVal = ('small', 'smaller', '-')"
+                >font-size: small;</xsl:when>
+              <!--<xsl:when test="$thisVal = ('space', 'spacebreak')"
+                >display: block; margin: 0.4em 0;</xsl:when>-->
+              <xsl:when test="$thisVal = ('underline', 'underlined', 'underscore', 'underscored')"
+                >text-decoration: underline;</xsl:when>
+              <xsl:when test="$thisVal = ('upright')"
+                >font-style: normal;</xsl:when>
+              <xsl:when test="$thisVal = ('visible')"
+                >display: initial;</xsl:when>
+              
+              <!--<xsl:when test="$thisVal eq 'blockquote'"       >display: block; padding: 0em 1em;</xsl:when>
+              <xsl:when test="$thisVal eq 'indent'"           ></xsl:when>
+              <xsl:when test="$thisVal eq 'overstrike'"       >text-decoration: overline;</xsl:when>
+              <xsl:when test="$thisVal eq 'spaced'"           >font-stretch: wider;</xsl:when>
+              <xsl:when test="$thisVal eq 'typescript'"       ></xsl:when>-->
+            </xsl:choose>
+          </xsl:for-each>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <xsl:value-of select="$css"/>
+    <xsl:variable name="importedStyles" as="xs:string*">
+      <xsl:for-each select="$additional-styles">
+        <xsl:variable name="normalized" select="normalize-space(.)"/>
+        <xsl:value-of select="if ( ends-with($normalized, ';') ) then $normalized
+                              else concat($normalized, ';')"/>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:value-of select="string-join(($css, $importedStyles),' ')"/>
   </xsl:template>
 
   <xd:doc>
