@@ -511,9 +511,7 @@
         <xsl:otherwise> display: inline; </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <xsl:element name="{$gi}"> <!-- TODO: reliable attr.s -->
-      <!--<xsl:apply-templates select="@* except @style" mode="#current"/>
-      <xsl:attribute name="style" select="concat( replace( @style,';\s*$',''), $style )"/>-->
+    <xsl:element name="{$gi}">
       <xsl:call-template name="set-reliable-attributes">
         <xsl:with-param name="additional-styles" select="$style" tunnel="yes"/>
       </xsl:call-template>
@@ -1515,7 +1513,7 @@
                            select="html:div[ @id = ('tapasToolbox','tapas-ref-dialog') ]"/>
         <div id="TOC">
           <ol>
-            <xsl:apply-templates mode="makeTOCentry" select=".//*[@data-tapas-tocme]"/>
+            <xsl:apply-templates select=".//*[@data-tapas-tocme]" mode="makeTOCentry"/>
           </ol>
         </div>
       <xsl:apply-templates mode="TOCer"
@@ -1629,6 +1627,11 @@
       </a>
     </li>
   </xsl:template>
+  
+  <xd:doc>
+    <xd:desc>Don't show any TOC entries that may have been flagged in the &lt;teiHeader&gt;</xd:desc>
+  </xd:doc>
+  <xsl:template match="html:teiHeader//*[@data-tapas-tocme]" mode="makeTOCentry" priority="11"/>
   
   <xd:doc>
     <xd:desc>Take one or more nodes (most likely child elements),
