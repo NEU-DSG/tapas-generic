@@ -93,7 +93,7 @@
   <!-- Given a att.datable attribute, return a human-readable label for the 
     attribute's name. -->
   <xsl:function name="tps:get-date-like-attr-label" as="xs:string?">
-    <xsl:param name="attribute" as="attribute()" required="yes"/>
+    <xsl:param name="attribute" as="attribute()"/>
     <xsl:if test="not(tps:is-date-like-attr($attribute))">
       <xsl:message>tps:get-date-like-attr-label() requires a date-like attribute as input!</xsl:message>
     </xsl:if>

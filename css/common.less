@@ -175,8 +175,17 @@ max-height: 60px;
         &.og-label {
           width: 80px;
         }
-      }
-    }
+      } // td
+      
+      thead {
+        
+        td.og-label {
+          padding: 0.25em 0;
+          color: black;
+          font-size: inherit;
+        }
+      } // thead
+    } // .og-metadata table
     
     .og-label {
       .tapas-label;
@@ -196,7 +205,7 @@ max-height: 60px;
           //margin-left: 0;
         }
       }
-    }
+    } // .og-label
     
     .og-metadata-item {
       margin-bottom: 0.5em;
@@ -205,7 +214,7 @@ max-height: 60px;
       .og-metadata-item {
         margin-bottom: 0;
         padding-bottom: 0.25em;
-        line-height: 1em;
+        line-height: 1.4em;
       }
     }
   } // .og-metadata
@@ -1252,6 +1261,7 @@ max-height: 60px;
 	display: inline-block;
 	min-width: 1.5em;
 	float: right;
+  color: gray;
 	}
 
 	/*
