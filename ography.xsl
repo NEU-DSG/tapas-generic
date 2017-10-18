@@ -463,6 +463,22 @@
     </xsl:if>
   </xsl:template>
   
+  <xsl:template match="bibl[tps:is-mixed-content(.)]" mode="og-gen" priority="12">
+    <xsl:param name="idrefs" as="xs:string*" tunnel="yes"/>
+    <div class="contextual-item {local-name()}">
+      <xsl:call-template name="save-gi"/>
+      <xsl:call-template name="get-attributes"/>
+      <div class="og-entry">
+        <div class="og-metadata"/>
+        <div class="og-context">
+          <span>
+            <xsl:apply-templates mode="work"/>
+          </span>
+        </div>
+      </div>
+    </div>
+  </xsl:template>
+  
   <xsl:template match="@xml:id" mode="og-gen og-entry">
     <xsl:param name="doc-uri" as="xs:string" tunnel="yes"/>
     <xsl:variable name="ident" select="data(.)"/>
