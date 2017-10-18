@@ -297,10 +297,10 @@
   
   <xsl:template name="toolbox">
     <div id="tapasToolbox">
-      <div id="tapasToolbox-pb">
+      <!--<div id="tapasToolbox-pb">
         <label for="pbToggle">Hide page breaks</label>
         <input type="checkbox" id="pbToggle"></input>
-      </div>
+      </div>-->
       <div id="tapasToolbox-views">
         <label for="viewBox">Views</label>
         <select id="viewBox">

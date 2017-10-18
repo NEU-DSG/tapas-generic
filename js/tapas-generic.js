@@ -16,7 +16,7 @@ function addPageBreaks(){
 }
 
 function initialize_tapas_g(){
-	jQuery('.tapas-generic #pbToggle').click( function(){
+	/*jQuery('.tapas-generic #pbToggle').click( function(){
 		if(jQuery(this).is(':checked')){
 			clearPageBreaks();
 			Tapas.showPbs = false;
@@ -24,7 +24,7 @@ function initialize_tapas_g(){
 			addPageBreaks();
 			Tapas.showPbs = true;
 		}
-	});
+	});*/
 	addPageBreaks();
 	jQuery(this).checked = false;
 	if (jQuery("#TOC").length > 0){
