@@ -26,6 +26,12 @@
       javascript and other features from the html/browser environment.</xd:p>
       <xd:p><xd:b>change log:</xd:b></xd:p>
       <xd:ul>
+        <xd:li>2017-10-18 by Ashley: Created a convenience wrapper for creating 
+          attributes which should be on every transformed TEI element. Cleaned up 
+          the 'addRend' template and expanded recognized keywords within `@rend`, 
+          but commented out previously-recognized WWO-style rendition ladders. 
+          Commented out the 'show/hide page breaks' toggle since it behaves 
+          strangely across browsers and depending on diplomatic/normalized view.</xd:li>
         <xd:li>2017-05-15 by Ashley: Renamed the 'body' element so browsers 
           don't eat it.</xd:li>
         <xd:li>2015-10-12 by Syd: Created from tei2html_1 and tei2html_2</xd:li>
