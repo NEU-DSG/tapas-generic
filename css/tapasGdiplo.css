@@ -26,7 +26,7 @@ body {
   max-height: 60px;
 }
 /* Rules for the popup dialog box */
-.ui-dialog .ui-widget.ui-widget-content {
+.ui-dialog.ui-widget.ui-widget-content {
   border-color: #AAA;
 }
 .ui-dialog .ui-dialog-title {
@@ -183,19 +183,27 @@ body {
   font-weight: normal;
 }
 .tapas-generic #TOC {
-  width: 25%;
+  border: 1px solid #7681ce;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  background-color: #ffffff;
+  font-size: 11.5pt;
+  border-color: #AAA;
+  padding: 0 1em;
+  width: 22.5%;
+  max-height: 80%;
   float: left;
-  position: static;
-  overflow-y: scroll;
+  position: fixed;
+  overflow-y: auto;
 }
 .tapas-generic #TOC ol {
   list-style-type: none;
   -webkit-margin-before: 0px;
   -webkit-padding-start: 0;
-  padding-left: 1em;
+  padding-left: 0;
 }
 .tapas-generic #TOC ol .toc-entry-label {
-  font-size: 17px;
   margin-right: 5px;
 }
 @media (max-width: 1000px) {
@@ -224,22 +232,6 @@ body {
   -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
   -moz-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
-}
-.tapas-generic .page-setup {
-  font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
-  font-size: 13pt;
-  line-height: 1.5;
-  background-color: transparent;
-  color: #232936;
-  padding-left: 2em;
-  padding-right: 2em;
-  margin: 0;
-}
-@media (max-width: 767px) {
-  .tapas-generic .page-setup {
-    padding-left: 0;
-    padding-right: 0;
-  }
 }
 .tapas-generic table {
   display: block;
@@ -1394,19 +1386,21 @@ body {
   display: none;
 }
 .tapas-generic #tapasToolbox {
-  position: relative;
-  top: 20px;
-  left: 85%;
-  background: #FFF;
-  padding: 5px 10px 8px;
   border: 1px solid #7681ce;
-  font-size: 13px;
-  text-transform: uppercase;
-  line-height: 1.5;
   border-radius: 3px;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
-  max-width: 12em;
+  background-color: #ffffff;
+  font-size: 11.5pt;
+  position: relative;
+  top: 20px;
+  left: 85%;
+  padding: 5px 10px 8px;
+  display: table;
+  line-height: 1.5;
+  font-size: 10pt;
+  text-transform: uppercase;
+  max-width: 180px;
 }
 @media (max-width: 767px) {
   .tapas-generic #tapasToolbox {
@@ -1424,7 +1418,10 @@ body {
   display: inline;
   margin-right: .5em;
 }
-.tapas-generic #tapasToolbox input[type=checkbox] {
+.tapas-generic #tapasToolbox > div {
+  display: table-row;
+}
+.tapas-generic #tapasToolbox input {
   border: 1px solid #4d88cd;
   border-radius: 0px;
   background: transparent;
@@ -1432,13 +1429,15 @@ body {
   -webkit-box-shadow: none;
   -webkit-border-radius: 0em;
   display: inline-block;
+}
+.tapas-generic #tapasToolbox input[type=checkbox] {
   width: 14px;
   height: 14px;
   line-height: normal;
   padding: 0;
   vertical-align: text-bottom;
 }
-.tapas-generic #tapasToolbox input[type=checkbox]:checked {
+.tapas-generic #tapasToolbox input[type=checkbox] :checked {
   background: #337dd3;
 }
 .tapas-generic TEI {
@@ -1573,8 +1572,9 @@ body {
   line-height: 1.5;
   background-color: transparent;
   color: #232936;
-  padding-left: 2em;
-  padding-right: 2em;
+  height: 100%;
+  padding-left: 1em;
+  padding-right: 1em;
   margin: 0;
   /* xml-serialization */
   /* loading animation */

@@ -71,7 +71,7 @@ Tapas.refreshDialog = function(html, target, coords) {
     // Set the position of the dialog.
     $('#tapas-ref-dialog').dialog('option', 'position', {
       my:"left top",
-      at: "left+10 top+150",
+      at: "left+10 top",
       of: window
     });
     //console.log(target);

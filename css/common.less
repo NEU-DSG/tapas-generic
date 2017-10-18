@@ -106,6 +106,15 @@ margin: 0;
 	.quotesUS;
 }
 
+.widget-base() {
+  border: 1px solid @toolbox-border;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  background-color: @whitebackground;
+  font-size: 11.5pt;
+}
+
 /* teibp classes */
 
 .-teibp-thumbnail {
@@ -139,7 +148,7 @@ max-height: 60px;
 /* Rules for the popup dialog box */
 .ui-dialog {
   
-  .ui-widget.ui-widget-content {
+  &.ui-widget.ui-widget-content {
     border-color: #AAA;
   }
   
@@ -256,26 +265,32 @@ max-height: 60px;
   }
   
   #TOC {
-    width:25%;
+    .widget-base;
+    border-color: #AAA;
+    padding: 0 1em;
+    width:22.5%;
+    max-height: 80%;
     float:left;
-    position:static;
-    overflow-y:scroll;
+    position:fixed;
+    overflow-y:auto;
+    
     ol {
       list-style-type: none;
       -webkit-margin-before: 0px;
       -webkit-padding-start: 0;
-      padding-left: 1em;
+      padding-left: 0;
+      
       .toc-entry-label {
-        font-size: 17px;
         margin-right: 5px;
       }
-    }
+    } // ol
+    
     @media(max-width: 1000px){
       width:100%;
       float:none;
       position:static;
     }
-  }
+  } // #TOC
 
 	.note-like {
 	.block;
@@ -294,21 +309,23 @@ max-height: 60px;
 	.box-shadow;
 	}
 
-	.page-setup {
+	.page-setup() {
 	font-family: @body-font-family;
 	font-size:@body-font-size;
 	line-height:@body-line-height;
 	background-color:@background-color;
 	color:@color;
 	//width:100%;
-	padding-left:2em;
-	padding-right:2em;
+  height: 100%;
+	padding-left:1em;
+	padding-right:1em;
 	margin:0;
-	@media(max-width:767px){
-		padding-left:0;
-		padding-right:0;
+  
+  	@media(max-width:767px){
+  		padding-left:0;
+  		padding-right:0;
 		}
-	}
+  } // .page-setup
 
 	table {
 	.block;
@@ -2236,19 +2253,17 @@ max-height: 60px;
 	/* t */
 
 	#tapasToolbox {
-	position: relative;
-	top: 20px;
-	left: 85%;
-	background: #FFF;
-	padding: 5px 10px 8px;
-	border: 1px solid @toolbox-border;
-	font-size: 13px;
-	text-transform: uppercase;
-	line-height: 1.5;
-	border-radius: 3px;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	max-width: 12em;
+    .widget-base();
+    position: relative;
+    top: 20px;
+    left: 85%;
+    padding: 5px 10px 8px;
+    display: table;
+    line-height: 1.5;
+    font-size: 10pt;
+    text-transform: uppercase;
+    max-width:180px;
+    
 		@media(max-width:767px){
 			clear: both;
 			display: block;
@@ -2258,15 +2273,19 @@ max-height: 60px;
 		}
     
     h1 {
-    	.hide;
-    }
+      .hide;
+  	}
     
     label {
     	.inline;
     	margin-right:.5em;
     }
     
-  	.toolboxinput() {
+    > div {
+      display: table-row;
+    }
+    
+    input {
     	border: 1px solid @border-color;
     	border-radius: 0px;
     	background: @background-color;
@@ -2274,20 +2293,19 @@ max-height: 60px;
     	-webkit-box-shadow:none;
     	-webkit-border-radius:0em;
     	display: inline-block;
-  	}
-
-  	input[type=checkbox] {
-    	.toolboxinput;
-    	width: 14px;
-    	height: 14px;
-    	line-height:normal;
-    	padding:0;
-    	vertical-align: text-bottom;
-  	}
-
-  	input[type=checkbox]:checked {
-  	  background: @link-color;
-  	}
+      
+      &[type=checkbox] {
+      	width: 14px;
+      	height: 14px;
+      	line-height:normal;
+      	padding:0;
+      	vertical-align: text-bottom;
+        
+        :checked {
+        	background: @link-color;
+        }
+      } // input[type=checkbox]
+    } // input
   } // #tapasToolbox
 
 	TEI {
