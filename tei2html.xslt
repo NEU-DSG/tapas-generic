@@ -625,12 +625,22 @@
   </xsl:template>
 
   <xsl:template name="addRend">
+    <xsl:param name="additional-styles" as="xs:string*" tunnel="yes"/>
+    <xsl:variable name="actionableStyles" as="xs:string*"
+      select="$additional-styles[normalize-space(.) ne '']"/>
     <xsl:apply-templates select="@rendition" mode="#current"/>
-    <xsl:if test="@rend | @html:style | @style">
+    <xsl:if test="exists($actionableStyles) or @rend or @style or @html:style">
       <xsl:attribute name="style">
         <xsl:apply-templates select="@rend" mode="rendition2style"/>
         <xsl:apply-templates select="@style" mode="#current"/>
         <xsl:apply-templates select="@html:style" mode="#current"/>
+        <xsl:if test="count($actionableStyles) gt 0">
+          <xsl:for-each select="$actionableStyles">
+            <xsl:variable name="normalized" select="normalize-space(.)"/>
+            <xsl:value-of select="if ( ends-with($normalized, ';') ) then $normalized
+                                  else concat($normalized, ';')"/>
+          </xsl:for-each>
+        </xsl:if>
       </xsl:attribute>
     </xsl:if>
   </xsl:template>
@@ -642,7 +652,6 @@
     </xsl:if>
   </xsl:template>
   <xsl:template match="@rend" mode="rendition2style">
-    <xsl:param name="additional-styles" as="xs:string*" tunnel="yes"/>
     <xsl:variable name="rendVal" select="normalize-space(.)"/>
     <!-- Try to categorize the use of @rend:
             * CSS,
@@ -769,14 +778,7 @@
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <xsl:variable name="importedStyles" as="xs:string*">
-      <xsl:for-each select="$additional-styles">
-        <xsl:variable name="normalized" select="normalize-space(.)"/>
-        <xsl:value-of select="if ( ends-with($normalized, ';') ) then $normalized
-                              else concat($normalized, ';')"/>
-      </xsl:for-each>
-    </xsl:variable>
-    <xsl:value-of select="string-join(($css, $importedStyles),' ')"/>
+    <xsl:value-of select="string-join($css,' ')"/>
   </xsl:template>
 
   <xd:doc>
