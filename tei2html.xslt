@@ -668,7 +668,7 @@
               else 'keyword'"/>
     <xsl:variable name="rendSplit" 
       select="if ( $rendType eq 'rendladder' ) then 
-                tokenize($rendVal, ') ?')
+                tokenize($rendVal, '\) ?')
               else tokenize($rendVal, ' ')" as="xs:string*"/>
     <xsl:variable name="css" as="xs:string*">
       <xsl:choose>
