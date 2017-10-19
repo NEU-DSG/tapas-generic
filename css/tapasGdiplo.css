@@ -526,7 +526,6 @@ body {
 .tapas-generic closer {
   margin-bottom: 1em;
   padding-bottom: 1em;
-  border-bottom: 1px dotted #333333;
   display: block;
   margin-top: 0;
   margin-bottom: 0;
@@ -1543,7 +1542,6 @@ body {
   margin-bottom: 0;
   margin-bottom: 1em;
   padding-bottom: 1em;
-  border-bottom: 1px dotted #333333;
 }
 .tapas-generic typeDesc {
   display: none;
@@ -1796,20 +1794,23 @@ body {
   color: gray;
   padding: 1em 0;
   font-size: 11pt;
-  border-bottom: 2px dotted #808080;
-  border-top: 2px dotted #808080;
-}
-.tapas-generic.diplomatic .-teibp-pb a:hover {
-  text-decoration: none;
-  color: #808080;
+  padding: 0.2em;
+  margin: 2em 0;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 .tapas-generic.diplomatic .-teibp-pb a:before {
   font-style: italic;
   content: "Page " attr(data-tei-n);
 }
+.tapas-generic.diplomatic .-teibp-pb a:hover {
+  text-decoration: none;
+  color: #808080;
+}
 .tapas-generic.diplomatic .-teibp-pb a.gallery-facs:before {
   content: " ";
 }
-.tapas-generic.diplomatic .-teibp-thumbnail {
-  padding: 15px;
+.tapas-generic.diplomatic .-teibp-pb a.gallery-facs .-teibp-thumbnail {
+  padding: 0.2em;
 }

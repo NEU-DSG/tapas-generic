@@ -526,7 +526,6 @@ body {
 .tapas-generic closer {
   margin-bottom: 1em;
   padding-bottom: 1em;
-  border-bottom: 1px dotted #333333;
   display: block;
   margin-top: 0;
   margin-bottom: 0;
@@ -1543,7 +1542,6 @@ body {
   margin-bottom: 0;
   margin-bottom: 1em;
   padding-bottom: 1em;
-  border-bottom: 1px dotted #333333;
 }
 .tapas-generic typeDesc {
   display: none;

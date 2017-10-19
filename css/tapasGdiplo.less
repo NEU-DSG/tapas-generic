@@ -126,28 +126,37 @@
 
 
   .-teibp-pb {
-  .tapas-generic .pb;
-  border-bottom: @heavyhoverunderline;
-  border-top: @heavyhoverunderline;
-  }
-
-  .-teibp-pb a {}
-
-  .-teibp-pb a:hover {
-  text-decoration: none;
-  color: @linkgrey;
-  }
-
-  .-teibp-pb a:before {
-  .italic;
-  content: "Page " attr(data-tei-n);
-  }
-
-  .-teibp-pb a.gallery-facs:before {
-  content: " ";
-  }
-
-  .-teibp-thumbnail {
-  padding: (@boxpadding * 3);
-  }
-}
+    .tapas-generic .pb;
+    //border-bottom: @heavyhoverunderline;
+    //border-top: @heavyhoverunderline;
+    padding: 0.2em;
+    margin: 2em 0;
+    background-color: #DDD;
+    color: #888;
+    font-family: @sans-font-family;
+    
+    a {
+      
+      &:before {
+        .italic;
+        content: "Page " attr(data-tei-n);
+      }
+      
+      &:hover {
+        text-decoration: none;
+        color: @linkgrey;
+      }
+      
+      &.gallery-facs {
+        
+        &:before {
+          content: " ";
+        }
+        
+        .-teibp-thumbnail {
+          padding: 0.2em;
+        }
+      } // a.gallery-facs
+    } // a
+  } // .-teibp-pb
+} // .tapas-generic.diplomatic

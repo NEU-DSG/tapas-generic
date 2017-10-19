@@ -17,6 +17,7 @@ margin: 0;
 @body-font-family: Georgia,Baskerville,Palatino,'Palatino Linotype','Book Antiqua','Times New Roman',serif;
 @body-font-size: 13pt;
 @body-line-height: 1.5;
+@sans-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 @background-color:transparent;
 @color: #232936;
 @metalabel: #9699AE;
@@ -735,7 +736,7 @@ max-height: 60px;
 	closer {
 	margin-bottom: 1em;
 	padding-bottom: 1em;
-	border-bottom: @darkunderline;
+	//border-bottom: @darkunderline;
 	.block;
 	}
 
@@ -990,7 +991,9 @@ max-height: 60px;
 
 	finalRubric {}
 
-	floatingText {}
+	floatingText {
+	  
+	}
 
 	floruit {}
 
@@ -1116,7 +1119,7 @@ max-height: 60px;
   }
 
 	/* Need head with TEI parent to distinguish from HTML head */
-	tei-head, 
+	tei-head,
   .heading {
 	.block(0.4em);
 	.tapas-generic .head-font;
@@ -2444,7 +2447,7 @@ max-height: 60px;
 	.block;
 	margin-bottom: 1em;
 	padding-bottom: 1em;
-	border-bottom: @darkunderline;
+	//border-bottom: @darkunderline;
 	}
 
 	trait {}
