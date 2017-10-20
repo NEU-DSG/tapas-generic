@@ -1,5 +1,5 @@
 /* IMPORTS */
-/* @import url("shell.css"); */
+// @import url("shell.css");
 @import url('http://fonts.googleapis.com/css?family=Arvo:400,700,400italic,700italic|Gentium+Book+Basic:400,400italic,700,700italic');
 
 /* NAMESPACES */
@@ -7,20 +7,16 @@
 /* @namespace with prefix, as below, throws an error in less. */
 /* @namespace html "http://www.w3.org/1999/xhtml"; */
 
-body {
+/*body {
 margin: 0;
-}
+}*/
 
 
 /* LESS VARIABLES */
-
+/* COLORS  */
+@background-color:transparent;
 @tapas-blue: #D3E5F7;
 @vibrant-blue: #A7C7E6;
-@body-font-family: Georgia,Baskerville,Palatino,'Palatino Linotype','Book Antiqua','Times New Roman',serif;
-@body-font-size: 13pt;
-@body-line-height: 1.5;
-@sans-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-@background-color:transparent;
 @color: #232936;
 @metalabel: #9699AE;
 @link-color:#337DD3;
@@ -30,15 +26,21 @@ margin: 0;
 @border-color: #4D88CD;
 @toolbox-border: #7681CE;
 @note-background-color: #FAF3ED;
-@underline: 1px dotted @linkgrey;
-@darkunderline: 1px dotted @linkdarkgrey;
-@hoverunderline: 1px dotted @linkblack;
-@heavyhoverunderline: 2px dotted @linkgrey;
-@noteborder: 1px solid #CCCCCC;
 @highlightyellow: #FFFF66;
 @highlightblue: #3399FF;
 @whitebackground: #FFFFFF;
 @greybackground: #CCCCCC;
+/* FONTS */
+@body-font-family: Georgia,Baskerville,Palatino,'Palatino Linotype','Book Antiqua','Times New Roman',serif;
+@sans-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+@body-font-size: 13pt;
+@body-line-height: 1.5;
+@underline: 1px dotted @linkgrey;
+@darkunderline: 1px dotted @linkdarkgrey;
+@hoverunderline: 1px dotted @linkblack;
+@heavyhoverunderline: 2px dotted @linkgrey;
+/* MISC. */
+@noteborder: 1px solid #CCCCCC;
 @boxpadding: 5px;
 
 
@@ -125,7 +127,7 @@ margin: 0;
   quotes: "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019";
 }
 .quotes() {
-	.quotesUS;
+  .quotesUS;
 }
 
 .widget-base() {
@@ -149,19 +151,19 @@ max-height: 60px;
 
 
 .label (@content: "") {
-	&:before{
-		font-weight: bold;
-		content: @content;
-	}
+  &:before{
+    font-weight: bold;
+    content: @content;
+  }
 }
 
 .surround (@before, @after){
-	&:before{
-	content: @before;
-	}
-	&:after{
-		content: @after;
-	}
+  &:before{
+  content: @before;
+  }
+  &:after{
+    content: @after;
+  }
 }
 
 .messageReplace (@message){}
@@ -267,9 +269,9 @@ max-height: 60px;
 /* Rules for the pop-up box. */
 #tapas-ref-dialog {
   padding: 0.5em 1em;
-	background: none;
-	color: black;
-	font-family: @body-font-family;
+  background: none;
+  color: black;
+  font-family: @body-font-family;
   font-size: @body-font-size;
   line-height: 1.35;
   
@@ -314,71 +316,71 @@ max-height: 60px;
     }
   } // #TOC
 
-	.note-like {
-	.block;
-	margin:1.5em auto 1.5em auto;
-	padding:.5em 1.5em 1.5em 1.5em;
-	border:1px solid black;
-	border-radius: 15px;
-	width: 325px;
-	position: relative;
-	border: 1px solid @border-color;
-	background: @note-background-color;
-	/* reset text-indent for note with <l> ancestors. */
-	text-indent:0;
-	font-size:85%;
-	text-align:justify;
-	.box-shadow;
-	}
+  .note-like {
+  .block;
+  margin:1.5em auto 1.5em auto;
+  padding:.5em 1.5em 1.5em 1.5em;
+  border:1px solid black;
+  border-radius: 15px;
+  width: 325px;
+  position: relative;
+  border: 1px solid @border-color;
+  background: @note-background-color;
+  /* reset text-indent for note with <l> ancestors. */
+  text-indent:0;
+  font-size:85%;
+  text-align:justify;
+  .box-shadow;
+  }
 
-	.page-setup() {
-	font-family: @body-font-family;
-	font-size:@body-font-size;
-	line-height:@body-line-height;
-	background-color:@background-color;
-	color:@color;
-	//width:100%;
+  .page-setup() {
+  font-family: @body-font-family;
+  font-size:@body-font-size;
+  line-height:@body-line-height;
+  background-color:@background-color;
+  color:@color;
+  //width:100%;
   height: 100%;
-	padding-left:1em;
-	padding-right:1em;
-	margin:0;
+  padding-left:1em;
+  padding-right:1em;
+  margin:0;
   
-  	@media(max-width:767px){
-  		padding-left:0;
-  		padding-right:0;
-		}
+    @media(max-width:767px){
+      padding-left:0;
+      padding-right:0;
+    }
   } // .page-setup
 
-	table {
-	.block;
-	border-collapse: separate;
-	border-spacing: 2px;
-	margin-top:2em;
-	margin-bottom:2em;
-	font-size:12pt;
-	}
+  table {
+  .block;
+  border-collapse: separate;
+  border-spacing: 2px;
+  margin-top:2em;
+  margin-bottom:2em;
+  font-size:12pt;
+  }
 
-	table > head {
-	text-align:center;
-	}
+  table > head {
+  text-align:center;
+  }
   
   .table-border {
-	border:@darkunderline;
-	}
+  border:@darkunderline;
+  }
 
-	/* Choice elements */
-	choice {
-		abbr + expan, expan + abbr, sic + corr, corr + sic, orig + reg, reg + orig{
-			.surround(" (", ")");
-		}
-	}
+  /* Choice elements */
+  choice {
+    abbr + expan, expan + abbr, sic + corr, corr + sic, orig + reg, reg + orig{
+      .surround(" (", ")");
+    }
+  }
   
   /* 'Ography things (inside .tapas-generic) */
   
   *[data-tapas-gotoentry="true"] {
-  	border-bottom: @hoverunderline;
-  	background: @tapas-blue;
-  	cursor:pointer;
+    border-bottom: @hoverunderline;
+    background: @tapas-blue;
+    cursor:pointer;
   }
   
   .contextual-item {
@@ -413,709 +415,709 @@ max-height: 60px;
           }
         }
       }
-    }
+    } // .og-entry
     
     .list-contextual {
       margin: 0.2em 0;
     }
+  } // .contextual-item
+
+  /* A */
+  a[rend~="super"] {
+  vertical-align:super;
+  font-size: 70%;
   }
 
-	/* A */
-	a[rend~="super"] {
-	vertical-align:super;
-	font-size: 70%;
-	}
+  a.ref-not-found,
+  .ptr-not-found,
+  [class$="-not-found"] {
+  text-decoration: none;
+  color: inherit;
+  pointer: text;
+  }
 
-	a.ref-not-found,
-	.ptr-not-found,
-	[class$="-not-found"] {
-	text-decoration: none;
-	color: inherit;
-	pointer: text;
-	}
+  ab {
+  .block-margins;
+  }
 
-	ab {
-	.block-margins;
-	}
+  accMat {
+  .block;
+  }
 
-	accMat {
-	.block;
-	}
+  accMat:before {
+  //content: "accompanying materials: ";
+  }
 
-	accMat:before {
-	//content: "accompanying materials: ";
-	}
+  acquisition {
+  .block;
+  //.label("acquisition");
+  }
 
-	acquisition {
-	.block;
-	//.label("acquisition");
-	}
+  activity {
+  .block;
+  }
 
-	activity {
-	.block;
-	}
+  activity:before {
+  content: "activity: ";
+  }
 
-	activity:before {
-	content: "activity: ";
-	}
+  /* add */
+  add {
+  vertical-align:super;
+  font-size:90%;
+  }
 
-	/* add */
-	add {
-	vertical-align:super;
-	font-size:90%;
-	}
+  add[place=below] {
+  vertical-align:sub;
+  font-size:90%;
+  }
 
-	add[place=below] {
-	vertical-align:sub;
-	font-size:90%;
-	}
+  additional {
+  .block;
+  }
 
-	additional {
-	.block;
-	}
+  additions {
+  .block;
+  }
 
-	additions {
-	.block;
-	}
+  additions:before {
+  content: "Significant additions within the document: ";
+  }
 
-	additions:before {
-	content: "Significant additions within the document: ";
-	}
+  addrLine {
+  .block;
+  }
 
-	addrLine {
-	.block;
-	}
+  address {}
 
-	address {}
+  address[rend~="block"],
+  addresss[rendition~="#block"]  {
+  .block;
+  }
 
-	address[rend~="block"],
-	addresss[rendition~="#block"]  {
-	.block;
-	}
+  adminInfo  {
+  .block;
+  }
 
-	adminInfo  {
-	.block;
-	}
+  affiliation {}
 
-	affiliation {}
+  age {}
 
-	age {}
+  alt {}
 
-	alt {}
+  altGrp {}
 
-	altGrp {}
+  altIdent {}
 
-	altIdent {}
+  altIdentifier  {
+  .block;
+  }
 
-	altIdentifier  {
-	.block;
-	}
+  altIdentifier:before {
+  content: "Alternate ID: ";
+  }
 
-	altIdentifier:before {
-	content: "Alternate ID: ";
-	}
+  am {}
 
-	am {}
+  analytic {}
 
-	analytic {}
+  anchor {}
 
-	anchor {}
+  app  {
+  .block;
+  }
 
-	app  {
-	.block;
-	}
+  appInfo  {
+  .block;
+  }
 
-	appInfo  {
-	.block;
-	}
+  appInfo:before {
+  content: "Application information: ";
+  }
 
-	appInfo:before {
-	content: "Application information: ";
-	}
+  application  {
+  .block;
+  }
 
-	application  {
-	.block;
-	}
+  application:after {
+  content: " " attr(version);
+  }
 
-	application:after {
-	content: " " attr(version);
-	}
+  arc {}
 
-	arc {}
+  argument {
+  .block;
+  }
 
-	argument {
-	.block;
-	}
+  att {
+  .mono;
+  line-height: normal;
+  }
 
-	att {
-	.mono;
-	line-height: normal;
-	}
+  att:before {
+  content: "@";
+  }
 
-	att:before {
-	content: "@";
-	}
+  attDef {}
 
-	attDef {}
+  attlist {}
 
-	attlist {}
+  attRef {}
 
-	attRef {}
+  author {}
 
-	author {}
+  titleStmt > author {
+  .block;
+  .tapas-generic .head-font;
+  margin-bottom:1em;
+  }
 
-	titleStmt > author {
-	.block;
-	.tapas-generic .head-font;
-	margin-bottom:1em;
-	}
+  authority {}
 
-	authority {}
+  publicationStmt > availability{
+  font-size:80%;
+  .label("Availability: ");
+  }
 
-	publicationStmt > availability{
-	font-size:80%;
-	.label("Availability: ");
-	}
+  publicationStmt > availability[status]{
+  .label("Availability (" attr(status) "): ");
+  }
 
-	publicationStmt > availability[status]{
-	.label("Availability (" attr(status) "): ");
-	}
+  /* B */
 
-	/* B */
-
-	back,
+  back,
   front  {
-	.block(1em);
+  .block(1em);
   padding: 1em;
   background-color: aliceblue;
-	}
+  }
 
-	bibl {}
+  bibl {}
 
-	epigraph bibl:before {
-	content: "\2014";
-	}
+  epigraph bibl:before {
+  content: "\2014";
+  }
 
-	bibl[rend~="block"], bibl[rendition~="#block"] {
-	.block;
-	padding-left:2em;
-	text-indent:-2em;
-	}
+  bibl[rend~="block"], bibl[rendition~="#block"] {
+  .block;
+  padding-left:2em;
+  text-indent:-2em;
+  }
 
-	bibl title {
-	font-style: italic;
-	}
+  bibl title {
+  font-style: italic;
+  }
 
-	biblFull  {
-	.block;
-	}
+  biblFull  {
+  .block;
+  }
 
-	biblScope {}
+  biblScope {}
 
-	biblStruct {}
+  biblStruct {}
 
-	bicond {}
+  bicond {}
 
-	binary {}
+  binary {}
 
-	binaryObject {}
+  binaryObject {}
 
-	binding {
-	.block;
-	}
+  binding {
+  .block;
+  }
 
-	binding:before {
-	content: "Binding: \A";
-	white-space: pre-wrap;
-	}
+  binding:before {
+  content: "Binding: \A";
+  white-space: pre-wrap;
+  }
 
-	binding[contemporary]:before {
-	content: "Binding: \A" "Contemporary: " attr(contemporary) "\A";
-	white-space: pre-wrap;
-	}
+  binding[contemporary]:before {
+  content: "Binding: \A" "Contemporary: " attr(contemporary) "\A";
+  white-space: pre-wrap;
+  }
 
-	bindingDesc  {
-	.block;
-	}
+  bindingDesc  {
+  .block;
+  }
 
-	birth  {
-	//.block;
-	}
+  birth  {
+  //.block;
+  }
 
-	bloc {}
+  bloc {}
 
-	tei-body {
-	color: inherit;
-	background-color: inherit;
-	}
+  tei-body {
+  color: inherit;
+  background-color: inherit;
+  }
 
-	broadcast {}
+  broadcast {}
 
-	byline {
-	.block;
-	}
+  byline {
+  .block;
+  }
 
-	/* c */
+  /* c */
 
-	c {}
+  c {}
 
-	cRefPattern {
-	.hide;
-	}
+  cRefPattern {
+  .hide;
+  }
 
-	caesura {}
+  caesura {}
 
-	camera {}
+  camera {}
 
-	caption {
-	.block-margins
-	}
+  caption {
+  .block-margins
+  }
 
-	case {}
+  case {}
 
-	case[value]{
-	.label(attr(value) " ");
-	}
+  case[value]{
+  .label(attr(value) " ");
+  }
 
-	castGroup {
-	.block-margins;
-	}
+  castGroup {
+  .block-margins;
+  }
 
-	castItem {
-	.list-item;
-	list-style-type:none;
-	}
+  castItem {
+  .list-item;
+  list-style-type:none;
+  }
 
-	castlist {
-	.block-margins;
-	margin-left:2em;
-	}
+  castlist {
+  .block-margins;
+  margin-left:2em;
+  }
 
-	catDesc {}
+  catDesc {}
 
-	catRef {}
+  catRef {}
 
-	catchwords {}
+  catchwords {}
 
-	category {}
+  category {}
 
-	cb {
-	.block-margins;
-	}
+  cb {
+  .block-margins;
+  }
 
-	cb:before {
-	content:"[column break]";
-	color: gray;
-	}
+  cb:before {
+  content:"[column break]";
+  color: gray;
+  }
 
-	cell {
-	display:table-cell;
-	padding:1em 1.5em 1em 1em;
-	.table-border;
-	}
+  cell {
+  display:table-cell;
+  padding:1em 1.5em 1em 1em;
+  .table-border;
+  }
 
-	/* for cell or row with @role = label */
-	[role=label] {
-	font-weight:bold;
-	}
+  /* for cell or row with @role = label */
+  [role=label] {
+  font-weight:bold;
+  }
 
-	certainty {}
+  certainty {}
 
-	change {}
+  change {}
 
-	channel {}
+  channel {}
 
-	char {}
+  char {}
 
-	charDecl {}
+  charDecl {}
 
-	charName {}
+  charName {}
 
-	charProp {}
+  charProp {}
 
-	choice {}
+  choice {}
 
-	cit {}
+  cit {}
 
-	cl {}
+  cl {}
 
-	classCode {}
+  classCode {}
 
-	classDecl {}
+  classDecl {}
 
-	classRef {}
+  classRef {}
 
-	classSpec {}
+  classSpec {}
 
-	classes {}
+  classes {}
 
-	climate {
-	.block-margins;
-	//.label("Climate: ");
-	}
+  climate {
+  .block-margins;
+  //.label("Climate: ");
+  }
 
-	closer {
-	margin-bottom: 1em;
-	padding-bottom: 1em;
-	//border-bottom: @darkunderline;
-	.block;
-	}
+  closer {
+  margin-bottom: 1em;
+  padding-bottom: 1em;
+  //border-bottom: @darkunderline;
+  .block;
+  }
 
-	code {
-	.mono;
-	}
+  code {
+  .mono;
+  }
 
-	/* For things like collation, condition, etc. that can have text or paragraphs as
-	children, we should use margins, when the content is text, and no margins when there
-	are child paragraphs (or other block elements). Otherwise we end up with double
-	margins. */
+  /* For things like collation, condition, etc. that can have text or paragraphs as
+  children, we should use margins, when the content is text, and no margins when there
+  are child paragraphs (or other block elements). Otherwise we end up with double
+  margins. */
 
-	collation {.block-margins;}
+  collation {.block-margins;}
 
-	collection {}
+  collection {}
 
-	colloc {}
+  colloc {}
 
-	colophon {.block-margins;}
+  colophon {.block-margins;}
 
-	cond {}
+  cond {}
 
-	condition {.block-margins;}
+  condition {.block-margins;}
 
-	constitution {
-	.block-margins;
-	.label("Constitution: ");
-	}
+  constitution {
+  .block-margins;
+  .label("Constitution: ");
+  }
 
-	constitution[type] {
-	.block-margins;
-	.label("Constitution (" attr(type) "): ");
-	}
+  constitution[type] {
+  .block-margins;
+  .label("Constitution (" attr(type) "): ");
+  }
 
-	constitution[type=frags] {
-	.block-margins;
-	.label("Constitution (fragments): ");
-	}
+  constitution[type=frags] {
+  .block-margins;
+  .label("Constitution (fragments): ");
+  }
 
-	constraint {}
+  constraint {}
 
-	constraintSpec {}
+  constraintSpec {}
 
-	content {}
+  content {}
 
-	/* Need to discuss and coordinate handling of sic/corr, abbr/expan, and orig/reg */
+  /* Need to discuss and coordinate handling of sic/corr, abbr/expan, and orig/reg */
 
-	corr {}
+  corr {}
 
-	correction {}
+  correction {}
 
-	country {}
+  country {}
 
-	creation {}
+  creation {}
 
-	/*
-	Need to handle attributes for custEvent. All the att.datable* attributes will be tricky.
-	custodialHist and custEvent may normally be hidden along with other header metadata, but
-	we'll have other datable elements that may be tricky. */
+  /*
+  Need to handle attributes for custEvent. All the att.datable* attributes will be tricky.
+  custodialHist and custEvent may normally be hidden along with other header metadata, but
+  we'll have other datable elements that may be tricky. */
 
-	custEvent {
-	.list-item;
-	}
+  custEvent {
+  .list-item;
+  }
 
-	custodialHist {
-	.block-margins;
-	}
+  custodialHist {
+  .block-margins;
+  }
 
-	/* d */
+  /* d */
 
-	[data-tapas-hashed-ref] {
-	border-bottom: @hoverunderline;
-	}
+  [data-tapas-hashed-ref] {
+  border-bottom: @hoverunderline;
+  }
 
-	damage {}
+  damage {}
 
-	damageSpan {}
+  damageSpan {}
 
-	datatype {}
+  datatype {}
 
-	date {}
+  date {}
 
-	date[when]:empty:before {
-		content: attr(when);
-	}
+  date[when]:empty:before {
+    content: attr(when);
+  }
 
-	dateline {
-	.block;
-	}
+  dateline {
+  .block;
+  }
 
-	death {}
+  death {}
 
-	decoDesc {}
+  decoDesc {}
 
-	decoNote {}
+  decoNote {}
 
-	def {}
+  def {}
 
-	default {}
+  default {}
 
-	defaultVal {}
+  defaultVal {}
 
-	del {}
+  del {}
 
-	delSpan {}
+  delSpan {}
 
-	depth {}
+  depth {}
 
-	derivation {}
+  derivation {}
 
-	desc {}
+  desc {}
 
-	dictScrap {}
+  dictScrap {}
 
-	dim {}
+  dim {}
 
-	dimensions {}
+  dimensions {}
 
-	distinct {}
+  distinct {}
 
-	distributor {}
+  distributor {}
 
-	district {}
+  district {}
 
-	divGen {}
+  divGen {}
 
-	docAuthor {}
+  docAuthor {}
 
-	docDate {
-	.block;
-	}
+  docDate {
+  .block;
+  }
 
-	docEdition {
-	.block
-	}
+  docEdition {
+  .block
+  }
 
-	docImprint {
-	.block;
-	}
+  docImprint {
+  .block;
+  }
 
-	docTitle {
-	.block;
-	}
+  docTitle {
+  .block;
+  }
 
-	domain {}
+  domain {}
 
-	/* e */
+  /* e */
 
-	eLeaf {}
+  eLeaf {}
 
-	eTree {}
+  eTree {}
 
-	edition {}
+  edition {}
 
-	editionStmt {}
+  editionStmt {}
 
-	editor {}
+  editor {}
 
-	editorialDecl {}
+  editorialDecl {}
 
-	education {}
+  education {}
 
-	eg {}
+  eg {}
 
-	egXML {
-	.block;
-	font-size: 80%;
-	margin-left: 1em;
-	padding-left: 1em;
-	border-left: 1px solid @border-color;
-	margin-top: .75em;
-	margin-bottom: .75em;
-	padding-top: .75em;
-	padding-bottom: .75em;
-	font-family:monospace;
-	white-space:pre;
-	}
+  egXML {
+  .block;
+  font-size: 80%;
+  margin-left: 1em;
+  padding-left: 1em;
+  border-left: 1px solid @border-color;
+  margin-top: .75em;
+  margin-bottom: .75em;
+  padding-top: .75em;
+  padding-bottom: .75em;
+  font-family:monospace;
+  white-space:pre;
+  }
 
-	elementRef {}
+  elementRef {}
 
-	elementSpec {}
+  elementSpec {}
 
-	email {}
+  email {}
 
-	emph {
-	font-style:italic;
-	}
+  emph {
+  font-style:italic;
+  }
 
-	encodingDesc {
-	.hide;
-	}
+  encodingDesc {
+  .hide;
+  }
 
-	entry {}
+  entry {}
 
-	entryFree {}
+  entryFree {}
 
-	epigraph {
-	.block-margins;
-	padding: 0 1em;
-	}
+  epigraph {
+  .block-margins;
+  padding: 0 1em;
+  }
 
-	epilogue {}
+  epilogue {}
 
-	equipment {}
+  equipment {}
 
-	equiv {}
+  equiv {}
 
-	etym {}
+  etym {}
 
-	event {}
+  event {}
 
-	ex {}
+  ex {}
 
-	exemplum {}
+  exemplum {}
 
-	expan {}
+  expan {}
 
-	explicit {}
+  explicit {}
 
-	fileDesc > extent {
-	.hide;
-	}
+  fileDesc > extent {
+  .hide;
+  }
 
-	/* f */
+  /* f */
 
-	f {}
+  f {}
 
-	fDecl {}
+  fDecl {}
 
-	fDescr {}
+  fDescr {}
 
-	fLib {}
+  fLib {}
 
-	facsimile {}
+  facsimile {}
 
-	factuality {}
+  factuality {}
 
-	faith {}
+  faith {}
 
-	figDesc {}
+  figDesc {}
 
-	figure {
-	.block;
-	text-align:center;
-	margin-left:auto;
-	margin-right:auto;
-	}
+  figure {
+  .block;
+  text-align:center;
+  margin-left:auto;
+  margin-right:auto;
+  }
 
-	fileDesc {}
+  fileDesc {}
 
-	filiation {}
+  filiation {}
 
-	finalRubric {}
+  finalRubric {}
 
-	floatingText {
-	  
-	}
+  floatingText {
+    
+  }
 
-	floruit {}
+  floruit {}
 
-	foliation {}
+  foliation {}
 
-	foreign {}
+  foreign {}
 
-	forename {}
+  forename {}
 
-	forest {}
+  forest {}
 
-	forestGrp {}
+  forestGrp {}
 
-	form {}
+  form {}
 
-	formula {}
+  formula {}
 
-	front {}
+  front {}
 
-	fs {}
+  fs {}
 
-	fsConstraints {}
+  fsConstraints {}
 
-	fsDecl {}
+  fsDecl {}
 
-	fsDescr {}
+  fsDescr {}
 
-	fsdDecl {}
+  fsdDecl {}
 
-	fsdLink {}
+  fsdLink {}
 
-	funder {}
+  funder {}
 
-	fvLib {}
+  fvLib {}
 
-	fw {}
+  fw {}
 
-	/* g */
+  /* g */
 
-	g {}
+  g {}
 
-	gap {/* GLS: Depending upon how we handle gap and lacuna, we may want to enclose in [] */ }
+  gap {/* GLS: Depending upon how we handle gap and lacuna, we may want to enclose in [] */ }
 
-	gb {}
+  gb {}
 
-	gen {}
+  gen {}
 
-	genName {}
+  genName {}
 
-	geo {}
+  geo {}
 
-	geoDecl {}
+  geoDecl {}
 
-	geogFeat {}
+  geogFeat {}
 
-	geogName {}
+  geogName {}
 
-	gi {
-	.mono;
-	}
+  gi {
+  .mono;
+  }
 
-	gi:before {
-	content:"<";
-	}
+  gi:before {
+  content:"<";
+  }
 
-	gi:after {
-	content:">";
-	}
+  gi:after {
+  content:">";
+  }
 
-	gloss {}
+  gloss {}
 
-	glyph {}
+  glyph {}
 
-	glyphName {}
+  glyphName {}
 
-	gram {}
+  gram {}
 
-	gramGrp {}
+  gramGrp {}
 
-	graph {
-	.messageReplace("Message here.");
-	}
+  graph {
+  .messageReplace("Message here.");
+  }
 
-	graphic {
-	.hide;
-	}
-	group {}
+  graphic {
+  .hide;
+  }
+  group {}
 
-	/* h */
+  /* h */
 
-	handDesc {}
+  handDesc {}
 
-	handNote {}
+  handNote {}
 
-	handNotes {}
+  handNotes {}
 
-	handShift {}
+  handShift {}
 
-	.heading {
-  	.block(0.4em);
-  	.tapas-generic .head-font;
+  .heading {
+    .block(0.4em);
+    .tapas-generic .head-font;
     
     /*&.heading-listtype {
       margin: 0.2em 0;
@@ -1139,370 +1141,370 @@ max-height: 60px;
     }
   }
 
-	/* Need head with TEI parent to distinguish from HTML head */
-	tei-head,
+  /* Need head with TEI parent to distinguish from HTML head */
+  tei-head,
   .heading {
-	.block(0.4em);
-	.tapas-generic .head-font;
-	}
+  .block(0.4em);
+  .tapas-generic .head-font;
+  }
 
-	TEI text front > .heading, TEI text tei-body > .heading, TEI text back > .heading {
-	margin-bottom: 1em;
-	}
+  TEI text front > .heading, TEI text tei-body > .heading, TEI text back > .heading {
+  margin-bottom: 1em;
+  }
 
-	tei-body > .heading {
-	font-size: 150%;
-	}
+  tei-body > .heading {
+  font-size: 150%;
+  }
 
-	div > .heading {
-	font-size: 142%;
-	}
+  div > .heading {
+  font-size: 142%;
+  }
 
-	div > div > .heading {
-	font-size: 136%;
-	}
+  div > div > .heading {
+  font-size: 136%;
+  }
 
-	div > div > div > .heading {
-	font-size: 128%;
-	}
+  div > div > div > .heading {
+  font-size: 128%;
+  }
 
-	div > div > div > div > .heading,
-	list > head {
-	font-size: 120%;
-	}
+  div > div > div > div > .heading,
+  list > head {
+  font-size: 120%;
+  }
 
-	div > div > div > div > div > .heading {
-	font-size: 112%;
-	}
+  div > div > div > div > div > .heading {
+  font-size: 112%;
+  }
 
-	div > div > div > div > div > div .heading {
-	font-size: 106%;
-	}
+  div > div > div > div > div > div .heading {
+  font-size: 106%;
+  }
 
-	figure > .heading {
-	.note-like;
-	width:85%;
-	font-family:@body-font-family;
-	font-size:@body-font-size;
-	}
+  figure > .heading {
+  .note-like;
+  width:85%;
+  font-family:@body-font-family;
+  font-size:@body-font-size;
+  }
 
-	div[type="canto"] .heading {
-	.block(.25em);
-	}
+  div[type="canto"] .heading {
+  .block(.25em);
+  }
 
-	div .heading[data-tapas-att-type="sub"]{
-	font-size: 115%;
-	}
+  div .heading[data-tapas-att-type="sub"]{
+  font-size: 115%;
+  }
 
-	div[data-tapas-att-type="chapter"] > .heading {
-	text-align: center;
-	margin-bottom: 1em;
-	}
+  div[data-tapas-att-type="chapter"] > .heading {
+  text-align: center;
+  margin-bottom: 1em;
+  }
 
-	div[data-tapas-att-type="half_title"] > .heading {
-	text-align:center;
-	padding: 1em;
-	border: 1px dashed lightgray;
-	}
+  div[data-tapas-att-type="half_title"] > .heading {
+  text-align:center;
+  padding: 1em;
+  border: 1px dashed lightgray;
+  }
 
-	.heading[data-tapas-att-type="supplied"] {
-	.hide;
-	}
+  .heading[data-tapas-att-type="supplied"] {
+  .hide;
+  }
   
   .heading.heading-og > .heading-sub {
     font-size: 0.7em;
   }
 
-	headItem {}
+  headItem {}
 
-	headLabel {}
+  headLabel {}
 
-	height {}
+  height {}
 
-	heraldry {}
+  heraldry {}
 
-	hi {}
+  hi {}
 
-	history {}
+  history {}
 
-	hom {}
+  hom {}
 
-	hyph {}
+  hyph {}
 
-	hyphenation {}
+  hyphenation {}
 
-	/* i */
+  /* i */
 
-	iNode {}
+  iNode {}
 
-	iType {}
+  iType {}
 
-	ident {
-	.mono;
-	}
+  ident {
+  .mono;
+  }
 
-	idno {}
+  idno {}
 
-	if {}
+  if {}
 
-	iff {}
+  iff {}
 
-	imprimatur {}
+  imprimatur {}
 
-	imprint {}
+  imprint {}
 
-	incident {}
+  incident {}
 
-	incipit {}
+  incipit {}
 
-	index {}
+  index {}
 
-	institution {}
+  institution {}
 
-	interaction {}
+  interaction {}
 
-	interp {}
+  interp {}
 
-	interpGrp {}
+  interpGrp {}
 
-	interpretation {}
+  interpretation {}
 
-	item {
-	.list-item;
-	}
+  item {
+  .list-item;
+  }
 
-	list item {
-	margin-left: 1em;
-	margin-top: .125em;
-	margin-bottom: .25em;
-	}
+  list item {
+  margin-left: 1em;
+  margin-top: .125em;
+  margin-bottom: .25em;
+  }
 
-	cell item {
-	margin-left:1em;
-	}
+  cell item {
+  margin-left:1em;
+  }
 
 
-	/* j */
+  /* j */
 
-	join {}
+  join {}
 
-	joinGrp {}
+  joinGrp {}
 
-	/* k */
-	keywords {}
+  /* k */
+  keywords {}
 
-	kinesic {}
+  kinesic {}
 
-	/* l */
+  /* l */
 
-	l {
-	.block;
-	/*padding-left:2em;
-	text-indent:-2em;*/
-	}
+  l {
+  .block;
+  /*padding-left:2em;
+  text-indent:-2em;*/
+  }
 
-	.poem-line-count {
-	font-size: 80%;
-	display: inline-block;
-	min-width: 1.5em;
-	float: right;
+  .poem-line-count {
+  font-size: 80%;
+  display: inline-block;
+  min-width: 1.5em;
+  float: right;
   color: gray;
-	}
+  }
 
-	/*
-	.poem-line-count + l {
-	margin-top: 1em;
-	display: inline-block;
-	text-indent: 0em;
-	padding-left: 0
-	}*/
+  /*
+  .poem-line-count + l {
+  margin-top: 1em;
+  display: inline-block;
+  text-indent: 0em;
+  padding-left: 0
+  }*/
 
-	label {}
+  label {}
 
-	label + item {
-	    list-style: none;
-	}
+  label + item {
+      list-style: none;
+  }
 
-	list label {
-	    float: left;
-	}
+  list label {
+      float: left;
+  }
 
-	list label:after {
-	    content: " ";
-	}
+  list label:after {
+      content: " ";
+  }
 
-	list[type = "gloss"] > label {
-	display: inline-block;
-	font-weight:bold;
-	}
+  list[type = "gloss"] > label {
+  display: inline-block;
+  font-weight:bold;
+  }
 
-	lacunaEnd {}
+  lacunaEnd {}
 
-	lacunaStart {}
+  lacunaStart {}
 
-	lang {}
+  lang {}
 
-	langKnowledge {}
+  langKnowledge {}
 
-	langKnown {}
+  langKnown {}
 
-	langUsage {}
+  langUsage {}
 
-	language {}
+  language {}
 
-	layout {}
+  layout {}
 
-	layoutDesc {}
+  layoutDesc {}
 
-	lb {}
+  lb {}
 
-	lbl {}
+  lbl {}
 
-	leaf {}
+  leaf {}
 
-	lem {}
+  lem {}
 
-	lg {
-	.block-margins;
-	}
+  lg {
+  .block-margins;
+  }
 
-	lg[type="verse_paragraph"] l {
-	}
+  lg[type="verse_paragraph"] l {
+  }
 
-	lg[style*="text-align:center"],
-	lg[style*="text-align: center"] {
-	  text-align: left !important;
-	}
+  lg[style*="text-align:center"],
+  lg[style*="text-align: center"] {
+    text-align: left !important;
+  }
 
 
-	link {}
+  link {}
 
-	linkGrp {}
+  linkGrp {}
 
-	list {
-	.block-margins;
-	}
+  list {
+  .block-margins;
+  }
 
-	p list {
-	text-align:left;
-	}
+  p list {
+  text-align:left;
+  }
 
-	item > list {
-	margin-top:0;
-	}
+  item > list {
+  margin-top:0;
+  }
 
-	list label {
-	display: inline-block;
-	min-width: 1.5em;
-	}
+  list label {
+  display: inline-block;
+  min-width: 1.5em;
+  }
 
-	list label + item {
-	list-style-type: none;
-	margin-left: 0em;
-	}
+  list label + item {
+  list-style-type: none;
+  margin-left: 0em;
+  }
 
-	list label + item:after {
-	content: "\A" ;
-	white-space: pre;
-	}
+  list label + item:after {
+  content: "\A" ;
+  white-space: pre;
+  }
 
-	/* Match only lists that are descendants of
-	text. Otherwise they show up in the header. */
+  /* Match only lists that are descendants of
+  text. Otherwise they show up in the header. */
 
-	text list[type=simple],  {
-	list-style-type:none;
-	}
+  text list[type=simple],  {
+  list-style-type:none;
+  }
 
-	text list[type=simple] > item {
-	margin-left: 0;
-	}
+  text list[type=simple] > item {
+  margin-left: 0;
+  }
 
-	text list[type=bulleted] {
-	list-style-type:disc;
-	}
+  text list[type=bulleted] {
+  list-style-type:disc;
+  }
 
-	text list[type=ordered] {
-	list-style-type:none;
-	counter-reset: items 0;
-	margin-left:1em;
-	}
+  text list[type=ordered] {
+  list-style-type:none;
+  counter-reset: items 0;
+  margin-left:1em;
+  }
 
-	text list[type=ordered] label {
-	.hide;
-	}
+  text list[type=ordered] label {
+  .hide;
+  }
 
-	text list[type=ordered] > item {
-	.list-item;
-	margin-left:0;
-	}
+  text list[type=ordered] > item {
+  .list-item;
+  margin-left:0;
+  }
 
-	text list[type=ordered] > item:before {
-	counter-increment:items 1;
-	content: counter(items, decimal) ". ";
-	}
+  text list[type=ordered] > item:before {
+  counter-increment:items 1;
+  content: counter(items, decimal) ". ";
+  }
 
-	text list[type=gloss],
-	text list[type=gloss] > item {
-	list-style-type: none;
-	}
+  text list[type=gloss],
+  text list[type=gloss] > item {
+  list-style-type: none;
+  }
 
-	text div[type~="contents"] list item {
-	padding-top:.5em;
-	}
+  text div[type~="contents"] list item {
+  padding-top:.5em;
+  }
 
-	text list item a[rend~="right"] {
-	float:right;
-	}
+  text list item a[rend~="right"] {
+  float:right;
+  }
 
-	text list[type=toc] {
-	list-style: none;
-	margin-bottom: 20px;
-	}
+  text list[type=toc] {
+  list-style: none;
+  margin-bottom: 20px;
+  }
 
-	text list[type=toc] > item {
-	list-style-type: none;
-	}
+  text list[type=toc] > item {
+  list-style-type: none;
+  }
 
-	text list[type=toc] item {
-	position:relative;
-	background: url('http://5thirtyone.com/sandbox/share/toc/dot.gif') repeat-x bottom left;
-	overflow: hidden;
-	padding-bottom: 2px;
-	margin-left: 0;
-	}
+  text list[type=toc] item {
+  position:relative;
+  background: url('http://5thirtyone.com/sandbox/share/toc/dot.gif') repeat-x bottom left;
+  overflow: hidden;
+  padding-bottom: 2px;
+  margin-left: 0;
+  }
 
-	text list[type=toc] a,
-	text list[type=toc] label,
-	text list[type=toc] rs {
-	display: inline-block;
-	background: @background-color;
-	position: relative;
-	bottom: -4px;
-	}
+  text list[type=toc] a,
+  text list[type=toc] label,
+  text list[type=toc] rs {
+  display: inline-block;
+  background: @background-color;
+  position: relative;
+  bottom: -4px;
+  }
 
-	text list[type=toc] a {
-	position:absolute;
-	right:0;
-	bottom:0;
-	padding: 0 0 3px 2px;
-	width:70px;
-	border-bottom:0;
-	text-decoration: none;
-	}
+  text list[type=toc] a {
+  position:absolute;
+  right:0;
+  bottom:0;
+  padding: 0 0 3px 2px;
+  width:70px;
+  border-bottom:0;
+  text-decoration: none;
+  }
 
-	text list[type=toc] label {
-	background-color:@background-color;
-	float:left;
-	padding: 0 2px 3px 0;
-	}
+  text list[type=toc] label {
+  background-color:@background-color;
+  float:left;
+  padding: 0 2px 3px 0;
+  }
 
-	text list[type=toc] rs {
-	padding: 0 2px 3px 0;
-	}
+  text list[type=toc] rs {
+  padding: 0 2px 3px 0;
+  }
 
-	text list item p:first-child {
-	.inline;
-	}
+  text list item p:first-child {
+  .inline;
+  }
   
   .list-contextual {
     margin: 1.4em 1em 2em;
@@ -1543,740 +1545,740 @@ max-height: 60px;
     }
   } // .list-contextual
 
-	listBibl bibl {
-	display: list-item;
-	list-style: none;
-	margin: .5em 0;
-	}
+  listBibl bibl {
+  display: list-item;
+  list-style: none;
+  margin: .5em 0;
+  }
 
-	listBibl biblStruct {
-	display: list-item;
-	list-style: none;
-	margin: .5em 0;
-	}
+  listBibl biblStruct {
+  display: list-item;
+  list-style: none;
+  margin: .5em 0;
+  }
 
-	listBibl bibl:last-child,
-	listBibl biblStruct:last-child {
-	padding-bottom: 1em;
-	}
+  listBibl bibl:last-child,
+  listBibl biblStruct:last-child {
+  padding-bottom: 1em;
+  }
 
-	listEvent {}
+  listEvent {}
 
-	listNym {}
+  listNym {}
 
-	listOrg {}
+  listOrg {}
 
-	listPerson {}
+  listPerson {}
 
-	listPlace {}
+  listPlace {}
 
-	listRef {}
+  listRef {}
 
-	listWit {}
+  listWit {}
 
-	localName {}
+  localName {}
 
-	locale {}
+  locale {}
 
-	location {}
+  location {}
 
-	locus {}
+  locus {}
 
-	locusGrp {}
+  locusGrp {}
 
-	/* m */
+  /* m */
 
-	m {}
+  m {}
 
-	macroRef {}
+  macroRef {}
 
-	macroSpec {}
+  macroSpec {}
 
-	mapping {}
+  mapping {}
 
-	material {}
+  material {}
 
-	measure {}
+  measure {}
 
-	measureGrp {}
+  measureGrp {}
 
-	meeting {}
+  meeting {}
 
-	memberOf {}
+  memberOf {}
 
-	mentioned {}
+  mentioned {}
 
-	metDecl {}
+  metDecl {}
 
-	metSym {}
+  metSym {}
 
-	milestone {
-	.block;
-	margin-left:auto;
-	margin-right:auto;
-	text-align:center;
-	}
+  milestone {
+  .block;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  }
 
-	milestone:before {
-	content: "* * * * *";
-	}
+  milestone:before {
+  content: "* * * * *";
+  }
 
-	moduleRef {}
+  moduleRef {}
 
-	moduleSpec {}
+  moduleSpec {}
 
-	monogr {}
+  monogr {}
 
-	mood {}
+  mood {}
 
-	move {}
+  move {}
 
-	msContents {
-	.block-margins {
-		.block(1em)
-		}
-	}
+  msContents {
+  .block-margins {
+    .block(1em)
+    }
+  }
 
-	msDesc {}
+  msDesc {}
 
-	msIdentifier {}
+  msIdentifier {}
 
-	msItem {}
+  msItem {}
 
-	msItemStruct {}
+  msItemStruct {}
 
-	msName {}
+  msName {}
 
-	msPart {}
+  msPart {}
 
-	musicNotation {
-	.label("Musical Notation: ");
-	font-weight: bold;
-	}
+  musicNotation {
+  .label("Musical Notation: ");
+  font-weight: bold;
+  }
 
-	/* n */
+  /* n */
 
-	name {}
+  name {}
 
-	nameLink {}
+  nameLink {}
 
-	namespace {}
+  namespace {}
 
-	nationality {}
+  nationality {}
 
-	node {
-	.hide
-	}
+  node {
+  .hide
+  }
 
-	normalization {}
+  normalization {}
 
-	note {
+  note {
     display: block;
     
     &[data-tapas-anchored="true"] {
-    	.hide;
+      .hide;
     }
-	
-  	&[place~="foot"],
-  	&[place~="bottom"] {
-    	.block;
-    	font-size: 90%;
-    	padding: 2px 0;
-    	font-family: Arial, Verdana, sans-serif;
+  
+    &[place~="foot"],
+    &[place~="bottom"] {
+      .block;
+      font-size: 90%;
+      padding: 2px 0;
+      font-family: Arial, Verdana, sans-serif;
     
       &:before {
-      	vertical-align: super;
-      	font-size: 70%;
-      	content: attr(data-tapas-note-num) "\00a0";
+        vertical-align: super;
+        font-size: 70%;
+        content: attr(data-tapas-note-num) "\00a0";
       }
-  	}
+    }
   } // note
   
-	div[type="endnotes"]:before {
-	.block;
-	margin-top: 1em;
-	content: 'Endnotes: ';
-	font-family: Arial, Verdana, sans-serif;
-	}
+  div[type="endnotes"]:before {
+  .block;
+  margin-top: 1em;
+  content: 'Endnotes: ';
+  font-family: Arial, Verdana, sans-serif;
+  }
 
-	div[type="endnotes"] note {
-	.block-margins;
-	font-size: 90%;
-	font-family: Arial, Verdana, sans-serif;
-	}
+  div[type="endnotes"] note {
+  .block-margins;
+  font-size: 90%;
+  font-family: Arial, Verdana, sans-serif;
+  }
 
 
-	.note-marker {
+  .note-marker {
     padding: 0 0.2em;
-	vertical-align:super;
-	font-size:80%;
-	}
+  vertical-align:super;
+  font-size:80%;
+  }
 
-	notesStmt {
-	.hide;
-	}
+  notesStmt {
+  .hide;
+  }
 
-	num {}
+  num {}
 
-	number {}
+  number {}
 
-	numeric {}
+  numeric {}
 
-	nym {}
+  nym {}
 
-	/* o */
+  /* o */
 
-	oRef {}
+  oRef {}
 
-	oVar {
-	.italic;
-	}
+  oVar {
+  .italic;
+  }
 
-	objectDesc {}
+  objectDesc {}
 
-	objectType {}
+  objectType {}
 
-	occupation {}
+  occupation {}
 
-	offset {}
+  offset {}
 
-	opener {
-	.inline;
-	.clearfix;
-	}
+  opener {
+  .inline;
+  .clearfix;
+  }
 
-	opener placeName,
-	opener date {
-	.inline;
-	.clearfix;
-	}
+  opener placeName,
+  opener date {
+  .inline;
+  .clearfix;
+  }
 
-	opener tapas_metadata {
-	.inline;
-	}
+  opener tapas_metadata {
+  .inline;
+  }
 
-	opener tapas_metadata:before {
-	content: "\00000a";
-	white-space: pre;
-	}
+  opener tapas_metadata:before {
+  content: "\00000a";
+  white-space: pre;
+  }
 
-	org {}
+  org {}
 
-	orgName {}
-	orgName[ref] {
-		//background: @tapas-blue;
-		//cursor:pointer;
-	}
+  orgName {}
+  orgName[ref] {
+    //background: @tapas-blue;
+    //cursor:pointer;
+  }
 
-	origDate {}
+  origDate {}
 
-	origPlace {
-	//.label("Place of Origin: ");
-	font-weight: bold;
-	}
+  origPlace {
+  //.label("Place of Origin: ");
+  font-weight: bold;
+  }
 
-	origin {}
+  origin {}
 
-	orth {}
+  orth {}
 
-	/* p */
+  /* p */
 
-	p {
-	.block-margins;
-	/*text-align:justify;*/
-	}
+  p {
+  .block-margins;
+  /*text-align:justify;*/
+  }
 
-	*[rendition~="#center"] p {
-	text-align:center;
-	}
+  *[rendition~="#center"] p {
+  text-align:center;
+  }
 
-	availability > p:first-child {
-	margin-top:0em;
-	}
+  availability > p:first-child {
+  margin-top:0em;
+  }
 
-	pRef {}
+  pRef {}
 
-	pVar {}
+  pVar {}
 
-	particDesc {}
+  particDesc {}
 
-	pause {}
+  pause {}
 
-	.pb {
-	.block-margins;
-	width: 100%;
-	text-align: right;
-	color: gray;
-	padding: 1em 0;
-	font-size:11pt;
-	}
+  .pb {
+  .block-margins;
+  width: 100%;
+  text-align: right;
+  color: gray;
+  padding: 1em 0;
+  font-size:11pt;
+  }
 
-	pb {
-	.pb;
-	}
-	/*
-	pb:before {
-	content: "page:\a0" attr(n);
-	}*/
+  pb {
+  .pb;
+  }
+  /*
+  pb:before {
+  content: "page:\a0" attr(n);
+  }*/
 
-	pc {}
+  pc {}
 
-	per {}
+  per {}
 
-	performance {
-	.block-margins;
-	}
+  performance {
+  .block-margins;
+  }
 
-	persName[ref] {
-	//border-bottom: @hoverunderline;
-	//background: @tapas-blue;
-	//cursor:pointer;
-	}
+  persName[ref] {
+  //border-bottom: @hoverunderline;
+  //background: @tapas-blue;
+  //cursor:pointer;
+  }
 
-	person {
-	.block-margins;
-	}
+  person {
+  .block-margins;
+  }
 
-	personGrp {
-	.block-margins;
-	}
+  personGrp {
+  .block-margins;
+  }
 
-	phr {}
+  phr {}
 
-	physDesc {}
+  physDesc {}
 
-	place {}
+  place {}
 
-	placeName {
-		//background: @tapas-blue;
-		//cursor:pointer;
-	}
+  placeName {
+    //background: @tapas-blue;
+    //cursor:pointer;
+  }
 
-	div[type="poem"]{
-	.block-margins;
-	}
+  div[type="poem"]{
+  .block-margins;
+  }
 
-	population {}
+  population {}
 
-	pos {}
+  pos {}
 
-	postBox {}
+  postBox {}
 
-	postCode {}
+  postCode {}
 
-	postscript {
-	.block;
-	margin-top:2em;
-	}
+  postscript {
+  .block;
+  margin-top:2em;
+  }
 
-	precision {}
+  precision {}
 
-	preparedness {}
+  preparedness {}
 
-	principal {
-	//.label("Principal: ");
-	font-weight: bold;
-	}
+  principal {
+  //.label("Principal: ");
+  font-weight: bold;
+  }
 
-	profileDesc {
-	.hide;
-	}
+  profileDesc {
+  .hide;
+  }
 
-	projectDesc {}
+  projectDesc {}
 
-	prologue {}
+  prologue {}
 
-	pron {}
+  pron {}
 
-	provenance {
-	.block;
-	}
+  provenance {
+  .block;
+  }
 
-	ptr {}
+  ptr {}
 
-	pubPlace {}
+  pubPlace {}
 
-	docImprint pubPlace {
-	.block;
-	}
+  docImprint pubPlace {
+  .block;
+  }
 
-	publicationStmt > * {
-	.hide;
-	}
+  publicationStmt > * {
+  .hide;
+  }
 
-	publicationStmt {
-	.block-margins;
-	}
+  publicationStmt {
+  .block-margins;
+  }
 
-	publicationStmt > date {
-	.hide;
-	}
+  publicationStmt > date {
+  .hide;
+  }
 
-	publisher {}
+  publisher {}
 
-	publicationStmt > publisher {
-	.hide;
-	}
+  publicationStmt > publisher {
+  .hide;
+  }
 
-	purpose {}
+  purpose {}
 
-	/* q */
+  /* q */
 
-	q {
-	.quotes;
-	}
+  q {
+  .quotes;
+  }
 
-	q:before {
-	content: open-quote;
-	}
+  q:before {
+  content: open-quote;
+  }
 
-	q:after {
-	content: close-quote;
-	}
+  q:after {
+  content: close-quote;
+  }
 
-	q[next]:after,
-	q[prev]:before {
-	content: "" !important;
-	}
+  q[next]:after,
+  q[prev]:before {
+  content: "" !important;
+  }
 
-	quotation {}
+  quotation {}
 
-	quote {
-	.quotes;
-	.block;
-	}
+  quote {
+  .quotes;
+  .block;
+  }
 
-	quote:before {
-	content: open-quote;
-	}
+  quote:before {
+  content: open-quote;
+  }
 
-	quote:after {
-	content: close-quote;
-	}
+  quote:after {
+  content: close-quote;
+  }
 
-	quote[next]:after,
-	quote[prev]:before {
-	content: "" !important;
-	}
+  quote[next]:after,
+  quote[prev]:before {
+  content: "" !important;
+  }
 
-	q l:first-child,
-	quote l:first-child {
-	.inline;
-	padding-left: 0;
-	text-indent: 0;
-	}
+  q l:first-child,
+  quote l:first-child {
+  .inline;
+  padding-left: 0;
+  text-indent: 0;
+  }
 
-	q l:last-child,
-	quote l:last-child {
-	.inline;
-	padding-left: 0;
-	text-indent: 0;
-	}
+  q l:last-child,
+  quote l:last-child {
+  .inline;
+  padding-left: 0;
+  text-indent: 0;
+  }
 
-	q lg:first-child,
-	quote lg:first-child {
-	.inline;
-	}
+  q lg:first-child,
+  quote lg:first-child {
+  .inline;
+  }
 
-	q p:last-child,
-	quote p:last-child {
-	margin-bottom: 0;
-	.inline;
-	}
+  q p:last-child,
+  quote p:last-child {
+  margin-bottom: 0;
+  .inline;
+  }
 
-	q p:first-child,
-	quote p:first-child,{
-	margin-top: 0;
-	.inline;
-	}
+  q p:first-child,
+  quote p:first-child,{
+  margin-top: 0;
+  .inline;
+  }
 
-	/* r */
-	rdg {}
+  /* r */
+  rdg {}
 
-	rdgGrp {}
+  rdgGrp {}
 
-	re {
-	.block;
-	}
+  re {
+  .block;
+  }
 
-	recordHist {
-	.block-margins;
-	}
+  recordHist {
+  .block-margins;
+  }
 
-	recording {}
+  recording {}
 
-	recordingStmt {}
+  recordingStmt {}
 
-	ref {}
+  ref {}
 
-	.ref-external:link {
-	border-bottom: 1px solid @linkdarkgrey;
-	text-decoration: none;
-	}
+  .ref-external:link {
+  border-bottom: 1px solid @linkdarkgrey;
+  text-decoration: none;
+  }
 
-	.ref-note:link {
-	border-bottom: @underline;
-	text-decoration: none;
-	}
+  .ref-note:link {
+  border-bottom: @underline;
+  text-decoration: none;
+  }
 
-	.ref-note:hover {
-	border-bottom: @hoverunderline;
-	text-decoration: none;
-	}
+  .ref-note:hover {
+  border-bottom: @hoverunderline;
+  text-decoration: none;
+  }
 
-	refState {}
+  refState {}
 
-	refsDecl {}
+  refsDecl {}
 
-	region {}
+  region {}
 
-	relatedItem {}
+  relatedItem {}
 
-	relation {}
+  relation {}
 
-	relationGrp {}
+  relationGrp {}
 
-	remarks {
-	//.label("remarks: ");
-	font-weight: bold;
-	}
+  remarks {
+  //.label("remarks: ");
+  font-weight: bold;
+  }
 
-	rendition {}
+  rendition {}
 
-	repository {}
+  repository {}
 
-	residence {}
+  residence {}
 
-	resp {}
+  resp {}
 
-	respStmt {
-	.block;
-	}
+  respStmt {
+  .block;
+  }
 
-	bibl respStmt {
-	.inline;
-	}
+  bibl respStmt {
+  .inline;
+  }
 
-	respons {}
+  respons {}
 
-	restore {}
+  restore {}
 
-	revisionDesc {
-	.hide;
-	}
+  revisionDesc {
+  .hide;
+  }
 
-	rhyme {}
+  rhyme {}
 
-	role {}
+  role {}
 
-	roleDesc {}
+  roleDesc {}
 
-	roleName {}
+  roleName {}
 
-	root {}
+  root {}
 
-	row {
-	display:table-row;
-	}
+  row {
+  display:table-row;
+  }
 
-	rs {}
+  rs {}
 
-	rubric {}
+  rubric {}
 
-	/* s */
-	/* When TEI document is embedded in HTML page,
-	   TEI's <s> element can be interpreted by
-	   browser as HTML <s>, which results in
-	   a strike-through from the "user agent"
-	   styles. */
-	s {
-	text-decoration:none;
-	}
-	said {}
+  /* s */
+  /* When TEI document is embedded in HTML page,
+     TEI's <s> element can be interpreted by
+     browser as HTML <s>, which results in
+     a strike-through from the "user agent"
+     styles. */
+  s {
+  text-decoration:none;
+  }
+  said {}
 
 
-	tapas_metadata {
-	.block-margins;
-	}
+  tapas_metadata {
+  .block-margins;
+  }
 
-	closer tapas_metadata {
-	.inline;
-	}
+  closer tapas_metadata {
+  .inline;
+  }
 
-	samplingDecl {
-	.block;
-	}
+  samplingDecl {
+  .block;
+  }
 
-	schemaSpec {}
+  schemaSpec {}
 
-	scriptDesc {}
+  scriptDesc {}
 
-	scriptNote {
-	.block-margins;
-	}
+  scriptNote {
+  .block-margins;
+  }
 
-	scriptStmt {}
+  scriptStmt {}
 
-	seal {
-	.block;
-	.label("Seal: ");
-	}
+  seal {
+  .block;
+  .label("Seal: ");
+  }
 
-	sealDesc {
-	.block-margins;
-	}
+  sealDesc {
+  .block-margins;
+  }
 
-	secFol {
-	//.label("Second Folio: ");
-	}
+  secFol {
+  //.label("Second Folio: ");
+  }
 
-	seg {}
+  seg {}
 
-	segmentation {}
+  segmentation {}
 
-	sense {
-	.block;
-	}
+  sense {
+  .block;
+  }
 
-	series {}
+  series {}
 
-	seriesStmt {
-	.hide;
-	}
+  seriesStmt {
+  .hide;
+  }
 
-	set {}
+  set {}
 
-	setting {
-	.block;
-	}
+  setting {
+  .block;
+  }
 
-	settingDesc {}
+  settingDesc {}
 
-	settlement {}
+  settlement {}
 
-	sex {}
+  sex {}
 
-	shift {}
+  shift {}
 
-	sic {}
+  sic {}
 
-	signatures {}
+  signatures {}
 
-	signed {
-	display: inline-block;
-	margin-top:1.5em;
-	}
+  signed {
+  display: inline-block;
+  margin-top:1.5em;
+  }
 
-	signed persName {
-	.block;
-	}
+  signed persName {
+  .block;
+  }
 
-	closer signed:before {
-	content: "\00000a";
-	white-space: pre;
-	}
+  closer signed:before {
+  content: "\00000a";
+  white-space: pre;
+  }
 
-	closer signed {
-	margin-top: 0;
-	}
+  closer signed {
+  margin-top: 0;
+  }
 
-	soCalled {
-	.quotes;
-	}
+  soCalled {
+  .quotes;
+  }
 
-	soCalled:before {
-	content: open-quote;
-	}
+  soCalled:before {
+  content: open-quote;
+  }
 
-	soCalled:after {
-	content: close-quote;
-	}
+  soCalled:after {
+  content: close-quote;
+  }
 
-	soCalled[next]:after,
-	soCalled[prev]:before {
-	content: "" !important;
-	}
+  soCalled[next]:after,
+  soCalled[prev]:before {
+  content: "" !important;
+  }
 
-	socecStatus {}
+  socecStatus {}
 
-	sound {
-	.italic;
-	}
+  sound {
+  .italic;
+  }
 
-	source {
-	.block;
-	}
+  source {
+  .block;
+  }
 
-	sourceDesc {
-	.hide;
-	}
+  sourceDesc {
+  .hide;
+  }
 
-	sp {}
+  sp {}
 
-	space {
-	.label();
-	}
+  space {
+  .label();
+  }
 
-	TEI span {
-	/* .hide; */
-	}
+  TEI span {
+  /* .hide; */
+  }
 
-	TEI egXML span {
-	.inline;
-	}
+  TEI egXML span {
+  .inline;
+  }
 
-	spanGrp {}
-	speaker {
-	font-weight:bold;
-	margin-right:0;
-	}
-	specDesc {}
-	specGrp {}
-	specGrpRef {}
-	specList {}
+  spanGrp {}
+  speaker {
+  font-weight:bold;
+  margin-right:0;
+  }
+  specDesc {}
+  specGrp {}
+  specGrpRef {}
+  specList {}
 
-	sponsor {
-	.block;
-	//.label("Sponsor: ");
-	}
+  sponsor {
+  .block;
+  //.label("Sponsor: ");
+  }
 
-	stage {
-	.block-margins;
-	.italic;
-	}
+  stage {
+  .block-margins;
+  .italic;
+  }
 
-	stamp {
-	.block-margins;
-	//.label("Stamped: ");
-	}
+  stamp {
+  .block-margins;
+  //.label("Stamped: ");
+  }
 
-	state {}
-	stdVals {}
-	street {}
-	stress {}
-	string {}
-	stringVal {/* doesn't seem to be part of tei 5 */}
-	subc {}
-	subst {}
-	summary {}
-	superEntry {/* Block with space above and below, maybe have no block and space for <entry> when contained by this element */}
-	supplied {}
-	support {}
-	supportDesc {}
-	surface {}
-	surname {}
+  state {}
+  stdVals {}
+  street {}
+  stress {}
+  string {}
+  stringVal {/* doesn't seem to be part of tei 5 */}
+  subc {}
+  subst {}
+  summary {}
+  superEntry {/* Block with space above and below, maybe have no block and space for <entry> when contained by this element */}
+  supplied {}
+  support {}
+  supportDesc {}
+  surface {}
+  surname {}
 
-	surplus {
-	.hide
-	}
+  surplus {
+  .hide
+  }
 
-	surrogates {}
-	syll {}
-	symbol {}
+  surrogates {}
+  syll {}
+  symbol {}
 
-	/* t */
+  /* t */
 
-	#tapasToolbox {
+  #tapasToolbox {
     .widget-base();
     position: relative;
     top: 20px;
@@ -2288,21 +2290,21 @@ max-height: 60px;
     text-transform: uppercase;
     max-width:180px;
     
-		@media(max-width:767px){
-			clear: both;
-			display: block;
-			width: 100%;
-			top: 0;
-			left: 0;
-		}
+    @media(max-width:767px){
+      clear: both;
+      display: block;
+      width: 100%;
+      top: 0;
+      left: 0;
+    }
     
     h1 {
       .hide;
-  	}
+    }
     
     label {
-    	.inline;
-    	margin-right:.5em;
+      .inline;
+      margin-right:.5em;
     }
     
     > div {
@@ -2310,373 +2312,373 @@ max-height: 60px;
     }
     
     input {
-    	border: 1px solid @border-color;
-    	border-radius: 0px;
-    	background: @background-color;
-    	-webkit-appearance:none;
-    	-webkit-box-shadow:none;
-    	-webkit-border-radius:0em;
-    	display: inline-block;
+      border: 1px solid @border-color;
+      border-radius: 0px;
+      background: @background-color;
+      -webkit-appearance:none;
+      -webkit-box-shadow:none;
+      -webkit-border-radius:0em;
+      display: inline-block;
       
       &[type=checkbox] {
-      	width: 14px;
-      	height: 14px;
-      	line-height:normal;
-      	padding:0;
-      	vertical-align: text-bottom;
+        width: 14px;
+        height: 14px;
+        line-height:normal;
+        padding:0;
+        vertical-align: text-bottom;
         
         :checked {
-        	background: @link-color;
+          background: @link-color;
         }
       } // input[type=checkbox]
     } // input
   } // #tapasToolbox
 
-	TEI {
-	.block;
-	}
+  TEI {
+  .block;
+  }
 
-	tag {}
+  tag {}
 
-	tagUsage {}
+  tagUsage {}
 
-	tagsDecl {}
+  tagsDecl {}
 
-	taxonomy {}
+  taxonomy {}
 
-	tech {}
-
-	teiCorpus {}
-
-	#tei_contextual {
-	.hide
-	}
-
-	teiHeader {
-	display:none;
-	margin-top:2em;
-	margin-bottom:2em;
-	border-bottom:1px solid #999;
-	}
-
-	term {}
-	terrain {}
-	text {}
-
-	TEI > text {
-	.block;
-	}
-
-	textClass {
-	.hide;
-	}
-
-	textDesc {
-	.hide;
-	}
-
-	textLang {}
+  tech {}
+
+  teiCorpus {}
+
+  #tei_contextual {
+  .hide
+  }
+
+  teiHeader {
+  display:none;
+  margin-top:2em;
+  margin-bottom:2em;
+  border-bottom:1px solid #999;
+  }
+
+  term {}
+  terrain {}
+  text {}
+
+  TEI > text {
+  .block;
+  }
+
+  textClass {
+  .hide;
+  }
+
+  textDesc {
+  .hide;
+  }
+
+  textLang {}
 
-	then {}
+  then {}
 
-	time {}
+  time {}
 
-	timeline {}
+  timeline {}
 
-	TEI teiHeader + tapas_metadata {
-	 .hide;
-	}
+  TEI teiHeader + tapas_metadata {
+   .hide;
+  }
 
-	TEI tapas_metadata contributor,
-	TEI tapas_metadata rights,
-	TEI tapas_metadata source {
-	.hide;
-	}
+  TEI tapas_metadata contributor,
+  TEI tapas_metadata rights,
+  TEI tapas_metadata source {
+  .hide;
+  }
 
-	TEI tapas_metadata date, TEI tapas_metadata creator {
-	.block;
-	}
+  TEI tapas_metadata date, TEI tapas_metadata creator {
+  .block;
+  }
 
-	/* title */
-	/* Need TEI ancestor to distinguish TEI title from HTML title */
-	title {}
+  /* title */
+  /* Need TEI ancestor to distinguish TEI title from HTML title */
+  title {}
 
-	TEI title {
-	.inline;
-	}
+  TEI title {
+  .inline;
+  }
 
-	TEI title[level=a] {
-		.quotes;
-	}
+  TEI title[level=a] {
+    .quotes;
+  }
 
-	TEI title[level=a]:before {content: open-quote;}
-	TEI title[level=a]:after {content: close-quote;}
-	TEI title[level=a][next]:after {content: "" !important;}
-	TEI title[level=a][prev]:before {content: "" !important;}
+  TEI title[level=a]:before {content: open-quote;}
+  TEI title[level=a]:after {content: close-quote;}
+  TEI title[level=a][next]:after {content: "" !important;}
+  TEI title[level=a][prev]:before {content: "" !important;}
 
-	title[level=m] {
-	    .italic;
-	}
+  title[level=m] {
+      .italic;
+  }
 
-	/* We transformed teiHeader//title to tei.title  */
-	/* as a hack to solve a JavaScript/jQuery issue. */
-	titleStmt > tei-title {
-	.block;
-	.tapas-generic .head-font;
-	font-weight:bold !important;
-	font-size:150%;
-	}
+  /* We transformed teiHeader//title to tei.title  */
+  /* as a hack to solve a JavaScript/jQuery issue. */
+  titleStmt > tei-title {
+  .block;
+  .tapas-generic .head-font;
+  font-weight:bold !important;
+  font-size:150%;
+  }
 
-	titleStmt > editor:before {
-	content: "Edited by ";
-	}
+  titleStmt > editor:before {
+  content: "Edited by ";
+  }
 
-	titlePage {}
+  titlePage {}
 
-	titlePage argument,
-	titlePage byline,
-	titlePage cb,
-	titlePage docAuthor,
-	titlePage docDate,
-	titlePage docEdition,
-	titlePage docImprint,
-	titlePage docTitle,
-	titlePage epigraph,
-	titlePage figure,
-	titlePage gap,
-	titlePage imprimatur,
-	titlePage lb,
-	titlePage milestone,
-	titlePage note,
-	titlePage pb,
-	titlePage space,
-	titlePage titlePart {
-	.block;
-	}
-	titlePage byline docAuthor {
-	.inline;
-	}
+  titlePage argument,
+  titlePage byline,
+  titlePage cb,
+  titlePage docAuthor,
+  titlePage docDate,
+  titlePage docEdition,
+  titlePage docImprint,
+  titlePage docTitle,
+  titlePage epigraph,
+  titlePage figure,
+  titlePage gap,
+  titlePage imprimatur,
+  titlePage lb,
+  titlePage milestone,
+  titlePage note,
+  titlePage pb,
+  titlePage space,
+  titlePage titlePart {
+  .block;
+  }
+  titlePage byline docAuthor {
+  .inline;
+  }
 
 
-	titlePart {}
+  titlePart {}
 
-	titleStmt {}
+  titleStmt {}
 
-	tns {}
+  tns {}
 
-	trailer {
-	.block;
-	margin-bottom: 1em;
-	padding-bottom: 1em;
-	//border-bottom: @darkunderline;
-	}
+  trailer {
+  .block;
+  margin-bottom: 1em;
+  padding-bottom: 1em;
+  //border-bottom: @darkunderline;
+  }
 
-	trait {}
+  trait {}
 
-	tree {}
+  tree {}
 
-	triangle {}
+  triangle {}
 
-	typeDesc {
-	.hide;
-	}
+  typeDesc {
+  .hide;
+  }
 
-	typeNote {}
+  typeNote {}
 
-	/* u */
-	u:before {
-	content: "-";
-	}
+  /* u */
+  u:before {
+  content: "-";
+  }
 
-	unclear {}
+  unclear {}
 
-	unicodeName {}
+  unicodeName {}
 
-	usg {}
+  usg {}
 
-	.ui-widget-header{
-	border: 0px;
-	background: none;
-	}
+  .ui-widget-header{
+  border: 0px;
+  background: none;
+  }
 
-	.ui-dialog .ui-dialog-titlebar {
-	font-size: 15px;
-	min-height: 21px;
-	}
+  .ui-dialog .ui-dialog-titlebar {
+  font-size: 15px;
+  min-height: 21px;
+  }
 
-	.ui-dialog .ui-dialog-titlebar-close{
-	right: 0;
-	}
+  .ui-dialog .ui-dialog-titlebar-close{
+  right: 0;
+  }
 
-	/* v */
+  /* v */
 
-	vAlt {}
+  vAlt {}
 
-	vColl {}
+  vColl {}
 
-	vDefault {}
+  vDefault {}
 
-	vLabel {}
+  vLabel {}
 
-	vMerge {}
+  vMerge {}
 
-	vNot {}
+  vNot {}
 
-	vRange {}
+  vRange {}
 
-	val {}
+  val {}
 
-	valDesc {}
+  valDesc {}
 
-	valItem {}
+  valItem {}
 
-	valList {}
+  valList {}
 
-	value {}
+  value {}
 
-	variantEncoding {}
+  variantEncoding {}
 
-	view {
-	.italic;
-	}
+  view {
+  .italic;
+  }
 
-	vocal {}
+  vocal {}
 
-	/* w */
+  /* w */
 
-	w {}
+  w {}
 
-	watermark {}
+  watermark {}
 
-	width {}
+  width {}
 
-	wit {}
+  wit {}
 
-	witDetail {}
+  witDetail {}
 
-	witEnd {}
+  witEnd {}
 
-	witStart {}
+  witStart {}
 
-	witness {}
+  witness {}
 
-	writing {}
+  writing {}
 
-	/* x */
-	xr {}
+  /* x */
+  xr {}
 
-	/* z */
-	zone {}
+  /* z */
+  zone {}
 }
 
-	/* styles for html shell and html elements in TEI (e.g.,<a> and <img>) */
-	// html > body {
-	// margin:0;
-	// padding:0;
-	// }
-	//
-	// html {
-	// margin:0;
-	// padding:0;
-	// .tapas-generic .page-setup;
-	// }
+  /* styles for html shell and html elements in TEI (e.g.,<a> and <img>) */
+  // html > body {
+  // margin:0;
+  // padding:0;
+  // }
+  //
+  // html {
+  // margin:0;
+  // padding:0;
+  // .tapas-generic .page-setup;
+  // }
 
 .tapas-generic {
-	.tapas-generic .page-setup;
-	img {
-	border:1px solid @border-color;
-	}
+  .tapas-generic .page-setup;
+  img {
+  border:1px solid @border-color;
+  }
 
-	footer {
-	margin-top:1em;
-	border-top: 1px solid @color;
-	padding-top:.5em;
-	font-size:12pt;
-	}
+  footer {
+  margin-top:1em;
+  border-top: 1px solid @color;
+  padding-top:.5em;
+  font-size:12pt;
+  }
 
-	a:link, a:visited, a:active  {
-	color:@link-color;
-	text-decoration:none;
-	}
+  a:link, a:visited, a:active  {
+  color:@link-color;
+  text-decoration:none;
+  }
 
-	a:hover {
-	color:@link-color;
-	text-decoration:underline;
-	}
+  a:hover {
+  color:@link-color;
+  text-decoration:underline;
+  }
 
-	#TOC + #tei_wrapper{
-		width:73%;
-		float:right;
-		@media(max-width: 1000px){
+  #TOC + #tei_wrapper{
+    width:73%;
+    float:right;
+    @media(max-width: 1000px){
       width:100%;
       float:none;
     }
-	}
+  }
 
-	/* xml-serialization */
-	.eg-element {
-	    color:rgb(1,101,200);
-	}
-	.eg-comment {
-	    color:gray;
-	}
-	.eg-att, .eg-nsdecl {
-	    color:rgb(245,134,80);
-	}
-	.eg-attvalue, .eg-ns {
-	    color:rgb(153,51,0);
-	}
-	.eg-text {
-	    color:@color;
-	}
+  /* xml-serialization */
+  .eg-element {
+      color:rgb(1,101,200);
+  }
+  .eg-comment {
+      color:gray;
+  }
+  .eg-att, .eg-nsdecl {
+      color:rgb(245,134,80);
+  }
+  .eg-attvalue, .eg-ns {
+      color:rgb(153,51,0);
+  }
+  .eg-text {
+      color:@color;
+  }
 
-	/* loading animation */
-	#loading {
-	.hide;
-	position:fixed;
-	left:0;
-	top:0;
-	width:100%;
-	height:100%;
-	background-image:url("../images/transparentbg.png");
-	}
+  /* loading animation */
+  #loading {
+  .hide;
+  position:fixed;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  background-image:url("../images/transparentbg.png");
+  }
 
-	/* facsViewer */
+  /* facsViewer */
 
-	.img-resizable {
-	background-color:@background-color;
-	width:350px;
-	height:500px;
-	overflow:hidden;
-	padding:0 1em .25em 0;
-	border:none
-	}
+  .img-resizable {
+  background-color:@background-color;
+  width:350px;
+  height:500px;
+  overflow:hidden;
+  padding:0 1em .25em 0;
+  border:none
+  }
 
-	div.facsImage {
-	width:100%;
-	height: 98%;
-	overflow-y:scroll;
-	border:1px solid black;
-	}
+  div.facsImage {
+  width:100%;
+  height: 98%;
+  overflow-y:scroll;
+  border:1px solid black;
+  }
 
-	div.facsImage img {
-	max-width:98% !important;
-	margin-top:.5em;
-	}
+  div.facsImage img {
+  max-width:98% !important;
+  margin-top:.5em;
+  }
 
-	div.facsImage img:first-child {
-	margin-top:0;
-	}
+  div.facsImage img:first-child {
+  margin-top:0;
+  }
 
-	div#footer {
-	  width: 67%;
-	  text-align: center;
-	  border: dashed thin black;
-	  padding: 1ex 1ex 1ex 1ex;
-	  //background-color: desaturate( darken( @background-color, 10%), 40% );
-	}
+  div#footer {
+    width: 67%;
+    text-align: center;
+    border: dashed thin black;
+    padding: 1ex 1ex 1ex 1ex;
+    //background-color: desaturate( darken( @background-color, 10%), 40% );
+  }
 
-	div#footer > p {
-	  text-align: center;
-	}
+  div#footer > p {
+    text-align: center;
+  }
 }
