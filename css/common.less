@@ -159,7 +159,7 @@ max-height: 60px;
 
 .surround (@before, @after){
   &:before{
-  content: @before;
+    content: @before;
   }
   &:after{
     content: @after;
@@ -352,28 +352,34 @@ max-height: 60px;
   } // .page-setup
 
   table {
-  .block;
-  border-collapse: separate;
-  border-spacing: 2px;
-  margin-top:2em;
-  margin-bottom:2em;
-  font-size:12pt;
-  }
-
-  table > head {
-  text-align:center;
-  }
+    .block;
+    border-collapse: separate;
+    border-spacing: 2px;
+    margin-top:2em;
+    margin-bottom:2em;
+    font-size:12pt;
+    
+    > head {
+      text-align: center;
+    }
+  } // table
   
   .table-border {
-  border:@darkunderline;
+    border: @darkunderline;
   }
 
   /* Choice elements */
   choice {
-    abbr + expan, expan + abbr, sic + corr, corr + sic, orig + reg, reg + orig{
+    
+    abbr + expan,
+    expan + abbr,
+    sic + corr,
+    corr + sic,
+    orig + reg,
+    reg + orig {
       .surround(" (", ")");
     }
-  }
+  } // choice
   
   /* 'Ography things (inside .tapas-generic) */
   
@@ -441,11 +447,7 @@ max-height: 60px;
   }
 
   accMat {
-  .block;
-  }
-
-  accMat:before {
-  //content: "accompanying materials: ";
+    .block;
   }
 
   acquisition {
@@ -454,34 +456,26 @@ max-height: 60px;
   }
 
   activity {
-  .block;
+    .block;
+    .intervention-before("Activity: ");
   }
 
-  activity:before {
-  content: "activity: ";
-  }
-
-  /* add */
   add {
-  vertical-align:super;
-  font-size:90%;
-  }
-
-  add[place=below] {
-  vertical-align:sub;
-  font-size:90%;
-  }
+    vertical-align:super;
+    font-size:90%;
+    
+    &[place=below] {
+      vertical-align:sub;
+    }
+  } // add
 
   additional {
   .block;
   }
 
   additions {
-  .block;
-  }
-
-  additions:before {
-  content: "Significant additions within the document: ";
+    .block;
+    .intervention-before("Significant additions within the document: ");
   }
 
   addrLine {
@@ -491,7 +485,7 @@ max-height: 60px;
   address {}
 
   address[rend~="block"],
-  addresss[rendition~="#block"]  {
+  address[rendition~="#block"]  {
   .block;
   }
 
@@ -510,11 +504,8 @@ max-height: 60px;
   altIdent {}
 
   altIdentifier  {
-  .block;
-  }
-
-  altIdentifier:before {
-  content: "Alternate ID: ";
+    .block;
+    .intervention-before("Alternate ID: ");
   }
 
   am {}
@@ -528,20 +519,17 @@ max-height: 60px;
   }
 
   appInfo  {
-  .block;
-  }
-
-  appInfo:before {
-  content: "Application information: ";
+    .block;
+    .intervention-before("Application information: ");
   }
 
   application  {
-  .block;
-  }
-
-  application:after {
-  content: " " attr(version);
-  }
+    .block;
+    
+    [version] {
+      .intervention-before(" " attr(version));
+    }
+  } // application
 
   arc {}
 
@@ -550,13 +538,13 @@ max-height: 60px;
   }
 
   att {
-  .mono;
-  line-height: normal;
-  }
-
-  att:before {
-  content: "@";
-  }
+    .mono;
+    line-height: normal;
+    
+    &:before {
+      content: "@";
+    }
+  } // att
 
   attDef {}
 
@@ -592,20 +580,22 @@ max-height: 60px;
   background-color: aliceblue;
   }
 
-  bibl {}
+  bibl {
+    
+    &[rend~="block"],
+    &[rendition~="#block"] {
+      .block;
+      padding-left:2em;
+      text-indent:-2em;
+    }
+    
+    title {
+      font-style: italic;
+    }
+  } // bibl
 
-  epigraph bibl:before {
-  content: "\2014";
-  }
-
-  bibl[rend~="block"], bibl[rendition~="#block"] {
-  .block;
-  padding-left:2em;
-  text-indent:-2em;
-  }
-
-  bibl title {
-  font-style: italic;
+  epigraph bibl {
+    .intervention-before("\2014");
   }
 
   biblFull  {
@@ -623,18 +613,19 @@ max-height: 60px;
   binaryObject {}
 
   binding {
-  .block;
-  }
-
-  binding:before {
-  content: "Binding: \A";
-  white-space: pre-wrap;
-  }
-
-  binding[contemporary]:before {
-  content: "Binding: \A" "Contemporary: " attr(contemporary) "\A";
-  white-space: pre-wrap;
-  }
+    .block;
+    
+    &:before {
+      .intervention;
+      content: "Binding: \A";
+      white-space: pre-wrap;
+    }
+    
+    &[contemporary]:before {
+      .intervention;
+      content: "Binding: \A" "Contemporary: " attr(contemporary) "\A";
+    }
+  } // binding
 
   bindingDesc  {
   .block;
@@ -673,11 +664,12 @@ max-height: 60px;
   .block-margins
   }
 
-  case {}
-
-  case[value]{
-  .label(attr(value) " ");
-  }
+  case {
+    
+    [value]{
+      .label(attr(value) " ");
+    }
+  } // case
 
   castGroup {
   .block-margins;
@@ -688,7 +680,7 @@ max-height: 60px;
   list-style-type:none;
   }
 
-  castlist {
+  castList {
   .block-margins;
   margin-left:2em;
   }
@@ -702,13 +694,14 @@ max-height: 60px;
   category {}
 
   cb {
-  .block-margins;
-  }
-
-  cb:before {
-  content:"[column break]";
-  color: gray;
-  }
+    .block-margins;
+    
+    &:before {
+      .intervention;
+      content: "[column break]";
+      color: gray;
+    }
+  } // cb
 
   cell {
   display:table-cell;
@@ -1002,11 +995,18 @@ max-height: 60px;
   figDesc {}
 
   figure {
-  .block;
-  text-align:center;
-  margin-left:auto;
-  margin-right:auto;
-  }
+    .block;
+    text-align:center;
+    margin-left:auto;
+    margin-right:auto;
+    
+    > .heading {
+      .note-like;
+      width:85%;
+      font-family:@body-font-family;
+      font-size:@body-font-size;
+    }
+  } // figure
 
   fileDesc {}
 
@@ -1075,16 +1075,16 @@ max-height: 60px;
   geogName {}
 
   gi {
-  .mono;
-  }
-
-  gi:before {
-  content:"<";
-  }
-
-  gi:after {
-  content:">";
-  }
+    .mono;
+    
+    :before {
+      content:"<";
+    }
+  
+    :after {
+      content:">";
+    }
+  } // gi
 
   gloss {}
 
@@ -1138,8 +1138,8 @@ max-height: 60px;
       &:first-child {
         margin-left: 0;
       }
-    }
-  }
+    } // .og-label-inner
+  } // .heading
 
   /* Need head with TEI parent to distinguish from HTML head */
   tei-head,
@@ -1148,16 +1148,18 @@ max-height: 60px;
   .tapas-generic .head-font;
   }
 
-  TEI text front > .heading, TEI text tei-body > .heading, TEI text back > .heading {
-  margin-bottom: 1em;
+  TEI text front > .heading, 
+  TEI text tei-body > .heading, 
+  TEI text back > .heading {
+    margin-bottom: 1em;
   }
 
   tei-body > .heading {
-  font-size: 150%;
+    font-size: 150%;
   }
 
   div > .heading {
-  font-size: 142%;
+    font-size: 142%;
   }
 
   div > div > .heading {
@@ -1179,13 +1181,6 @@ max-height: 60px;
 
   div > div > div > div > div > div .heading {
   font-size: 106%;
-  }
-
-  figure > .heading {
-  .note-like;
-  width:85%;
-  font-family:@body-font-family;
-  font-size:@body-font-size;
   }
 
   div[type="canto"] .heading {
@@ -1325,17 +1320,138 @@ max-height: 60px;
       list-style: none;
   }
 
-  list label {
+  /* Match only lists that are descendants of
+  text. Otherwise they show up in the header. */
+  text list {
+    .block-margins;
+    
+    label {
       float: left;
+      display: inline-block;
+      min-width: 1.5em;
+      
+      &:after {
+        content: " ";
+      }
+    } // label
+    
+    label + item {
+      list-style-type: none;
+      margin-left: 0em;
+      
+      &:after {
+        content: "\A" ;
+        white-space: pre;
+      }
+      
+      a[rend~="right"] {
+        float:right;
+      }
+    } // label + item
+    
+    &[type=simple] {
+      list-style-type:none;
+      
+      > item {
+        margin-left: 0;
+      }
+    } // list[type=simple]
+    
+    &[type=bulleted] {
+      list-style-type:disc;
+    }
+    
+    &[type=ordered] {
+      list-style-type:none;
+      counter-reset: items 0;
+      margin-left:1em;
+      
+      label {
+        .hide;
+      }
+      
+      > item {
+        .list-item;
+        margin-left:0;
+        
+        &:before {
+          counter-increment:items 1;
+          content: counter(items, decimal) ". ";
+        }
+      } // list[type=ordered] > item
+    } // list[type=ordered]
+    
+    &[type=gloss] {
+      list-style-type: none;
+      
+      > label {
+        display: inline-block;
+        font-weight:bold;
+      }
+    } // list[type=gloss]
+    
+    list[type=toc] {
+      list-style: none;
+      margin-bottom: 20px;
+      
+      item {
+        position:relative;
+        background: url('http://5thirtyone.com/sandbox/share/toc/dot.gif') repeat-x bottom left;
+        overflow: hidden;
+        padding-bottom: 2px;
+        margin-left: 0;
+    
+        p {
+      
+          &:first-child {
+            .inline;
+          }
+        }
+      } // list[type=toc]item
+  
+      > item {
+        list-style-type: none;
+      }
+  
+      a, label, rs {
+        display: inline-block;
+        background: @background-color;
+        position: relative;
+        bottom: -4px;
+      }
+  
+      a {
+        position:absolute;
+        right:0;
+        bottom:0;
+        padding: 0 0 3px 2px;
+        width:70px;
+        border-bottom:0;
+        text-decoration: none;
+      }
+  
+      label {
+        background-color:@background-color;
+        float:left;
+        padding: 0 2px 3px 0;
+      }
+  
+      rs {
+        padding: 0 2px 3px 0;
+      }
+    } // list[type=toc]
+  } // text list
+  
+  p list {
+    text-align:left;
   }
 
-  list label:after {
-      content: " ";
+  item > list {
+  margin-top:0;
   }
 
-  list[type = "gloss"] > label {
-  display: inline-block;
-  font-weight:bold;
+  text div[type~="contents"] list item {
+  padding-top:.5em;
   }
 
   lacunaEnd {}
@@ -1365,146 +1481,17 @@ max-height: 60px;
   lem {}
 
   lg {
-  .block-margins;
-  }
-
-  lg[type="verse_paragraph"] l {
-  }
-
-  lg[style*="text-align:center"],
-  lg[style*="text-align: center"] {
-    text-align: left !important;
-  }
-
+    .block-margins;
+    
+    &[style*="text-align:center"],
+    &[style*="text-align: center"] {
+      text-align: left !important;
+    }
+  } // lg
 
   link {}
 
   linkGrp {}
-
-  list {
-  .block-margins;
-  }
-
-  p list {
-  text-align:left;
-  }
-
-  item > list {
-  margin-top:0;
-  }
-
-  list label {
-  display: inline-block;
-  min-width: 1.5em;
-  }
-
-  list label + item {
-  list-style-type: none;
-  margin-left: 0em;
-  }
-
-  list label + item:after {
-  content: "\A" ;
-  white-space: pre;
-  }
-
-  /* Match only lists that are descendants of
-  text. Otherwise they show up in the header. */
-
-  text list[type=simple],  {
-  list-style-type:none;
-  }
-
-  text list[type=simple] > item {
-  margin-left: 0;
-  }
-
-  text list[type=bulleted] {
-  list-style-type:disc;
-  }
-
-  text list[type=ordered] {
-  list-style-type:none;
-  counter-reset: items 0;
-  margin-left:1em;
-  }
-
-  text list[type=ordered] label {
-  .hide;
-  }
-
-  text list[type=ordered] > item {
-  .list-item;
-  margin-left:0;
-  }
-
-  text list[type=ordered] > item:before {
-  counter-increment:items 1;
-  content: counter(items, decimal) ". ";
-  }
-
-  text list[type=gloss],
-  text list[type=gloss] > item {
-  list-style-type: none;
-  }
-
-  text div[type~="contents"] list item {
-  padding-top:.5em;
-  }
-
-  text list item a[rend~="right"] {
-  float:right;
-  }
-
-  text list[type=toc] {
-  list-style: none;
-  margin-bottom: 20px;
-  }
-
-  text list[type=toc] > item {
-  list-style-type: none;
-  }
-
-  text list[type=toc] item {
-  position:relative;
-  background: url('http://5thirtyone.com/sandbox/share/toc/dot.gif') repeat-x bottom left;
-  overflow: hidden;
-  padding-bottom: 2px;
-  margin-left: 0;
-  }
-
-  text list[type=toc] a,
-  text list[type=toc] label,
-  text list[type=toc] rs {
-  display: inline-block;
-  background: @background-color;
-  position: relative;
-  bottom: -4px;
-  }
-
-  text list[type=toc] a {
-  position:absolute;
-  right:0;
-  bottom:0;
-  padding: 0 0 3px 2px;
-  width:70px;
-  border-bottom:0;
-  text-decoration: none;
-  }
-
-  text list[type=toc] label {
-  background-color:@background-color;
-  float:left;
-  padding: 0 2px 3px 0;
-  }
-
-  text list[type=toc] rs {
-  padding: 0 2px 3px 0;
-  }
-
-  text list item p:first-child {
-  .inline;
-  }
   
   .list-contextual {
     margin: 1.4em 1em 2em;
@@ -1545,22 +1532,19 @@ max-height: 60px;
     }
   } // .list-contextual
 
-  listBibl bibl {
-  display: list-item;
-  list-style: none;
-  margin: .5em 0;
-  }
-
-  listBibl biblStruct {
-  display: list-item;
-  list-style: none;
-  margin: .5em 0;
-  }
-
-  listBibl bibl:last-child,
-  listBibl biblStruct:last-child {
-  padding-bottom: 1em;
-  }
+  listBibl {
+    
+    bibl,
+    biblStruct {
+      display: list-item;
+      list-style: none;
+      margin: .5em 0;
+      
+      &:last-child {
+        padding-bottom: 1em;
+      }
+    } // bibl, biblStruct
+  } // listBibl
 
   listEvent {}
 
@@ -1613,15 +1597,15 @@ max-height: 60px;
   metSym {}
 
   milestone {
-  .block;
-  margin-left:auto;
-  margin-right:auto;
-  text-align:center;
-  }
-
-  milestone:before {
-  content: "* * * * *";
-  }
+    .block;
+    margin-left:auto;
+    margin-right:auto;
+    text-align:center;
+    
+    :before {
+      .intervention-before("* * * * *");
+    }
+  } // milestone
 
   moduleRef {}
 
@@ -1634,10 +1618,10 @@ max-height: 60px;
   move {}
 
   msContents {
-  .block-margins {
-    .block(1em)
+    .block-margins {
+      .block(1em)
     }
-  }
+  } // msContents
 
   msDesc {}
 
@@ -1684,9 +1668,9 @@ max-height: 60px;
       .block;
       font-size: 90%;
       padding: 2px 0;
-      font-family: Arial, Verdana, sans-serif;
+      font-family: @sans-font-family;
     
-      &:before {
+      &[data-tapas-note-num]:before {
         vertical-align: super;
         font-size: 70%;
         content: attr(data-tapas-note-num) "\00a0";
@@ -1694,19 +1678,21 @@ max-height: 60px;
     }
   } // note
   
-  div[type="endnotes"]:before {
-  .block;
-  margin-top: 1em;
-  content: 'Endnotes: ';
-  font-family: Arial, Verdana, sans-serif;
-  }
-
-  div[type="endnotes"] note {
-  .block-margins;
-  font-size: 90%;
-  font-family: Arial, Verdana, sans-serif;
-  }
-
+  div[type="endnotes"] {
+    
+    &:before {
+      .block;
+      margin-top: 1em;
+      content: 'Endnotes: ';
+      font-family: @sans-font-family;
+    }
+    
+    note {
+      .block-margins;
+      font-size: 90%;
+      font-family: @sans-font-family;
+    }
+  } // div[type='endnotes']
 
   .note-marker {
     padding: 0 0.2em;
@@ -1743,24 +1729,23 @@ max-height: 60px;
   offset {}
 
   opener {
-  .inline;
-  .clearfix;
-  }
-
-  opener placeName,
-  opener date {
-  .inline;
-  .clearfix;
-  }
-
-  opener tapas_metadata {
-  .inline;
-  }
-
-  opener tapas_metadata:before {
-  content: "\00000a";
-  white-space: pre;
-  }
+    .inline;
+    .clearfix;
+    
+    placeName, date {
+      .inline;
+      .clearfix;
+    }
+    
+    tapas_metadata {
+      .inline;
+      
+      &:before {
+        content: "\00000a";
+        white-space: pre;
+      }
+    } // tapas_metadata
+  } // opener
 
   org {}
 
@@ -1804,22 +1789,18 @@ max-height: 60px;
 
   pause {}
 
-  .pb {
-  .block-margins;
-  width: 100%;
-  text-align: right;
-  color: gray;
-  padding: 1em 0;
-  font-size:11pt;
+  .pb() {
+    .block-margins;
+    width: 100%;
+    text-align: right;
+    color: gray;
+    padding: 1em 0;
+    font-size:11pt;
   }
 
   pb {
-  .pb;
+    .pb;
   }
-  /*
-  pb:before {
-  content: "page:\a0" attr(n);
-  }*/
 
   pc {}
 
@@ -1923,74 +1904,67 @@ max-height: 60px;
   purpose {}
 
   /* q */
+  
+  q, quote, soCalled {
+    .quotes;
+    
+    &:before {
+      content: open-quote;
+    }
+    
+    &:after {
+      content: close-quote;
+    }
+    
+    &[next]:after,
+    &[prev]:before {
+      content: '' !important;
+    }
+  } // q, quote, soCalled
+  
+  q, quote {
+    
+    lg {
+      
+      &:first-child {
+        .inline;
+      }
+    } // lg
+    
+    l {
+      
+      &:first-child {
+        .inline;
+        padding-left: 0;
+        text-indent: 0;
+      }
+      
+      &:last-child {
+        .inline;
+        padding-left: 0;
+        text-indent: 0;
+      }
+    } // l
+    
+    p {
+      
+      &:first-child {
+        margin-top: 0;
+        .inline;
+      }
+      
+      &:last-child {
+        margin-bottom: 0;
+        .inline;
+      }
+    } // p
+  } // q, quote
 
-  q {
-  .quotes;
-  }
-
-  q:before {
-  content: open-quote;
-  }
-
-  q:after {
-  content: close-quote;
-  }
-
-  q[next]:after,
-  q[prev]:before {
-  content: "" !important;
+  quote {
+    .block;
   }
 
   quotation {}
-
-  quote {
-  .quotes;
-  .block;
-  }
-
-  quote:before {
-  content: open-quote;
-  }
-
-  quote:after {
-  content: close-quote;
-  }
-
-  quote[next]:after,
-  quote[prev]:before {
-  content: "" !important;
-  }
-
-  q l:first-child,
-  quote l:first-child {
-  .inline;
-  padding-left: 0;
-  text-indent: 0;
-  }
-
-  q l:last-child,
-  quote l:last-child {
-  .inline;
-  padding-left: 0;
-  text-indent: 0;
-  }
-
-  q lg:first-child,
-  quote lg:first-child {
-  .inline;
-  }
-
-  q p:last-child,
-  quote p:last-child {
-  margin-bottom: 0;
-  .inline;
-  }
-
-  q p:first-child,
-  quote p:first-child,{
-  margin-top: 0;
-  .inline;
-  }
 
   /* r */
   rdg {}
@@ -2182,23 +2156,6 @@ max-height: 60px;
   margin-top: 0;
   }
 
-  soCalled {
-  .quotes;
-  }
-
-  soCalled:before {
-  content: open-quote;
-  }
-
-  soCalled:after {
-  content: close-quote;
-  }
-
-  soCalled[next]:after,
-  soCalled[prev]:before {
-  content: "" !important;
-  }
-
   socecStatus {}
 
   sound {
@@ -2351,7 +2308,7 @@ max-height: 60px;
   teiCorpus {}
 
   #tei_contextual {
-  .hide
+  .hide;
   }
 
   teiHeader {
@@ -2399,26 +2356,22 @@ max-height: 60px;
   .block;
   }
 
-  /* title */
-  /* Need TEI ancestor to distinguish TEI title from HTML title */
-  title {}
-
-  TEI title {
-  .inline;
-  }
-
-  TEI title[level=a] {
-    .quotes;
-  }
-
-  TEI title[level=a]:before {content: open-quote;}
-  TEI title[level=a]:after {content: close-quote;}
-  TEI title[level=a][next]:after {content: "" !important;}
-  TEI title[level=a][prev]:before {content: "" !important;}
-
-  title[level=m] {
+  tei-title {
+    .inline;
+    
+    &[level=a] {
+      .quotes;
+      
+      &:before {content: open-quote;}
+      &:after {content: close-quote;}
+      &[next]:after {content: "" !important;}
+      &[prev]:before {content: "" !important;}
+    }
+    
+    &[level=m] {
       .italic;
-  }
+    }
+  } // tei-title
 
   /* We transformed teiHeader//title to tei.title  */
   /* as a hack to solve a JavaScript/jQuery issue. */
@@ -2433,32 +2386,36 @@ max-height: 60px;
   content: "Edited by ";
   }
 
-  titlePage {}
-
-  titlePage argument,
-  titlePage byline,
-  titlePage cb,
-  titlePage docAuthor,
-  titlePage docDate,
-  titlePage docEdition,
-  titlePage docImprint,
-  titlePage docTitle,
-  titlePage epigraph,
-  titlePage figure,
-  titlePage gap,
-  titlePage imprimatur,
-  titlePage lb,
-  titlePage milestone,
-  titlePage note,
-  titlePage pb,
-  titlePage space,
-  titlePage titlePart {
-  .block;
-  }
-  titlePage byline docAuthor {
-  .inline;
-  }
-
+  titlePage {
+    
+    argument,
+    byline,
+    cb,
+    docAuthor,
+    docDate,
+    docEdition,
+    docImprint,
+    docTitle,
+    epigraph,
+    figure,
+    gap,
+    imprimatur,
+    lb,
+    milestone,
+    note,
+    pb,
+    space,
+    titlePart {
+      .block;
+    }
+    
+    byline {
+      
+      docAuthor {
+        .inline;
+      }
+    } // byline
+  } // titlePage
 
   titlePart {}
 
@@ -2501,14 +2458,17 @@ max-height: 60px;
   background: none;
   }
 
-  .ui-dialog .ui-dialog-titlebar {
-  font-size: 15px;
-  min-height: 21px;
-  }
-
-  .ui-dialog .ui-dialog-titlebar-close{
-  right: 0;
-  }
+  .ui-dialog {
+    
+    .ui-dialog-titlebar {
+      font-size: 15px;
+      min-height: 21px;
+    }
+    
+    .ui-dialog-titlebar-close{
+      right: 0;
+    }
+  } // .ui-dialog
 
   /* v */
 
@@ -2596,15 +2556,20 @@ max-height: 60px;
   font-size:12pt;
   }
 
-  a:link, a:visited, a:active  {
-  color:@link-color;
-  text-decoration:none;
-  }
-
-  a:hover {
-  color:@link-color;
-  text-decoration:underline;
-  }
+  a {
+    
+    &:link,
+    &:visited,
+    &active {
+      color:@link-color;
+      text-decoration:none;
+    }
+    
+    &:hover {
+      color:@link-color;
+      text-decoration:underline;
+    }
+  } // a
 
   #TOC + #tei_wrapper{
     width:73%;
@@ -2651,24 +2616,24 @@ max-height: 60px;
   height:500px;
   overflow:hidden;
   padding:0 1em .25em 0;
-  border:none
+  border:none;
   }
 
   div.facsImage {
-  width:100%;
-  height: 98%;
-  overflow-y:scroll;
-  border:1px solid black;
-  }
-
-  div.facsImage img {
-  max-width:98% !important;
-  margin-top:.5em;
-  }
-
-  div.facsImage img:first-child {
-  margin-top:0;
-  }
+    width:100%;
+    height: 98%;
+    overflow-y:scroll;
+    border:1px solid black;
+    
+    img {
+      max-width:98% !important;
+      margin-top:.5em;
+      
+      &:first-child {
+        margin-top:0;
+      }
+    } // img
+  } // div.facsImage
 
   div#footer {
     width: 67%;
@@ -2676,9 +2641,9 @@ max-height: 60px;
     border: dashed thin black;
     padding: 1ex 1ex 1ex 1ex;
     //background-color: desaturate( darken( @background-color, 10%), 40% );
-  }
-
-  div#footer > p {
-    text-align: center;
-  }
-}
+    
+    > p {
+      text-align: center;
+    }
+  } // div#footer
+} // .tapas-generic
