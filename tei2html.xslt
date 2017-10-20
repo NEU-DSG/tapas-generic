@@ -399,39 +399,48 @@
         <xsl:otherwise>ref</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <xsl:variable name="target" select="normalize-space(@target)"/>
-    <xsl:variable name="class">
-      <xsl:variable name="count" as="xs:integer">
-        <xsl:choose>
-          <xsl:when test="starts-with($target,'#')">
-            <xsl:value-of select="count(//*[@xml:id eq substring-after($target,'#')])"/>
-          </xsl:when>
-          <xsl:otherwise>0</xsl:otherwise>
-        </xsl:choose>
-      </xsl:variable>
+    <xsl:variable name="targetContent" select="normalize-space(@target)"/>
+    <xsl:variable name="count" as="xs:integer">
       <xsl:choose>
-        <xsl:when test="@data-tapas-target-warning eq 'target not found'">
+        <xsl:when test="starts-with($targetContent,'#')">
+          <xsl:value-of select="count(//*[@xml:id eq substring-after($targetContent,'#')])"/>
+        </xsl:when>
+        <xsl:otherwise>0</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="linkType" 
+      select="if ( @data-tapas-target-warning eq 'target not found'
+                or $count eq 0  and  starts-with($targetContent,'#') ) then 
+                'notFound'
+              else if ( $count eq 0 ) then
+                'external'
+              else if ( $count eq 1 ) then
+                'local'
+              else 'internals'"/>
+    <xsl:variable name="class">
+      <xsl:choose>
+        <xsl:when test="$linkType eq 'notFound'">
           <xsl:value-of select="concat($gi,'-not-found')"/>
         </xsl:when>
-        <xsl:when test="$count eq 0  and  starts-with($target,'#')">
-          <xsl:value-of select="concat($gi,'-not-found')"/>
-        </xsl:when>
-        <xsl:when test="$count eq 0">
+        <xsl:when test="$linkType eq 'external'">
           <xsl:value-of select="concat($gi,'-external')"/>
         </xsl:when>
-        <xsl:when test="$count eq 1">
-          <xsl:value-of select="concat($gi,'-', local-name(//*[@xml:id eq substring-after($target,'#')]) )"/>
+        <xsl:when test="$linkType eq 'local'">
+          <xsl:value-of select="concat($gi,'-', local-name(//*[@xml:id eq substring-after($targetContent,'#')]) )"/>
         </xsl:when>
         <xsl:otherwise>
           <xsl:value-of select="concat($gi,'-internals')"/>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <a class="{$class}" target="_blank">
+    <a class="{$class}">
+      <xsl:if test="$linkType ne 'local'">
+        <xsl:attribute name="target" select="'_blank'"/>
+      </xsl:if>
       <xsl:call-template name="set-reliable-attributes"/>
       <xsl:apply-templates select="node()" mode="#current"/>
       <xsl:if test="$gi eq 'ptr'">
-        <xsl:value-of select="$target"/>
+        <xsl:value-of select="$targetContent"/>
       </xsl:if>
     </a>
   </xsl:template>
