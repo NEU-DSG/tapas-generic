@@ -299,6 +299,7 @@
         </xsl:when>
         <xsl:otherwise>
           <link id="maincss" rel="stylesheet" type="text/css" href="{$view.diplo}"></link>
+          <link rel="stylesheet" type="text/css" href="{$view.norma}"></link>
         </xsl:otherwise>
       </xsl:choose>
       <xsl:call-template name="javascript"/>

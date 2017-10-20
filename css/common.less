@@ -1,8 +1,8 @@
-/* imports */
+/* IMPORTS */
 /* @import url("shell.css"); */
 @import url('http://fonts.googleapis.com/css?family=Arvo:400,700,400italic,700italic|Gentium+Book+Basic:400,400italic,700,700italic');
 
-/* namespaces */
+/* NAMESPACES */
 /* @namespace "http://www.tei-c.org/ns/1.0"; */
 /* @namespace with prefix, as below, throws an error in less. */
 /* @namespace html "http://www.w3.org/1999/xhtml"; */
@@ -11,7 +11,9 @@ body {
 margin: 0;
 }
 
-/* Less variables */
+
+/* LESS VARIABLES */
+
 @tapas-blue: #D3E5F7;
 @vibrant-blue: #A7C7E6;
 @body-font-family: Georgia,Baskerville,Palatino,'Palatino Linotype','Book Antiqua','Times New Roman',serif;
@@ -39,15 +41,33 @@ margin: 0;
 @greybackground: #CCCCCC;
 @boxpadding: 5px;
 
-/* Less mixins */
+
+/* LESS MIXINS */
+
 .head-font() {
   font-family: ‘Palatino Linotype’, ‘Book Antiqua’, Palatino, serif;//@body-font-family;
   font-weight: normal;
 }
 
+// Block styling
 .block {
   display:block;
 }
+.block(@margins: 0) {
+  display:block;
+  margin-top:@margins;
+  margin-bottom:@margins;
+}
+.block-margins() {
+  .block(1em);
+}
+
+.box-shadow() {
+  box-shadow: 0px 1px 3px rgba(0,0,0,0.25);
+  -moz-box-shadow: 0px 1px 3px rgba(0,0,0,0.25);
+  -webkit-box-shadow: 0px 1px 3px rgba(0,0,0,0.25);
+}
+
 .clearfix{
   &:before,
   &:after {
@@ -59,26 +79,34 @@ margin: 0;
   }
 }
 
-.block(@margins: 0) {
-  display:block;
-  margin-top:@margins;
-  margin-bottom:@margins;
-}
-
-.block-margins() {
-  .block(1em);
-}
-
 .hide() {
-  display:none;
+  display: none;
 }
 
 .inline() {
-  display:inline;
+  display: inline;
 }
 
 .list-item() {
-  display:list-item;
+  display: list-item;
+}
+
+// Standard rules for TAPAS interventions
+.intervention() {
+  display: inline;
+  .italic;
+}
+.intervention-after(@content: '') {
+  &:after {
+    .intervention();
+    content: @content;
+  }
+}
+.intervention-before(@content: '') {
+  &:before {
+    .intervention();
+    content: @content;
+  }
 }
 
 .italic() {
@@ -86,23 +114,16 @@ margin: 0;
 }
 
 .mono() {
-  font-family:Courier,monospace;
+  font-family: Courier,monospace;
 }
 
-.box-shadow() {
-  -webkit-box-shadow: 0px 1px 3px rgba(0,0,0,0.25);
-  -moz-box-shadow: 0px 1px 3px rgba(0,0,0,0.25);
-  box-shadow: 0px 1px 3px rgba(0,0,0,0.25);
-}
-
+// Quotation marks
 .quotesUS() {
   quotes: "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d";
 }
-
 .quotesUK() {
   quotes: "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019";
 }
-
 .quotes() {
 	.quotesUS;
 }
@@ -116,7 +137,7 @@ margin: 0;
   font-size: 11.5pt;
 }
 
-/* teibp classes */
+/* TEIBP CLASSES */
 
 .-teibp-thumbnail {
 max-height: 60px;

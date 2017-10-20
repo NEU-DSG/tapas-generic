@@ -2,29 +2,6 @@
 
 .tapas-generic.diplomatic {
   
-  
-  //  MIX-INS
-  
-  .intervention() {
-    display: inline;
-    .italic;
-  }
-  .intervention-after(@content: '') {
-    &:after {
-      .intervention();
-      content: @content;
-    }
-  }
-  .intervention-before(@content: '') {
-    &:before {
-      .intervention();
-      content: @content;
-    }
-  }
-  
-  
-  // RULESETS
-  
   add {
     background: @highlightyellow;
     
@@ -64,9 +41,12 @@
     .intervention-after("]");
   } // supplied, gap
 
-  supplied:hover {
-    .intervention-before("[(Text supplied: " attr(reason) ") ");
-  }
+  supplied {
+    
+    &[reason]:hover {
+      .intervention-before("[(Text supplied: " attr(reason) ") ");
+    }
+  } // supplied
   
   gap {
     .intervention-after("(Unclear text)]");

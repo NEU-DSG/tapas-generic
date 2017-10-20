@@ -1,15 +1,15 @@
-/* imports */
+/* IMPORTS */
 /* @import url("shell.css"); */
 @import url('http://fonts.googleapis.com/css?family=Arvo:400,700,400italic,700italic|Gentium+Book+Basic:400,400italic,700,700italic');
-/* namespaces */
+/* NAMESPACES */
 /* @namespace "http://www.tei-c.org/ns/1.0"; */
 /* @namespace with prefix, as below, throws an error in less. */
 /* @namespace html "http://www.w3.org/1999/xhtml"; */
 body {
   margin: 0;
 }
-/* Less variables */
-/* Less mixins */
+/* LESS VARIABLES */
+/* LESS MIXINS */
 .block {
   display: block;
 }
@@ -21,7 +21,7 @@ body {
 .clearfix:after {
   clear: both;
 }
-/* teibp classes */
+/* TEIBP CLASSES */
 .-teibp-thumbnail {
   max-height: 60px;
 }
@@ -229,9 +229,9 @@ body {
   text-indent: 0;
   font-size: 85%;
   text-align: justify;
-  -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
-  -moz-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
+  -moz-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
+  -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
 }
 .tapas-generic table {
   display: block;
@@ -745,9 +745,9 @@ body {
   text-indent: 0;
   font-size: 85%;
   text-align: justify;
-  -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
-  -moz-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
+  -moz-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
+  -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
   width: 85%;
   font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
   font-size: 13pt;
@@ -1677,35 +1677,18 @@ body {
 .tapas-generic.normal choice orig,
 .tapas-generic.normal choice sic,
 .tapas-generic.normal choice abbr {
-  display: none;
   border: 1px solid #cccccc;
   padding: 5px;
+  display: none;
   background: #ffffff;
 }
 .tapas-generic.normal choice:hover orig,
 .tapas-generic.normal choice:hover sic,
-.tapas-generic.normal choice:hover abbr,
-.tapas-generic.normal gap:hover {
+.tapas-generic.normal choice:hover abbr {
   display: inline;
 }
-.tapas-generic.normal choice abbr + expan:after,
-.tapas-generic.normal choice expan + abbr:after,
-.tapas-generic.normal choice sic + corr:after,
-.tapas-generic.normal choice corr + sic:after,
-.tapas-generic.normal choice orig + reg:after,
-.tapas-generic.normal choice reg + orig:after,
-.tapas-generic.normal choice abbr + expan:before,
-.tapas-generic.normal choice expan + abbr:before,
-.tapas-generic.normal choice sic + corr:before,
-.tapas-generic.normal choice corr + sic:before,
-.tapas-generic.normal choice orig + reg:before,
-.tapas-generic.normal choice reg + orig:before {
-  content: "";
-}
 .tapas-generic.normal del,
-.tapas-generic.normal subst del {
-  display: none;
-}
+.tapas-generic.normal subst del,
 .tapas-generic.normal fw {
   display: none;
 }
@@ -1713,28 +1696,29 @@ body {
   border-bottom: 1px dotted #000000;
 }
 .tapas-generic.normal gap:before {
-  content: "[";
-}
-.tapas-generic.normal gap:after {
-  content: "]";
-}
-.tapas-generic.normal gap[reason]:after,
-.tapas-generic.normal gap[extent]:after,
-.tapas-generic.normal gap[quantity]:after,
-.tapas-generic.normal gap:after {
+  display: inline;
   font-style: italic;
+  content: '[';
+}
+.tapas-generic.normal gap:after {
+  display: inline;
+  font-style: italic;
+  content: "(Unclear text)]";
 }
 .tapas-generic.normal gap[reason]:after {
+  display: inline;
+  font-style: italic;
   content: "(Gap reason: " attr(reason) ")]";
 }
-.tapas-generic.normal gap[extent]:after {
+.tapas-generic.normal gap[reason][unit][extent]:after {
+  display: inline;
+  font-style: italic;
   content: "(Gap of " attr(extent) " " attr(unit) "; reason: " attr(reason) ")]";
 }
-.tapas-generic.normal gap[quantity]:after {
+.tapas-generic.normal gap[reason][unit][quantity]:after {
+  display: inline;
+  font-style: italic;
   content: "(Gap of " attr(quantity) " " attr(unit) "; reason: " attr(reason) ")]";
-}
-.tapas-generic.normal gap:after {
-  content: "(Unclear text)]";
 }
 .tapas-generic.normal .-teibp-pb a {
   font-family: "sans-serif";
@@ -1751,6 +1735,6 @@ body {
   padding: 0 .5em 0 0;
   float: left;
 }
-.tapas-generic.normal .-teibp-pb a:hover:before {
+.tapas-generic.normal .-teibp-pb a[data-tapas-n]:hover:before {
   content: "\002119 " attr(data-tapas-n);
 }
