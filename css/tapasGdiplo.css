@@ -1672,68 +1672,72 @@ body {
 .tapas-generic.diplomatic add {
   background: #ffff66;
 }
-.tapas-generic.diplomatic add[hand]:hover:before {
+.tapas-generic.diplomatic add [hand]:hover:before {
+  display: inline;
   font-style: italic;
   content: "(Added by: " attr(hand) " ) ";
 }
 .tapas-generic.diplomatic choice orig,
 .tapas-generic.diplomatic choice sic,
-.tapas-generic.diplomatic choice abbr,
-.tapas-generic.diplomatic supplied,
-.tapas-generic.diplomatic gap {
+.tapas-generic.diplomatic choice abbr {
   border-bottom: 1px dotted #000000;
 }
 .tapas-generic.diplomatic choice reg,
 .tapas-generic.diplomatic choice corr,
 .tapas-generic.diplomatic choice expan {
   border: 1px solid #cccccc;
-  display: none;
   padding: 5px;
+  display: none;
   background: #ffffff;
 }
 .tapas-generic.diplomatic choice:hover reg,
 .tapas-generic.diplomatic choice:hover corr,
-.tapas-generic.diplomatic choice:hover expan,
-.tapas-generic.diplomatic add:hover,
-.tapas-generic.diplomatic supplied:hover,
-.tapas-generic.diplomatic gap:hover,
-.tapas-generic.diplomatic unclear:hover {
+.tapas-generic.diplomatic choice:hover expan {
   display: inline;
-}
-.tapas-generic.diplomatic choice abbr + expan:after,
-.tapas-generic.diplomatic choice expan + abbr:after,
-.tapas-generic.diplomatic choice sic + corr:after,
-.tapas-generic.diplomatic choice corr + sic:after,
-.tapas-generic.diplomatic choice orig + reg:after,
-.tapas-generic.diplomatic choice reg + orig:after,
-.tapas-generic.diplomatic choice abbr + expan:before,
-.tapas-generic.diplomatic choice expan + abbr:before,
-.tapas-generic.diplomatic choice sic + corr:before,
-.tapas-generic.diplomatic choice corr + sic:before,
-.tapas-generic.diplomatic choice orig + reg:before,
-.tapas-generic.diplomatic choice reg + orig:before {
-  content: "";
 }
 .tapas-generic.diplomatic del {
   text-decoration: line-through;
 }
-.tapas-generic.diplomatic gap[reason]:after,
-.tapas-generic.diplomatic gap[extent]:after,
-.tapas-generic.diplomatic gap[quantity]:after,
-.tapas-generic.diplomatic gap:after {
+.tapas-generic.diplomatic supplied,
+.tapas-generic.diplomatic gap {
+  border-bottom: 1px dotted #000000;
+}
+.tapas-generic.diplomatic supplied:before,
+.tapas-generic.diplomatic gap:before {
+  display: inline;
   font-style: italic;
+  content: "[";
+}
+.tapas-generic.diplomatic supplied:after,
+.tapas-generic.diplomatic gap:after {
+  display: inline;
+  font-style: italic;
+  content: "]";
+}
+.tapas-generic.diplomatic supplied:hover:before {
+  display: inline;
+  font-style: italic;
+  content: "[(Text supplied: " attr(reason) ") ";
+}
+.tapas-generic.diplomatic gap:after {
+  display: inline;
+  font-style: italic;
+  content: "(Unclear text)]";
 }
 .tapas-generic.diplomatic gap[reason]:after {
+  display: inline;
+  font-style: italic;
   content: "(Gap reason: " attr(reason) ")]";
 }
-.tapas-generic.diplomatic gap[extent]:after {
+.tapas-generic.diplomatic gap[reason][unit][extent]:after {
+  display: inline;
+  font-style: italic;
   content: "(Gap of " attr(extent) " " attr(unit) "; reason: " attr(reason) ")]";
 }
-.tapas-generic.diplomatic gap[quantity]:after {
+.tapas-generic.diplomatic gap[reason][unit][quantity]:after {
+  display: inline;
+  font-style: italic;
   content: "(Gap of " attr(quantity) " " attr(unit) "; reason: " attr(reason) ")]";
-}
-.tapas-generic.diplomatic gap:after {
-  content: "(Unclear text)]";
 }
 .tapas-generic.diplomatic lb:after {
   content: '\a';
@@ -1742,48 +1746,35 @@ body {
 .tapas-generic.diplomatic milestone {
   background: #cccccc;
 }
-.tapas-generic.diplomatic milestone[n]:before,
-.tapas-generic.diplomatic milestone[unit]:before,
-.tapas-generic.diplomatic milestone:before {
-  font-style: italic;
-}
 .tapas-generic.diplomatic milestone[n]:before {
+  display: inline;
+  font-style: italic;
   content: attr(n);
 }
-.tapas-generic.diplomatic milestone[unit]:before {
+.tapas-generic.diplomatic milestone[n][unit]:before {
+  display: inline;
+  font-style: italic;
   content: attr(unit) " " attr(n);
-}
-.tapas-generic.diplomatic milestone:before {
-  content: ;
 }
 .tapas-generic.diplomatic subst {
   background: #ffffff;
   padding: 5px;
   border: 1px solid #cccccc;
 }
-.tapas-generic.diplomatic supplied:before,
-.tapas-generic.diplomatic gap:before {
-  content: "[";
-}
-.tapas-generic.diplomatic supplied:after,
-.tapas-generic.diplomatic gap:after {
-  content: "]";
-}
-.tapas-generic.diplomatic supplied:hover:before {
-  content: "[(Text supplied: " attr(reason) ") ";
-}
 .tapas-generic.diplomatic unclear {
   padding-bottom: 5px;
   border-bottom: 2px dotted #808080;
   background: #3399ff;
 }
-.tapas-generic.diplomatic unclear[reason]:hover:before {
-  font-style: italic;
-  content: " (Unclear text: " attr(reason) ") ";
-}
 .tapas-generic.diplomatic unclear:hover:before {
+  display: inline;
   font-style: italic;
   content: " (Unclear text) ";
+}
+.tapas-generic.diplomatic unclear[reason]:hover:before {
+  display: inline;
+  font-style: italic;
+  content: " (Unclear text: " attr(reason) ") ";
 }
 .tapas-generic.diplomatic .-teibp-pb {
   display: block;
@@ -1801,12 +1792,18 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 .tapas-generic.diplomatic .-teibp-pb a:before {
+  display: inline;
   font-style: italic;
-  content: "Page " attr(data-tei-n);
+  content: "Page";
 }
 .tapas-generic.diplomatic .-teibp-pb a:hover {
   text-decoration: none;
   color: #808080;
+}
+.tapas-generic.diplomatic .-teibp-pb a[data-tei-n]:before {
+  display: inline;
+  font-style: italic;
+  content: "Page " attr(data-tei-n);
 }
 .tapas-generic.diplomatic .-teibp-pb a.gallery-facs:before {
   content: " ";

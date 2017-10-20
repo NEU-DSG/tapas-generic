@@ -1,134 +1,132 @@
 @import "common.less";
 
-.tapas-generic.diplomatic{
+.tapas-generic.diplomatic {
+  
+  
+  //  MIX-INS
+  
+  .intervention() {
+    display: inline;
+    .italic;
+  }
+  .intervention-after(@content: '') {
+    &:after {
+      .intervention();
+      content: @content;
+    }
+  }
+  .intervention-before(@content: '') {
+    &:before {
+      .intervention();
+      content: @content;
+    }
+  }
+  
+  
+  // RULESETS
   
   add {
-  background: @highlightyellow;
-  }
-
-  add[hand]:hover:before{
-   .italic;
-   content:"(Added by: " attr(hand) " ) ";
-  }
-
-  choice orig, choice sic, choice abbr, supplied, gap {
-  border-bottom: @hoverunderline;
-  }
-
-  choice reg, choice corr, choice expan {
-  border: @noteborder;
-  .hide;
-  padding: @boxpadding;
-  background: @whitebackground;
-  }
-
-  choice:hover reg, choice:hover corr, choice:hover expan, add:hover, supplied:hover, gap:hover, unclear:hover {
-  display: inline;
-  }
-
-  choice abbr + expan:after,
-  choice expan + abbr:after,
-  choice sic + corr:after,
-  choice corr + sic:after,
-  choice orig + reg:after,
-  choice reg + orig:after,
-  choice abbr + expan:before,
-  choice expan + abbr:before,
-  choice sic + corr:before,
-  choice corr + sic:before,
-  choice orig + reg:before,
-  choice reg + orig:before {
-  content: "";
-  }
+    background: @highlightyellow;
+    
+    [hand]:hover {
+      .intervention-before("(Added by: " attr(hand) " ) ");
+    }
+  } // add
+  
+  choice {
+    
+    orig, sic, abbr {
+      border-bottom: @hoverunderline;
+    }
+    
+    reg, corr, expan {
+      border: @noteborder;
+      padding: @boxpadding;
+      .hide;
+      background: @whitebackground;
+    }
+    
+    &:hover {
+      
+      reg, corr, expan {
+        display: inline;
+      }
+    } // choice:hover
+  } // choice
 
   del {
-  text-decoration: line-through;
+    text-decoration: line-through;
   }
+  
+  supplied, gap {
+    border-bottom: @hoverunderline;
+    .intervention-before("[");
+    .intervention-after("]");
+  } // supplied, gap
 
-  gap[reason]:after, gap[extent]:after, gap[quantity]:after, gap:after {
-  .italic;
+  supplied:hover {
+    .intervention-before("[(Text supplied: " attr(reason) ") ");
   }
-
-  gap[reason]:after {
-  content: "(Gap reason: " attr(reason) ")]";
-  }
-
-  gap[extent]:after {
-  content: "(Gap of " attr(extent) " " attr(unit) "; reason: " attr(reason) ")]";
-  }
-
-  gap[quantity]:after {
-  content: "(Gap of " attr(quantity) " " attr(unit) "; reason: " attr(reason) ")]";
-  }
-
-  gap:after {
-  content: "(Unclear text)]";
-  }
+  
+  gap {
+    .intervention-after("(Unclear text)]");
+    
+    &[reason] {
+      .intervention-after("(Gap reason: " attr(reason) ")]");
+      
+      &[unit] {
+        
+        &[extent] {
+          .intervention-after("(Gap of " attr(extent) " " attr(unit) "; reason: " attr(reason) ")]");
+        } // gap[reason][unit][extent]
+    
+        &[quantity] {
+          .intervention-after("(Gap of " attr(quantity) " " attr(unit) "; reason: " attr(reason) ")]");
+        } // gap[reason][unit][quantity]
+      } // gap[reason][unit]
+    } // gap[reason]
+  } // gap
 
   lb:after {
-  content: '\a' ;
-  white-space: pre;
+    content: '\a' ;
+    white-space: pre;
   }
 
   milestone {
-  background: @greybackground;
-  }
-
-  milestone[n]:before, milestone[unit]:before, milestone:before {
-  .italic;
-  }
-
-  milestone[n]:before {
-  content: attr(n);
-  }
-
-  milestone[unit]:before {
-  content: attr(unit) " " attr(n);
-  }
-
-  milestone:before {
-  content:  ;
-  }
+    background: @greybackground;
+    
+    &[n] {
+      .intervention-before(attr(n));
+      
+      &[unit] {
+        .intervention-before(attr(unit) " " attr(n));
+      }
+    } // milestone[n]
+  } // milestone
 
   subst {
-  background: @whitebackground;
-  padding: @boxpadding;
-  border: @noteborder;
-  }
-
-  supplied:before, gap:before {
-  content: "[";
-  }
-
-  supplied:after, gap:after {
-  content: "]";
-  }
-
-  supplied:hover:before {
-  content:"[(Text supplied: " attr(reason) ") " ;
+    background: @whitebackground;
+    padding: @boxpadding;
+    border: @noteborder;
   }
 
   unclear {
-  padding-bottom: @boxpadding;
-  border-bottom: @heavyhoverunderline;
-  background: @highlightblue;
-  }
-
-  unclear[reason]:hover:before {
-  .italic;
-  content: " (Unclear text: " attr(reason) ") ";
-  }
-
-  unclear:hover:before {
-  .italic;
-  content:" (Unclear text) " ;
-  }
+    padding-bottom: @boxpadding;
+    border-bottom: @heavyhoverunderline;
+    background: @highlightblue;
+    
+    &:hover {
+      .intervention-before(" (Unclear text) ");
+    }
+    
+    &[reason]:hover {
+      .intervention-before(" (Unclear text: " attr(reason) ") ");
+    }
+  } // unclear
 
 
   .-teibp-pb {
     .tapas-generic .pb;
-    //border-bottom: @heavyhoverunderline;
-    //border-top: @heavyhoverunderline;
     padding: 0.2em;
     margin: 2em 0;
     background-color: #DDD;
@@ -136,15 +134,15 @@
     font-family: @sans-font-family;
     
     a {
-      
-      &:before {
-        .italic;
-        content: "Page " attr(data-tei-n);
-      }
+      .intervention-before("Page");
       
       &:hover {
         text-decoration: none;
         color: @linkgrey;
+      }
+      
+      &[data-tei-n] {
+        .intervention-before("Page " attr(data-tei-n));
       }
       
       &.gallery-facs {
