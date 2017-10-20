@@ -676,10 +676,9 @@
         <xsl:when test="$rendType eq 'css'">
           <xsl:value-of select="."/>
         </xsl:when>
-        <!-- @rend as rendition ladder: resolve the most common keywords and 
-          keywords' values. -->
-        <!--<xsl:when test="$rendType eq 'rendladder'">
-          <xsl:for-each select="$rendSplit">
+        <!-- @rend as rendition ladder: do nothing. -->
+        <xsl:when test="$rendType eq 'rendladder'">
+          <!--<xsl:for-each select="$rendSplit">
             <!-\- Normalize casing on the current value, and remove insignificant 
               hyphens. -\->
             <xsl:variable name="thisVal">
@@ -688,7 +687,7 @@
             </xsl:variable>
             <xsl:variable name="ladderKey" select="substring-before($thisVal,'(')"/>
             <xsl:variable name="ladderVal" select="substring-after($thisVal,'(')"/>
-            <xsl:choose><!-\- TODO -\->
+            <xsl:choose>
               <xsl:when test="$ladderKey = ('align', 'textalign')"/>
               <xsl:when test="$ladderKey = ('case')"/>
               <xsl:when test="$ladderKey = ('color')"/>
@@ -702,19 +701,8 @@
               <xsl:when test="$ladderKey = ('valign', 'verticalalign')"/>
               <xsl:otherwise/>
             </xsl:choose>
-          </xsl:for-each>
-        </xsl:when>-->
-              <!--<xsl:when test="$rendVal eq 'align(center)'"    >text-align: center;</xsl:when>
-              <xsl:when test="$rendVal eq 'align(CENTER)'"    >text-align: center;</xsl:when>
-              <xsl:when test="$rendVal eq 'align(RIGHT)'"     >text-align: right;</xsl:when>
-              <xsl:when test="$rendVal eq 'valign(bottom)'"   >vertical-align: bottom;</xsl:when>
-              <xsl:when test="$rendVal eq 'align(right)'"     >text-align: right;</xsl:when>
-              <xsl:when test="$rendVal eq 'valign(TOP)'"      >vertical-align: top;</xsl:when>
-              <xsl:when test="$rendVal eq 'valign(top)'"      >vertical-align: top;</xsl:when>
-              <xsl:when test="$rendVal eq 'valign(BOTTOM)'"   >vertical-align: bottom;</xsl:when>
-              <xsl:when test="$rendVal eq 'case(upper)'"      >text-transform: uppercase;</xsl:when>
-              <xsl:when test="$rendVal eq 'align(center)case(upper)'"      >text-align:center; text-transform:uppercase;</xsl:when>
-              <xsl:when test="$rendVal eq 'case(upper)align(center)'"      >text-align:center; text-transform:uppercase;</xsl:when>-->
+          </xsl:for-each>-->
+        </xsl:when>
         
         <!-- @rend as keyword: resolve basic keywords. -->
         <xsl:otherwise>
@@ -782,6 +770,7 @@
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
+    <!-- Join the generated CSS rules with whitespace between. -->
     <xsl:value-of select="string-join($css,' ')"/>
   </xsl:template>
 
