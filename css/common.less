@@ -478,8 +478,6 @@ max-height: 60px;
   .block;
   }
 
-  address {}
-
   address[rend~="block"],
   address[rendition~="#block"]  {
   .block;
@@ -489,26 +487,10 @@ max-height: 60px;
   .block;
   }
 
-  affiliation {}
-
-  age {}
-
-  alt {}
-
-  altGrp {}
-
-  altIdent {}
-
   altIdentifier  {
     .block;
     .intervention-before("Alternate ID: ");
   }
-
-  am {}
-
-  analytic {}
-
-  anchor {}
 
   app  {
   .block;
@@ -527,8 +509,6 @@ max-height: 60px;
     }
   } // application
 
-  arc {}
-
   argument {
   .block;
   }
@@ -542,21 +522,11 @@ max-height: 60px;
     }
   } // att
 
-  attDef {}
-
-  attlist {}
-
-  attRef {}
-
-  author {}
-
   titleStmt > author {
   .block;
   .tapas-generic .head-font;
   margin-bottom:1em;
   }
-
-  authority {}
 
   publicationStmt > availability{
   font-size:80%;
@@ -598,16 +568,6 @@ max-height: 60px;
   .block;
   }
 
-  biblScope {}
-
-  biblStruct {}
-
-  bicond {}
-
-  binary {}
-
-  binaryObject {}
-
   binding {
     .block;
     
@@ -627,18 +587,10 @@ max-height: 60px;
   .block;
   }
 
-  birth  {
-  //.block;
-  }
-
-  bloc {}
-
   tei-body {
   color: inherit;
   background-color: inherit;
   }
-
-  broadcast {}
 
   byline {
   .block;
@@ -646,15 +598,9 @@ max-height: 60px;
 
   /* c */
 
-  c {}
-
   cRefPattern {
   .hide;
   }
-
-  caesura {}
-
-  camera {}
 
   caption {
   .block-margins
@@ -681,14 +627,6 @@ max-height: 60px;
   margin-left:2em;
   }
 
-  catDesc {}
-
-  catRef {}
-
-  catchwords {}
-
-  category {}
-
   cb {
     .block-margins;
     
@@ -709,36 +647,6 @@ max-height: 60px;
   [role=label] {
   font-weight:bold;
   }
-
-  certainty {}
-
-  change {}
-
-  channel {}
-
-  char {}
-
-  charDecl {}
-
-  charName {}
-
-  charProp {}
-
-  choice {}
-
-  cit {}
-
-  cl {}
-
-  classCode {}
-
-  classDecl {}
-
-  classRef {}
-
-  classSpec {}
-
-  classes {}
 
   climate {
   .block-margins;
@@ -763,13 +671,7 @@ max-height: 60px;
 
   collation {.block-margins;}
 
-  collection {}
-
-  colloc {}
-
   colophon {.block-margins;}
-
-  cond {}
 
   condition {.block-margins;}
 
@@ -787,22 +689,6 @@ max-height: 60px;
   .block-margins;
   .label("Constitution (fragments): ");
   }
-
-  constraint {}
-
-  constraintSpec {}
-
-  content {}
-
-  /* Need to discuss and coordinate handling of sic/corr, abbr/expan, and orig/reg */
-
-  corr {}
-
-  correction {}
-
-  country {}
-
-  creation {}
 
   /*
   Need to handle attributes for custEvent. All the att.datable* attributes will be tricky.
@@ -823,14 +709,6 @@ max-height: 60px;
   border-bottom: @hoverunderline;
   }
 
-  damage {}
-
-  damageSpan {}
-
-  datatype {}
-
-  date {}
-
   date[when]:empty:before {
     content: attr(when);
   }
@@ -838,44 +716,6 @@ max-height: 60px;
   dateline {
   .block;
   }
-
-  death {}
-
-  decoDesc {}
-
-  decoNote {}
-
-  def {}
-
-  default {}
-
-  defaultVal {}
-
-  del {}
-
-  delSpan {}
-
-  depth {}
-
-  derivation {}
-
-  desc {}
-
-  dictScrap {}
-
-  dim {}
-
-  dimensions {}
-
-  distinct {}
-
-  distributor {}
-
-  district {}
-
-  divGen {}
-
-  docAuthor {}
 
   docDate {
   .block;
@@ -893,25 +733,7 @@ max-height: 60px;
   .block;
   }
 
-  domain {}
-
   /* e */
-
-  eLeaf {}
-
-  eTree {}
-
-  edition {}
-
-  editionStmt {}
-
-  editor {}
-
-  editorialDecl {}
-
-  education {}
-
-  eg {}
 
   egXML {
   .block;
@@ -927,12 +749,6 @@ max-height: 60px;
   white-space:pre;
   }
 
-  elementRef {}
-
-  elementSpec {}
-
-  email {}
-
   emph {
   font-style:italic;
   }
@@ -941,54 +757,16 @@ max-height: 60px;
   .hide;
   }
 
-  entry {}
-
-  entryFree {}
-
   epigraph {
   .block-margins;
   padding: 0 1em;
   }
-
-  epilogue {}
-
-  equipment {}
-
-  equiv {}
-
-  etym {}
-
-  event {}
-
-  ex {}
-
-  exemplum {}
-
-  expan {}
-
-  explicit {}
 
   fileDesc > extent {
   .hide;
   }
 
   /* f */
-
-  f {}
-
-  fDecl {}
-
-  fDescr {}
-
-  fLib {}
-
-  facsimile {}
-
-  factuality {}
-
-  faith {}
-
-  figDesc {}
 
   figure {
     .block;
@@ -1004,71 +782,9 @@ max-height: 60px;
     }
   } // figure
 
-  fileDesc {}
-
-  filiation {}
-
-  finalRubric {}
-
-  floatingText {
-    
-  }
-
-  floruit {}
-
-  foliation {}
-
-  foreign {}
-
-  forename {}
-
-  forest {}
-
-  forestGrp {}
-
-  form {}
-
-  formula {}
-
-  front {}
-
-  fs {}
-
-  fsConstraints {}
-
-  fsDecl {}
-
-  fsDescr {}
-
-  fsdDecl {}
-
-  fsdLink {}
-
-  funder {}
-
-  fvLib {}
-
-  fw {}
-
   /* g */
 
-  g {}
-
   gap {/* GLS: Depending upon how we handle gap and lacuna, we may want to enclose in [] */ }
-
-  gb {}
-
-  gen {}
-
-  genName {}
-
-  geo {}
-
-  geoDecl {}
-
-  geogFeat {}
-
-  geogName {}
 
   gi {
     .mono;
@@ -1082,16 +798,6 @@ max-height: 60px;
     }
   } // gi
 
-  gloss {}
-
-  glyph {}
-
-  glyphName {}
-
-  gram {}
-
-  gramGrp {}
-
   graph {
   .messageReplace("Message here.");
   }
@@ -1099,17 +805,8 @@ max-height: 60px;
   graphic {
   .hide;
   }
-  group {}
 
   /* h */
-
-  handDesc {}
-
-  handNote {}
-
-  handNotes {}
-
-  handShift {}
 
   .heading {
     .block(0.4em);
@@ -1206,59 +903,11 @@ max-height: 60px;
     font-size: 0.7em;
   }
 
-  headItem {}
-
-  headLabel {}
-
-  height {}
-
-  heraldry {}
-
-  hi {}
-
-  history {}
-
-  hom {}
-
-  hyph {}
-
-  hyphenation {}
-
   /* i */
-
-  iNode {}
-
-  iType {}
 
   ident {
   .mono;
   }
-
-  idno {}
-
-  if {}
-
-  iff {}
-
-  imprimatur {}
-
-  imprint {}
-
-  incident {}
-
-  incipit {}
-
-  index {}
-
-  institution {}
-
-  interaction {}
-
-  interp {}
-
-  interpGrp {}
-
-  interpretation {}
 
   item {
   .list-item;
@@ -1273,18 +922,6 @@ max-height: 60px;
   cell item {
   margin-left:1em;
   }
-
-
-  /* j */
-
-  join {}
-
-  joinGrp {}
-
-  /* k */
-  keywords {}
-
-  kinesic {}
 
   /* l */
 
@@ -1309,8 +946,6 @@ max-height: 60px;
   text-indent: 0em;
   padding-left: 0
   }*/
-
-  label {}
 
   label + item {
       list-style: none;
@@ -1450,32 +1085,6 @@ max-height: 60px;
   padding-top:.5em;
   }
 
-  lacunaEnd {}
-
-  lacunaStart {}
-
-  lang {}
-
-  langKnowledge {}
-
-  langKnown {}
-
-  langUsage {}
-
-  language {}
-
-  layout {}
-
-  layoutDesc {}
-
-  lb {}
-
-  lbl {}
-
-  leaf {}
-
-  lem {}
-
   lg {
     .block-margins;
     
@@ -1484,10 +1093,6 @@ max-height: 60px;
       text-align: left !important;
     }
   } // lg
-
-  link {}
-
-  linkGrp {}
   
   .list-contextual {
     margin: 1.4em 1em 2em;
@@ -1542,55 +1147,7 @@ max-height: 60px;
     } // bibl, biblStruct
   } // listBibl
 
-  listEvent {}
-
-  listNym {}
-
-  listOrg {}
-
-  listPerson {}
-
-  listPlace {}
-
-  listRef {}
-
-  listWit {}
-
-  localName {}
-
-  locale {}
-
-  location {}
-
-  locus {}
-
-  locusGrp {}
-
   /* m */
-
-  m {}
-
-  macroRef {}
-
-  macroSpec {}
-
-  mapping {}
-
-  material {}
-
-  measure {}
-
-  measureGrp {}
-
-  meeting {}
-
-  memberOf {}
-
-  mentioned {}
-
-  metDecl {}
-
-  metSym {}
 
   milestone {
     .block;
@@ -1603,33 +1160,11 @@ max-height: 60px;
     }
   } // milestone
 
-  moduleRef {}
-
-  moduleSpec {}
-
-  monogr {}
-
-  mood {}
-
-  move {}
-
   msContents {
     .block-margins {
       .block(1em)
     }
   } // msContents
-
-  msDesc {}
-
-  msIdentifier {}
-
-  msItem {}
-
-  msItemStruct {}
-
-  msName {}
-
-  msPart {}
 
   musicNotation {
   .label("Musical Notation: ");
@@ -1638,19 +1173,9 @@ max-height: 60px;
 
   /* n */
 
-  name {}
-
-  nameLink {}
-
-  namespace {}
-
-  nationality {}
-
   node {
   .hide
   }
-
-  normalization {}
 
   note {
     display: block;
@@ -1700,29 +1225,11 @@ max-height: 60px;
   .hide;
   }
 
-  num {}
-
-  number {}
-
-  numeric {}
-
-  nym {}
-
   /* o */
-
-  oRef {}
 
   oVar {
   .italic;
   }
-
-  objectDesc {}
-
-  objectType {}
-
-  occupation {}
-
-  offset {}
 
   opener {
     .inline;
@@ -1743,24 +1250,16 @@ max-height: 60px;
     } // tapas_metadata
   } // opener
 
-  org {}
-
   orgName {}
   orgName[ref] {
     //background: @tapas-blue;
     //cursor:pointer;
   }
 
-  origDate {}
-
   origPlace {
   //.label("Place of Origin: ");
   font-weight: bold;
   }
-
-  origin {}
-
-  orth {}
 
   /* p */
 
@@ -1777,14 +1276,6 @@ max-height: 60px;
   margin-top:0em;
   }
 
-  pRef {}
-
-  pVar {}
-
-  particDesc {}
-
-  pause {}
-
   .pb() {
     .block-margins;
     width: 100%;
@@ -1797,10 +1288,6 @@ max-height: 60px;
   pb {
     .pb;
   }
-
-  pc {}
-
-  per {}
 
   performance {
   .block-margins;
@@ -1820,37 +1307,14 @@ max-height: 60px;
   .block-margins;
   }
 
-  phr {}
-
-  physDesc {}
-
-  place {}
-
-  placeName {
-    //background: @tapas-blue;
-    //cursor:pointer;
-  }
-
   div[type="poem"]{
   .block-margins;
   }
-
-  population {}
-
-  pos {}
-
-  postBox {}
-
-  postCode {}
 
   postscript {
   .block;
   margin-top:2em;
   }
-
-  precision {}
-
-  preparedness {}
 
   principal {
   //.label("Principal: ");
@@ -1861,19 +1325,9 @@ max-height: 60px;
   .hide;
   }
 
-  projectDesc {}
-
-  prologue {}
-
-  pron {}
-
   provenance {
   .block;
   }
-
-  ptr {}
-
-  pubPlace {}
 
   docImprint pubPlace {
   .block;
@@ -1891,13 +1345,9 @@ max-height: 60px;
   .hide;
   }
 
-  publisher {}
-
   publicationStmt > publisher {
   .hide;
   }
-
-  purpose {}
 
   /* q */
   
@@ -1960,12 +1410,7 @@ max-height: 60px;
     .block;
   }
 
-  quotation {}
-
   /* r */
-  rdg {}
-
-  rdgGrp {}
 
   re {
   .block;
@@ -1974,12 +1419,6 @@ max-height: 60px;
   recordHist {
   .block-margins;
   }
-
-  recording {}
-
-  recordingStmt {}
-
-  ref {}
 
   .ref-external:link {
   border-bottom: 1px solid @linkdarkgrey;
@@ -1996,30 +1435,10 @@ max-height: 60px;
   text-decoration: none;
   }
 
-  refState {}
-
-  refsDecl {}
-
-  region {}
-
-  relatedItem {}
-
-  relation {}
-
-  relationGrp {}
-
   remarks {
   //.label("remarks: ");
   font-weight: bold;
   }
-
-  rendition {}
-
-  repository {}
-
-  residence {}
-
-  resp {}
 
   respStmt {
   .block;
@@ -2029,31 +1448,13 @@ max-height: 60px;
   .inline;
   }
 
-  respons {}
-
-  restore {}
-
   revisionDesc {
   .hide;
   }
 
-  rhyme {}
-
-  role {}
-
-  roleDesc {}
-
-  roleName {}
-
-  root {}
-
   row {
   display:table-row;
   }
-
-  rs {}
-
-  rubric {}
 
   /* s */
   /* When TEI document is embedded in HTML page,
@@ -2064,8 +1465,6 @@ max-height: 60px;
   s {
   text-decoration:none;
   }
-  said {}
-
 
   tapas_metadata {
   .block-margins;
@@ -2079,15 +1478,9 @@ max-height: 60px;
   .block;
   }
 
-  schemaSpec {}
-
-  scriptDesc {}
-
   scriptNote {
   .block-margins;
   }
-
-  scriptStmt {}
 
   seal {
   .block;
@@ -2098,61 +1491,35 @@ max-height: 60px;
   .block-margins;
   }
 
-  secFol {
-  //.label("Second Folio: ");
-  }
-
-  seg {}
-
-  segmentation {}
-
   sense {
   .block;
   }
-
-  series {}
 
   seriesStmt {
   .hide;
   }
 
-  set {}
-
   setting {
   .block;
   }
 
-  settingDesc {}
-
-  settlement {}
-
-  sex {}
-
-  shift {}
-
-  sic {}
-
-  signatures {}
-
   signed {
-  display: inline-block;
-  margin-top:1.5em;
-  }
-
-  signed persName {
-  .block;
-  }
-
-  closer signed:before {
-  content: "\00000a";
-  white-space: pre;
-  }
+    display: inline-block;
+    margin-top:1.5em;
+    
+    persName {
+      .block;
+    }
+  } // signed
 
   closer signed {
-  margin-top: 0;
-  }
-
-  socecStatus {}
+    margin-top: 0;
+    
+    &:before {
+      content: "\00000a";
+      white-space: pre;
+    }
+  } // closer signed
 
   sound {
   .italic;
@@ -2166,8 +1533,6 @@ max-height: 60px;
   .hide;
   }
 
-  sp {}
-
   space {
   .label();
   }
@@ -2180,15 +1545,10 @@ max-height: 60px;
   .inline;
   }
 
-  spanGrp {}
   speaker {
   font-weight:bold;
   margin-right:0;
   }
-  specDesc {}
-  specGrp {}
-  specGrpRef {}
-  specList {}
 
   sponsor {
   .block;
@@ -2205,29 +1565,12 @@ max-height: 60px;
   //.label("Stamped: ");
   }
 
-  state {}
-  stdVals {}
-  street {}
-  stress {}
-  string {}
   stringVal {/* doesn't seem to be part of tei 5 */}
-  subc {}
-  subst {}
-  summary {}
   superEntry {/* Block with space above and below, maybe have no block and space for <entry> when contained by this element */}
-  supplied {}
-  support {}
-  supportDesc {}
-  surface {}
-  surname {}
 
   surplus {
   .hide
   }
-
-  surrogates {}
-  syll {}
-  symbol {}
 
   /* t */
 
@@ -2291,18 +1634,6 @@ max-height: 60px;
   .block;
   }
 
-  tag {}
-
-  tagUsage {}
-
-  tagsDecl {}
-
-  taxonomy {}
-
-  tech {}
-
-  teiCorpus {}
-
   #tei_contextual {
   .hide;
   }
@@ -2313,10 +1644,6 @@ max-height: 60px;
   margin-bottom:2em;
   border-bottom:1px solid #999;
   }
-
-  term {}
-  terrain {}
-  text {}
 
   TEI > text {
   .block;
@@ -2329,14 +1656,6 @@ max-height: 60px;
   textDesc {
   .hide;
   }
-
-  textLang {}
-
-  then {}
-
-  time {}
-
-  timeline {}
 
   TEI teiHeader + tapas_metadata {
    .hide;
@@ -2413,12 +1732,6 @@ max-height: 60px;
     } // byline
   } // titlePage
 
-  titlePart {}
-
-  titleStmt {}
-
-  tns {}
-
   trailer {
   .block;
   margin-bottom: 1em;
@@ -2426,28 +1739,15 @@ max-height: 60px;
   //border-bottom: @darkunderline;
   }
 
-  trait {}
-
-  tree {}
-
-  triangle {}
-
   typeDesc {
   .hide;
   }
 
-  typeNote {}
-
   /* u */
+
   u:before {
   content: "-";
   }
-
-  unclear {}
-
-  unicodeName {}
-
-  usg {}
 
   .ui-widget-header{
   border: 0px;
@@ -2468,64 +1768,9 @@ max-height: 60px;
 
   /* v */
 
-  vAlt {}
-
-  vColl {}
-
-  vDefault {}
-
-  vLabel {}
-
-  vMerge {}
-
-  vNot {}
-
-  vRange {}
-
-  val {}
-
-  valDesc {}
-
-  valItem {}
-
-  valList {}
-
-  value {}
-
-  variantEncoding {}
-
   view {
   .italic;
   }
-
-  vocal {}
-
-  /* w */
-
-  w {}
-
-  watermark {}
-
-  width {}
-
-  wit {}
-
-  witDetail {}
-
-  witEnd {}
-
-  witStart {}
-
-  witness {}
-
-  writing {}
-
-  /* x */
-  xr {}
-
-  /* z */
-  zone {}
-}
 
   /* styles for html shell and html elements in TEI (e.g.,<a> and <img>) */
   // html > body {
