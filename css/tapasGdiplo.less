@@ -3,7 +3,7 @@
 .tapas-generic.diplomatic {
   
   add {
-    background: @highlightyellow;
+    //background: @highlightyellow;
     
     [hand]:hover {
       .intervention-before("(Added by: " attr(hand) " ) ");
@@ -85,15 +85,12 @@
   } // milestone
 
   subst {
-    background: @whitebackground;
     padding: @boxpadding;
-    border: @noteborder;
+    //border: @noteborder;
   }
 
   unclear {
-    padding-bottom: @boxpadding;
-    border-bottom: @heavyhoverunderline;
-    background: @highlightblue;
+    border-bottom: @hoverunderline;
     
     &:hover {
       .intervention-before(" (Unclear text) ");
