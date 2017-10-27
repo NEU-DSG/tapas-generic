@@ -26,6 +26,8 @@
       javascript and other features from the html/browser environment.</xd:p>
       <xd:p><xd:b>change log:</xd:b></xd:p>
       <xd:ul>
+        <xd:li>2017-10-27 by Ashley: Added a LESS file (generic.less) to remove 
+          duplication in the diplomatic/normalized LESS files.</xd:li>
         <xd:li>2017-10-18 by Ashley: Created a convenience wrapper for creating 
           attributes which should be on every transformed TEI element. Cleaned up 
           the 'addRend' template and expanded recognized keywords within `@rend`, 
@@ -50,6 +52,7 @@
   <xsl:param name="lessJS"     select="'less.js'"/>
   <!-- set assets-base parameter to "../" to use locally; path below is for within-TAPAS use -->
   <xsl:param name="assets-base" select="'../'"/>
+  <xsl:param name="view.generic" select="concat($assets-base,'css/generic.css')"/>
   <xsl:param name="view.diplo" select="concat($assets-base,'css/tapasGdiplo.css')"/>
   <xsl:param name="view.norma" select="concat($assets-base,'css/tapasGnormal.css')"/>
   <xsl:param name="jqueryUIcss"    select="concat($assets-base,'js/jquery-ui-1.12.1/jquery-ui.css')"/>
@@ -298,7 +301,8 @@
           <script src="{$lessJS}" type="text/javascript"></script>
         </xsl:when>
         <xsl:otherwise>
-          <link id="maincss" rel="stylesheet" type="text/css" href="{$view.diplo}"></link>
+          <link rel="stylesheet" type="text/css" href="{$view.generic}"></link>
+          <link rel="stylesheet" type="text/css" href="{$view.diplo}"></link>
           <link rel="stylesheet" type="text/css" href="{$view.norma}"></link>
         </xsl:otherwise>
       </xsl:choose>
