@@ -1,0 +1,210 @@
+/* IMPORTS */
+// @import url("shell.css");
+@import url('http://fonts.googleapis.com/css?family=Arvo:400,700,400italic,700italic|Gentium+Book+Basic:400,400italic,700,700italic');
+
+/* NAMESPACES */
+/* @namespace "http://www.tei-c.org/ns/1.0"; */
+/* @namespace with prefix, as below, throws an error in less. */
+/* @namespace html "http://www.w3.org/1999/xhtml"; */
+
+
+/* LESS VARIABLES */
+/* Colors  */
+@background-color:transparent;
+@tapas-blue: #D3E5F7;
+@vibrant-blue: #A7C7E6;
+@color: #232936;
+@metalabel: #9699AE;
+@link-color:#337DD3;
+@linkgrey: #808080;
+@linkdarkgrey: #333333;
+@linkblack: #000000;
+@border-color: #4D88CD;
+@toolbox-border: #7681CE;
+@note-background-color: #FAF3ED;
+@highlightyellow: #FFFF66;
+@highlightblue: #3399FF;
+@whitebackground: #FFFFFF;
+@greybackground: #CCCCCC;
+
+/* Fonts */
+@body-font-family: Georgia,Baskerville,Palatino,'Palatino Linotype','Book Antiqua','Times New Roman',serif;
+@head-font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+@mono-font-family: Courier, monospace;
+@sans-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+@body-font-size: 13pt;
+@body-line-height: 1.5;
+@underline: 1px dotted @linkgrey;
+@darkunderline: 1px dotted @linkdarkgrey;
+@hoverunderline: 1px dotted @linkblack;
+@heavyhoverunderline: 2px dotted @linkgrey;
+
+/* Misc. */
+@noteborder: 1px solid #CCCCCC;
+@boxpadding: 5px;
+
+
+/* LESS MIXINS */
+
+.head-font() {
+  font-family: @head-font-family;
+  font-weight: normal;
+}
+
+// Block styling
+.block {
+  display:block;
+}
+.block(@margins: 0) {
+  display:block;
+  margin-top:@margins;
+  margin-bottom:@margins;
+}
+.block-margins() {
+  .block(1em);
+}
+
+.box-shadow() {
+  box-shadow: 0px 1px 3px rgba(0,0,0,0.25);
+  -moz-box-shadow: 0px 1px 3px rgba(0,0,0,0.25);
+  -webkit-box-shadow: 0px 1px 3px rgba(0,0,0,0.25);
+}
+
+.clearfix {
+  
+  &:before,
+  &:after {
+    content: " ";
+    display: table;
+  }
+  
+  &:after {
+    clear: both;
+  }
+} // .clearfix
+
+.hide() {
+  display: none;
+}
+
+.inline() {
+  display: inline;
+}
+
+.list-item() {
+  display: list-item;
+}
+
+// Standard rules for TAPAS interventions
+.intervention() {
+  .inline;
+  .italic;
+}
+.intervention-after(@content: '') {
+  &:after {
+    .intervention();
+    content: @content;
+  }
+}
+.intervention-before(@content: '') {
+  &:before {
+    .intervention();
+    content: @content;
+  }
+}
+
+.italic() {
+  font-style: italic;
+}
+
+.head-font() {
+  font-family: @head-font-family;
+  font-weight: normal;
+}
+
+.mono() {
+  font-family: Courier, monospace;
+}
+
+// Quotation marks
+.quotesUS() {
+  quotes: "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d";
+}
+.quotesUK() {
+  quotes: "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019" "\201c" "\201d" "\2018" "\2019";
+}
+.quotes() {
+  .quotesUS;
+}
+
+.widget-base() {
+  border: 1px solid @toolbox-border;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  background-color: @whitebackground;
+  font-size: 11.5pt;
+}
+
+.note-like() {
+  .block;
+  margin:1.5em auto 1.5em auto;
+  padding:.5em 1.5em 1.5em 1.5em;
+  border:1px solid black;
+  border-radius: 15px;
+  width: 325px;
+  position: relative;
+  border: 1px solid @border-color;
+  background: @note-background-color;
+  // reset text-indent for note with <l> ancestors.
+  text-indent:0;
+  font-size:85%;
+  text-align:justify;
+  .box-shadow;
+}
+
+.page-setup() {
+  font-family: @body-font-family;
+  font-size:@body-font-size;
+  line-height:@body-line-height;
+  background-color:@background-color;
+  color:@color;
+  //width:100%;
+  height: 100%;
+  padding-left:1em;
+  padding-right:1em;
+  margin:0;
+
+  @media(max-width:767px) {
+    padding-left:0;
+    padding-right:0;
+  }
+} // .page-setup()
+
+.table-border() {
+  border: @darkunderline;
+}
+
+.label (@content: "") {
+  &:before{
+    font-weight: bold;
+    content: @content;
+  }
+}
+
+.surround (@before, @after){
+  &:before{
+    content: @before;
+  }
+  &:after{
+    content: @after;
+  }
+}
+
+/* TAPAS-generated labels */
+
+.tapas-label() {
+  color: @metalabel;
+  font-style: italic;
+  margin-right: 0.5em;
+}
