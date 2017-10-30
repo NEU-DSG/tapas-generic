@@ -284,7 +284,7 @@
 } // .ui-dialog
 
 
-/* TOOLTIP */
+/* TOOLTIPS */
 
 .ui-tooltip.generic-tooltip {
   
@@ -941,15 +941,7 @@
     } // binding
 
     choice {
-    
-      abbr + expan,
-      expan + abbr,
-      sic + corr,
-      corr + sic,
-      orig + reg,
-      reg + orig {
-        .surround(" (", ")");
-      }
+      border-bottom: @hoverunderline;
     } // choice
     
 /* TAPAS labels on the content of TEI encoding */

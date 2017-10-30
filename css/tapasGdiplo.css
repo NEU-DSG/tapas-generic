@@ -51,18 +51,31 @@
 .tapas-generic.diplomatic del {
   text-decoration: line-through;
 }
+.tapas-generic.diplomatic subst,
 .tapas-generic.diplomatic supplied,
 .tapas-generic.diplomatic gap {
   border-bottom: 1px dotted #000000;
 }
-.tapas-generic.diplomatic supplied[reason]:hover:before {
-  padding: 0 0.25em;
-  display: inline;
-  background-color: #DDD;
-  color: #888;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-style: italic;
-  content: "[(Text supplied: " attr(reason) ") ";
+.tapas-generic.diplomatic supplied {
+  /*&[reason]:hover {
+      .intervention-before("[(Text supplied: " attr(reason) ") ");
+    }*/
+}
+.tapas-generic.diplomatic gap {
+  /*&[reason] {
+      .intervention-after("(Gap reason: " attr(reason) ")]");
+      
+      &[unit] {
+        
+        &[extent] {
+          .intervention-after("(Gap of " attr(extent) " " attr(unit) "; reason: " attr(reason) ")]");
+        } // gap[reason][unit][extent]
+    
+        &[quantity] {
+          .intervention-after("(Gap of " attr(quantity) " " attr(unit) "; reason: " attr(reason) ")]");
+        } // gap[reason][unit][quantity]
+      } // gap[reason][unit]
+    } // gap[reason]*/
 }
 .tapas-generic.diplomatic gap:after {
   padding: 0 0.25em;
@@ -72,33 +85,6 @@
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "gap";
-}
-.tapas-generic.diplomatic gap[reason]:after {
-  padding: 0 0.25em;
-  display: inline;
-  background-color: #DDD;
-  color: #888;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-style: italic;
-  content: "(Gap reason: " attr(reason) ")]";
-}
-.tapas-generic.diplomatic gap[reason][unit][extent]:after {
-  padding: 0 0.25em;
-  display: inline;
-  background-color: #DDD;
-  color: #888;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-style: italic;
-  content: "(Gap of " attr(extent) " " attr(unit) "; reason: " attr(reason) ")]";
-}
-.tapas-generic.diplomatic gap[reason][unit][quantity]:after {
-  padding: 0 0.25em;
-  display: inline;
-  background-color: #DDD;
-  color: #888;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-style: italic;
-  content: "(Gap of " attr(quantity) " " attr(unit) "; reason: " attr(reason) ")]";
 }
 .tapas-generic.diplomatic lb:after {
   content: '\a';
@@ -130,24 +116,13 @@
 }
 .tapas-generic.diplomatic unclear {
   border-bottom: 1px dotted #000000;
-}
-.tapas-generic.diplomatic unclear:hover:before {
-  padding: 0 0.25em;
-  display: inline;
-  background-color: #DDD;
-  color: #888;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-style: italic;
-  content: " (Unclear text) ";
-}
-.tapas-generic.diplomatic unclear[reason]:hover:before {
-  padding: 0 0.25em;
-  display: inline;
-  background-color: #DDD;
-  color: #888;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-style: italic;
-  content: " (Unclear text: " attr(reason) ") ";
+  /*&:hover {
+      .intervention-before(" (Unclear text) ");
+    }
+    
+    &[reason]:hover {
+      .intervention-before(" (Unclear text: " attr(reason) ") ");
+    }*/
 }
 .tapas-generic.diplomatic .-teibp-pb {
   display: block;

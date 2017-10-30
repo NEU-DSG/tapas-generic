@@ -1036,40 +1036,6 @@
     <xd:desc>Template to drop insignificant whitespace nodes</xd:desc>
   </xd:doc>
   <xsl:template match="choice/text()[normalize-space(.) eq '']" mode="work"/>
-  
-  <!-- TAPAS INTERVENTIONS -->
-  
-  <xsl:template match="gap" mode="work">
-    <xsl:element name="{local-name()}">
-      <xsl:call-template name="set-reliable-attributes"/>
-      <xsl:attribute name="data-tapas-tooltip">
-        <xsl:apply-templates select="@extent | @quantity" mode="att-intervention"/>
-        <xsl:apply-templates select="@* except ( @extent | @quantity )" mode="att-intervention"/>
-      </xsl:attribute>
-      <xsl:attribute name="tabindex" select="0"/>
-    </xsl:element>
-  </xsl:template>
-  
-  <xsl:template match="@*" mode="att-intervention" priority="-4"/>
-  
-  <xsl:template match="gap/@extent" mode="att-intervention">
-    <xsl:text>Gap of </xsl:text>
-    <xsl:value-of select="."/>
-  </xsl:template>
-  
-  <xsl:template match="gap[not(@extent)]/@quantity" mode="att-intervention">
-    <xsl:text>Gap of </xsl:text>
-    <xsl:value-of select="."/>
-    <xsl:if test="../@unit">
-      <xsl:text> </xsl:text>
-      <xsl:value-of select="../@unit"/>
-    </xsl:if>
-  </xsl:template>
-  
-  <xsl:template match="gap/@reason" mode="att-intervention">
-    <xsl:text>Reason: </xsl:text>
-    <xsl:value-of select="."/>
-  </xsl:template>
 
   <!-- ***************************** -->
   <!-- handle contextual information -->
@@ -1539,6 +1505,90 @@
       </span>
     </xsl:for-each>
   </xsl:template>
+  
+  
+  
+  <!-- TAPAS INTERVENTIONS -->
+  
+  <xd:doc>
+    <xd:desc>Represent the current element as accurately as possible, but also 
+      create an explanation of what the element is. This is especially important for 
+      transcriptional markers like &lt;gap> and for children of &lt;choice>.</xd:desc>
+    <xd:param name="content">The content of the current element. Defaults to 
+      applying templates in the current mode.</xd:param>
+    <xd:param name="gi-gloss">The label or term used to gloss the current element. 
+      Defaults to the name of the element, with the first letter capitalized.</xd:param>
+    <xd:param name="tooltip-content">The text to use in a tooltip when the current 
+      element (as represented in HTML) is moused-over or tabbed to. The default is 
+      the $gi-gloss, followed by any useful information in the attributes of the 
+      current element.</xd:param>
+  </xd:doc>
+  <xsl:template name="create-mouseover-intervention">
+    <xsl:param name="content" as="node()*">
+      <xsl:apply-templates mode="#current"/>
+    </xsl:param>
+    <xsl:param name="gi-gloss" as="xs:string">
+      <xsl:variable name="firstLetter"
+        select="upper-case(substring(local-name(.),1,1))"/>
+      <xsl:value-of 
+        select="concat($firstLetter,substring(local-name(.),2))"/>
+    </xsl:param>
+    <xsl:param name="tooltip-content" as="xs:string*">
+      <xsl:apply-templates select="@*" mode="att-intervention"/>
+    </xsl:param>
+    <xsl:variable name="tooltipPhrases" as="xs:string*">
+      <xsl:for-each select="( $gi-gloss, $tooltip-content )">
+        <xsl:value-of select="normalize-space(.)"/>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:element name="{local-name()}">
+      <xsl:call-template name="set-reliable-attributes"/>
+      <xsl:if test="count($tooltipPhrases[. ne '']) gt 0">
+        <xsl:attribute name="data-tapas-tooltip">
+          <xsl:copy-of select="string-join($tooltipPhrases,'. ')"/>
+          <xsl:text>.</xsl:text>
+        </xsl:attribute>
+      </xsl:if>
+      <xsl:attribute name="tabindex" select="0"/>
+      <xsl:if test="$content">
+        <xsl:copy-of select="$content"/>
+      </xsl:if>
+    </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="gap | supplied | unclear" mode="work">
+    <xsl:call-template name="create-mouseover-intervention"/>
+  </xsl:template>
+  
+  <xsl:template match="subst" mode="work">
+    <xsl:call-template name="create-mouseover-intervention">
+      <xsl:with-param name="gi-gloss">Substitution</xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+  
+  <xsl:template match="@*" mode="att-intervention" priority="-4"/>
+  
+  <xsl:template match="@extent" mode="att-intervention">
+    <xsl:value-of select="."/>
+  </xsl:template>
+  
+  <xsl:template match="*[not(@extent)]/@quantity" mode="att-intervention">
+    <xsl:variable name="gloss">
+      <xsl:value-of select="."/>
+      <xsl:if test="../@unit">
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="../@unit"/>
+      </xsl:if>
+    </xsl:variable>
+    <xsl:value-of select="$gloss"/>
+  </xsl:template>
+  
+  <xsl:template match="@reason" mode="att-intervention">
+    <xsl:value-of select="concat('Reason: ',.)"/>
+  </xsl:template>
+  
+  
+  <!--  POSTPROCESSING  -->
 
   <xd:doc>
     <xd:desc>Generate a table of contents, if needed</xd:desc>

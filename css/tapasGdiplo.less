@@ -35,23 +35,21 @@
     text-decoration: line-through;
   }
   
-  supplied, gap {
+  subst, supplied, gap {
     border-bottom: @hoverunderline;
-    //.intervention-before("[");
-    //.intervention-after("]");
   } // supplied, gap
 
   supplied {
     
-    &[reason]:hover {
+    /*&[reason]:hover {
       .intervention-before("[(Text supplied: " attr(reason) ") ");
-    }
+    }*/
   } // supplied
   
   gap {
     .intervention-after("gap");
     
-    &[reason] {
+    /*&[reason] {
       .intervention-after("(Gap reason: " attr(reason) ")]");
       
       &[unit] {
@@ -64,7 +62,7 @@
           .intervention-after("(Gap of " attr(quantity) " " attr(unit) "; reason: " attr(reason) ")]");
         } // gap[reason][unit][quantity]
       } // gap[reason][unit]
-    } // gap[reason]
+    } // gap[reason]*/
   } // gap
 
   lb:after {
@@ -92,13 +90,13 @@
   unclear {
     border-bottom: @hoverunderline;
     
-    &:hover {
+    /*&:hover {
       .intervention-before(" (Unclear text) ");
     }
     
     &[reason]:hover {
       .intervention-before(" (Unclear text: " attr(reason) ") ");
-    }
+    }*/
   } // unclear
 
 

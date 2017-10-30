@@ -277,7 +277,7 @@
 .ui-dialog #tapas-ref-dialog .og-metadata {
   margin: 0.5em;
 }
-/* TOOLTIP */
+/* TOOLTIPS */
 .ui-tooltip.generic-tooltip .ui-tooltip-content {
   padding: 0 0.25em;
   display: inline;
@@ -1221,33 +1221,9 @@
   font-style: italic;
   content: "Binding: \A" "Contemporary: " attr(contemporary) "\A";
 }
-.tapas-generic #tei_wrapper choice abbr + expan:before,
-#tapas-ref-dialog choice abbr + expan:before,
-.tapas-generic #tei_wrapper choice expan + abbr:before,
-#tapas-ref-dialog choice expan + abbr:before,
-.tapas-generic #tei_wrapper choice sic + corr:before,
-#tapas-ref-dialog choice sic + corr:before,
-.tapas-generic #tei_wrapper choice corr + sic:before,
-#tapas-ref-dialog choice corr + sic:before,
-.tapas-generic #tei_wrapper choice orig + reg:before,
-#tapas-ref-dialog choice orig + reg:before,
-.tapas-generic #tei_wrapper choice reg + orig:before,
-#tapas-ref-dialog choice reg + orig:before {
-  content: " (";
-}
-.tapas-generic #tei_wrapper choice abbr + expan:after,
-#tapas-ref-dialog choice abbr + expan:after,
-.tapas-generic #tei_wrapper choice expan + abbr:after,
-#tapas-ref-dialog choice expan + abbr:after,
-.tapas-generic #tei_wrapper choice sic + corr:after,
-#tapas-ref-dialog choice sic + corr:after,
-.tapas-generic #tei_wrapper choice corr + sic:after,
-#tapas-ref-dialog choice corr + sic:after,
-.tapas-generic #tei_wrapper choice orig + reg:after,
-#tapas-ref-dialog choice orig + reg:after,
-.tapas-generic #tei_wrapper choice reg + orig:after,
-#tapas-ref-dialog choice reg + orig:after {
-  content: ")";
+.tapas-generic #tei_wrapper choice,
+#tapas-ref-dialog choice {
+  border-bottom: 1px dotted #000000;
 }
 .tapas-generic #tei_wrapper case [value]:before,
 #tapas-ref-dialog case [value]:before {
