@@ -37,8 +37,8 @@
   
   supplied, gap {
     border-bottom: @hoverunderline;
-    .intervention-before("[");
-    .intervention-after("]");
+    //.intervention-before("[");
+    //.intervention-after("]");
   } // supplied, gap
 
   supplied {
@@ -49,7 +49,7 @@
   } // supplied
   
   gap {
-    .intervention-after("(Unclear text)]");
+    .intervention-after("gap");
     
     &[reason] {
       .intervention-after("(Gap reason: " attr(reason) ")]");
@@ -106,9 +106,7 @@
     .pb;
     padding: 0.2em;
     margin: 2em 0;
-    background-color: #DDD;
-    color: #888;
-    font-family: @sans-font-family;
+    .intervention;
     
     a {
       .intervention-before("Page");

@@ -267,6 +267,7 @@
 }
 .ui-dialog #tapas-ref-dialog {
   padding: 0.5em 1em;
+  z-index: 1000;
   background: none;
   color: black;
   font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
@@ -275,6 +276,16 @@
 }
 .ui-dialog #tapas-ref-dialog .og-metadata {
   margin: 0.5em;
+}
+/* TOOLTIP */
+.ui-tooltip.generic-tooltip .ui-tooltip-content {
+  padding: 0 0.25em;
+  display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-style: italic;
+  background-color: inherit;
 }
 /* THE TEI DOCUMENT AND POPUP */
 .tapas-generic #tei_wrapper,
@@ -554,7 +565,11 @@
 }
 .tapas-generic #tei_wrapper epigraph bibl:before,
 #tapas-ref-dialog epigraph bibl:before {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "\2014";
 }
@@ -581,6 +596,7 @@
   display: block;
   margin-top: 1em;
   margin-bottom: 1em;
+  margin-left: 1.75em;
 }
 .tapas-generic #tei_wrapper list > head,
 #tapas-ref-dialog list > head {
@@ -898,7 +914,11 @@
 }
 .tapas-generic #tei_wrapper milestone :before:before,
 #tapas-ref-dialog milestone :before:before {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "* * * * *";
 }
@@ -1118,7 +1138,11 @@
 }
 .tapas-generic #tei_wrapper activity:before,
 #tapas-ref-dialog activity:before {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "Activity: ";
 }
@@ -1130,7 +1154,11 @@
 }
 .tapas-generic #tei_wrapper additions:before,
 #tapas-ref-dialog additions:before {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "Significant additions within the document: ";
 }
@@ -1142,7 +1170,11 @@
 }
 .tapas-generic #tei_wrapper altIdentifier:before,
 #tapas-ref-dialog altIdentifier:before {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "Alternate ID: ";
 }
@@ -1154,7 +1186,11 @@
 }
 .tapas-generic #tei_wrapper appInfo:before,
 #tapas-ref-dialog appInfo:before {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "Application information: ";
 }
@@ -1166,14 +1202,22 @@
 }
 .tapas-generic #tei_wrapper binding:before,
 #tapas-ref-dialog binding:before {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "Binding: \A";
   white-space: pre-wrap;
 }
 .tapas-generic #tei_wrapper binding[contemporary]:before,
 #tapas-ref-dialog binding[contemporary]:before {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "Binding: \A" "Contemporary: " attr(contemporary) "\A";
 }
@@ -1391,7 +1435,11 @@
 #tapas-ref-dialog TEI cb:before,
 .tapas-generic #tei_wrapper text cb:before,
 #tapas-ref-dialog text cb:before {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "[column break]";
   color: gray;

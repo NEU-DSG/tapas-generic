@@ -17,13 +17,14 @@
   <xd:doc scope="stylesheet">
     <xd:desc>
       <xd:p><xd:b>Created on:</xd:b> 2013-10-12 by Syd Bauman, based
-      very heavily on the previous 'tei2html_1' and 'tei2html_2', which
-      were (together) an XSLT 1.0 version of this program. The first of
-      those was heavily based on 'teibp.xsl' (part of TEI Bolerplate) by
-      John A. Walsh</xd:p>
+        very heavily on the previous 'tei2html_1' and 'tei2html_2', which
+        were (together) an XSLT 1.0 version of this program. The first of
+        those was heavily based on 'teibp.xsl' (part of TEI Bolerplate) by
+        John A. Walsh</xd:p>
       <xd:p>TEI to HTML for TAPAS generic: Copies a TEI document, with a very
-      few modifications into an HTML 5 shell, which provides access to
-      javascript and other features from the html/browser environment.</xd:p>
+        few modifications into an HTML 5 shell, which provides access to
+        javascript and other features from the html/browser environment.</xd:p>
+      
       <xd:p><xd:b>change log:</xd:b></xd:p>
       <xd:ul>
         <xd:li>2017-10-27 by Ashley: Added a LESS file (generic.less) to remove 
@@ -60,7 +61,7 @@
   <xsl:param name="jqueryUIJS" select="concat($assets-base,'js/jquery-ui-1.12.1/jquery-ui.min.js')"/>
   <xsl:param name="jqueryBlockUIJS" select="concat($assets-base,'js/jquery/plugins/jquery.blockUI.min.js')"/>
   <xsl:param name="contextualJS" select="concat($assets-base,'js/contextualItems.js')"/>
-  <xsl:param name="teibpJS"    select="concat($assets-base,'js/tapas-generic.js')"/>
+  <xsl:param name="genericJS"    select="concat($assets-base,'js/tapas-generic.js')"/>
   <xsl:param name="fullHTML"   select="'false'"/> <!-- set to 'true' to get browsable output for debugging -->
   <xsl:variable name="root" select="/" as="node()"/>
   <xsl:variable name="htmlFooter">
@@ -364,13 +365,13 @@
   <xd:doc>
     <xd:desc>
       <xd:p>A hack because JavaScript was doing weird things with
-      &lt;title>, probably due to confusion with HTML title. There is
-      no TEI namespace in the TEI Boilerplate output because
-      JavaScript, or at least JQuery, cannot manipulate the TEI
-      elements/attributes if they are in the TEI namespace, so the TEI
-      namespace is stripped from the output.</xd:p>
+        &lt;title>, probably due to confusion with HTML title. There is
+        no TEI namespace in the TEI Boilerplate output because
+        JavaScript, or at least JQuery, cannot manipulate the TEI
+        elements/attributes if they are in the TEI namespace, so the TEI
+        namespace is stripped from the output.</xd:p>
       <xd:p>2015-09-18: Changed the match expression to affect all TEI titles.
-      ~Ashley</xd:p>
+        ~Ashley</xd:p>
     </xd:desc>
   </xd:doc>
   <xsl:template match="title" mode="work">
@@ -822,19 +823,18 @@
     <script type="text/javascript" src="{$jqueryBlockUIJS}"></script>
     <script type="text/javascript" src="{$contextualJS}"></script>
     <link rel="stylesheet" href="{$jqueryUIcss}"></link>
-    <script type="text/javascript" src="{$teibpJS}"></script>
+    <script type="text/javascript" src="{$genericJS}"></script>
   </xsl:template>
 
   <xsl:template name="css">
-    <!-- the one hard-coded rule (for #tapas-ref-dialog) in this <style> element should
-      probably be nuked, moving this one rule to tapasG.css. But we're not sure exactly
-      what effect that will have, so we're holding off for now. -->
-    <style type="text/css">
-      #tapas-ref-dialog{
-      z-index:1000;
-      }
+    <xsl:variable name="rendStyles">
       <xsl:call-template name="rendition2style"/>
-    </style>
+    </xsl:variable>
+    <xsl:if test="normalize-space($rendStyles) ne ''">
+      <style type="text/css">
+        <xsl:copy-of select="$rendStyles"/>
+      </style>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template name="rendition2style">
@@ -1036,6 +1036,40 @@
     <xd:desc>Template to drop insignificant whitespace nodes</xd:desc>
   </xd:doc>
   <xsl:template match="choice/text()[normalize-space(.) eq '']" mode="work"/>
+  
+  <!-- TAPAS INTERVENTIONS -->
+  
+  <xsl:template match="gap" mode="work">
+    <xsl:element name="{local-name()}">
+      <xsl:call-template name="set-reliable-attributes"/>
+      <xsl:attribute name="data-tapas-tooltip">
+        <xsl:apply-templates select="@extent | @quantity" mode="att-intervention"/>
+        <xsl:apply-templates select="@* except ( @extent | @quantity )" mode="att-intervention"/>
+      </xsl:attribute>
+      <xsl:attribute name="tabindex" select="0"/>
+    </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="@*" mode="att-intervention" priority="-4"/>
+  
+  <xsl:template match="gap/@extent" mode="att-intervention">
+    <xsl:text>Gap of </xsl:text>
+    <xsl:value-of select="."/>
+  </xsl:template>
+  
+  <xsl:template match="gap[not(@extent)]/@quantity" mode="att-intervention">
+    <xsl:text>Gap of </xsl:text>
+    <xsl:value-of select="."/>
+    <xsl:if test="../@unit">
+      <xsl:text> </xsl:text>
+      <xsl:value-of select="../@unit"/>
+    </xsl:if>
+  </xsl:template>
+  
+  <xsl:template match="gap/@reason" mode="att-intervention">
+    <xsl:text>Reason: </xsl:text>
+    <xsl:value-of select="."/>
+  </xsl:template>
 
   <!-- ***************************** -->
   <!-- handle contextual information -->

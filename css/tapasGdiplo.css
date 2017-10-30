@@ -22,7 +22,11 @@
 }
 /* TAPAS-generated labels */
 .tapas-generic.diplomatic add [hand]:hover:before {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "(Added by: " attr(hand) " ) ";
 }
@@ -51,40 +55,48 @@
 .tapas-generic.diplomatic gap {
   border-bottom: 1px dotted #000000;
 }
-.tapas-generic.diplomatic supplied:before,
-.tapas-generic.diplomatic gap:before {
-  display: inline;
-  font-style: italic;
-  content: "[";
-}
-.tapas-generic.diplomatic supplied:after,
-.tapas-generic.diplomatic gap:after {
-  display: inline;
-  font-style: italic;
-  content: "]";
-}
 .tapas-generic.diplomatic supplied[reason]:hover:before {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "[(Text supplied: " attr(reason) ") ";
 }
 .tapas-generic.diplomatic gap:after {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
-  content: "(Unclear text)]";
+  content: "gap";
 }
 .tapas-generic.diplomatic gap[reason]:after {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "(Gap reason: " attr(reason) ")]";
 }
 .tapas-generic.diplomatic gap[reason][unit][extent]:after {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "(Gap of " attr(extent) " " attr(unit) "; reason: " attr(reason) ")]";
 }
 .tapas-generic.diplomatic gap[reason][unit][quantity]:after {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "(Gap of " attr(quantity) " " attr(unit) "; reason: " attr(reason) ")]";
 }
@@ -96,12 +108,20 @@
   background: #cccccc;
 }
 .tapas-generic.diplomatic milestone[n]:before {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: attr(n);
 }
 .tapas-generic.diplomatic milestone[n][unit]:before {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: attr(unit) " " attr(n);
 }
@@ -112,12 +132,20 @@
   border-bottom: 1px dotted #000000;
 }
 .tapas-generic.diplomatic unclear:hover:before {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: " (Unclear text) ";
 }
 .tapas-generic.diplomatic unclear[reason]:hover:before {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: " (Unclear text: " attr(reason) ") ";
 }
@@ -132,12 +160,19 @@
   font-size: 11pt;
   padding: 0.2em;
   margin: 2em 0;
+  padding: 0 0.25em;
+  display: inline;
   background-color: #DDD;
   color: #888;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-style: italic;
 }
 .tapas-generic.diplomatic .-teibp-pb a:before {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "Page";
 }
@@ -146,7 +181,11 @@
   color: #808080;
 }
 .tapas-generic.diplomatic .-teibp-pb a[data-tei-n]:before {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "Page " attr(data-tei-n);
 }

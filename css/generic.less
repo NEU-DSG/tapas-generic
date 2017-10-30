@@ -270,6 +270,7 @@
 
   #tapas-ref-dialog {
     padding: 0.5em 1em;
+    z-index:1000;
     background: none;
     color: black;
     font-family: @body-font-family;
@@ -282,7 +283,18 @@
   } // #tapas-ref-dialog
 } // .ui-dialog
 
+
+/* TOOLTIP */
+
+.ui-tooltip.generic-tooltip {
   
+  .ui-tooltip-content {
+    .intervention;
+    background-color: inherit;
+  }
+} // .ui-tooltip.generic-tooltip
+
+
 /* THE TEI DOCUMENT AND POPUP */
 .tapas-generic #tei_wrapper,
 #tapas-ref-dialog {
@@ -457,6 +469,7 @@
     
     list {
       .block-margins;
+      margin-left: 1.75em;
       
       > head {
         font-size: 120%;

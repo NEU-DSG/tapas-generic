@@ -48,27 +48,47 @@
   border-bottom: 1px dotted #000000;
 }
 .tapas-generic.normal gap:before {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: '[';
 }
 .tapas-generic.normal gap:after {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "(Unclear text)]";
 }
 .tapas-generic.normal gap[reason]:after {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "(Gap reason: " attr(reason) ")]";
 }
 .tapas-generic.normal gap[reason][unit][extent]:after {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "(Gap of " attr(extent) " " attr(unit) "; reason: " attr(reason) ")]";
 }
 .tapas-generic.normal gap[reason][unit][quantity]:after {
+  padding: 0 0.25em;
   display: inline;
+  background-color: #DDD;
+  color: #888;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "(Gap of " attr(quantity) " " attr(unit) "; reason: " attr(reason) ")]";
 }
