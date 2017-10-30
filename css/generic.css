@@ -224,6 +224,13 @@
   position: fixed;
   overflow-y: auto;
 }
+@media (max-width: 1000px) {
+  .tapas-generic #TOC {
+    width: 100%;
+    float: none;
+    position: static;
+  }
+}
 .tapas-generic #TOC ol {
   list-style-type: none;
   -webkit-margin-before: 0px;
@@ -232,13 +239,6 @@
 }
 .tapas-generic #TOC ol .toc-entry-label {
   margin-right: 5px;
-}
-@media (max-width: 1000px) {
-  .tapas-generic #TOC {
-    width: 100%;
-    float: none;
-    position: static;
-  }
 }
 .tapas-generic #tei_contextual {
   display: none;

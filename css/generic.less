@@ -212,6 +212,12 @@
     position:fixed;
     overflow-y:auto;
     
+    @media(max-width: 1000px) {
+      width:100%;
+      float:none;
+      position:static;
+    }
+    
     ol {
       list-style-type: none;
       -webkit-margin-before: 0px;
@@ -222,12 +228,6 @@
         margin-right: 5px;
       }
     } // ol
-    
-    @media(max-width: 1000px){
-      width:100%;
-      float:none;
-      position:static;
-    }
   } // #TOC
   
   
