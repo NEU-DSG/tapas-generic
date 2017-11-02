@@ -1,5 +1,5 @@
-/* IMPORTS */
 @import url('http://fonts.googleapis.com/css?family=Arvo:400,700,400italic,700italic|Gentium+Book+Basic:400,400italic,700,700italic');
+/* IMPORTS */
 /* NAMESPACES */
 /* @namespace "http://www.tei-c.org/ns/1.0"; */
 /* @namespace with prefix, as below, throws an error in less. */
@@ -25,7 +25,7 @@
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;
-  color: #888;
+  color: #555;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "(Added by: " attr(hand) " ) ";
@@ -81,7 +81,7 @@
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;
-  color: #888;
+  color: #555;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "gap";
@@ -97,7 +97,7 @@
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;
-  color: #888;
+  color: #555;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: attr(n);
@@ -106,7 +106,7 @@
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;
-  color: #888;
+  color: #555;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: attr(unit) " " attr(n);
@@ -138,7 +138,7 @@
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;
-  color: #888;
+  color: #555;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
 }
@@ -146,7 +146,7 @@
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;
-  color: #888;
+  color: #555;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "Page";
@@ -159,7 +159,7 @@
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;
-  color: #888;
+  color: #555;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "Page " attr(data-tei-n);

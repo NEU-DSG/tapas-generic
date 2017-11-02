@@ -41,27 +41,23 @@
   } // table
   
   img {
-    border:1px solid @border-color;
+    border: 1px solid @border-color;
+    min-width: 1em;
+    min-height: 1em;
   }
 
   a {
-    
-    &:link,
-    &:visited,
-    &active {
-      color:@link-color;
-      text-decoration:none;
-    }
+    color: @link-color;
+    text-decoration: none;
     
     &:hover {
-      color:@link-color;
-      text-decoration:underline;
+      color: @link-color;
+      text-decoration: underline;
     }
     
     &.ref-not-found,
     &.ptr-not-found,
     &[class$="-not-found"] {
-      text-decoration: none;
       color: inherit;
       pointer: text;
     }
@@ -72,11 +68,11 @@
       font-size: 80%;
     }
     
-    &.ref-external:link,
+    /*&.ref-external:link,
     &.ptr-external:link {
       border-bottom: 1px solid @linkdarkgrey;
       text-decoration: none;
-    }
+    }*/
 
     /*&.ref-note,
     &.ptr-note{
@@ -245,7 +241,7 @@
       width:100%;
       float:none;
     }
-  } // #TOC + #tei_wrapper  
+  } // #TOC + #tei_wrapper
 } // .tapas-generic
 
 
@@ -373,22 +369,22 @@
     } // .og-context
     
 /* Elements that should generally display as blocks */
-    accMat, acquisition, additional, addrLine, address, adminInfo, app, argument, 
-    biblFull, bindingDesc, byline, cb, dateline, docAuthor, docDate, docEdition, 
-    docImprint, docTitle, l, lb, provenance, docImprint pubPlace, quote, re, 
+    accMat, acquisition, additional, addrLine, address, adminInfo, app, argument,
+    biblFull, bindingDesc, byline, cb, dateline, docAuthor, docDate, docEdition,
+    docImprint, docTitle, l, lb, provenance, docImprint pubPlace, quote, re,
     respStmt, samplingDecl, sense, setting, source, sponsor {
       .block;
     }
     
 /* Elements that should display as blocks with a 1em margin on the top and bottom */
-    ab, caption, castGroup, climate, collation, colophon, condition, custodialHist, 
-    div[type=poem], msContents, p, performance, person, personGrp, recordHist, 
+    ab, caption, castGroup, climate, collation, colophon, condition, custodialHist,
+    div[type=poem], msContents, p, performance, person, personGrp, recordHist,
     scriptNote, sealDesc, stamp {
       .block-margins;
     }
     
 /* Elements that should generally be hidden */
-    cRefPattern, encodingDesc, graphic, node, surplus, teiHeader, textClass, 
+    cRefPattern, encodingDesc, graphic, node, surplus, teiHeader, textClass,
     tapas_metadata {
       .hide;
     }
@@ -481,7 +477,7 @@
       } // item
       
       label {
-        float: left;
+        //float: left;
         display: inline-block;
         min-width: 1.5em;
     
@@ -964,7 +960,7 @@
     }
     
     
-/* Elements that should be kept to their context within the TEI document (rather 
+/* Elements that should be kept to their context within the TEI document (rather
   than to a fragment in a popup) */
     TEI, text {
       .block;

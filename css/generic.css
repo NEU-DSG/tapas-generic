@@ -1,5 +1,5 @@
-/* IMPORTS */
 @import url('http://fonts.googleapis.com/css?family=Arvo:400,700,400italic,700italic|Gentium+Book+Basic:400,400italic,700,700italic');
+/* IMPORTS */
 /* NAMESPACES */
 /* @namespace "http://www.tei-c.org/ns/1.0"; */
 /* @namespace with prefix, as below, throws an error in less. */
@@ -78,8 +78,17 @@
 }
 .tapas-generic img {
   border: 1px solid #4d88cd;
+  min-width: 1em;
+  min-height: 1em;
 }
 .tapas-generic a {
+  color: #337dd3;
+  text-decoration: none;
+  /*&.ref-external:link,
+    &.ptr-external:link {
+      border-bottom: 1px solid @linkdarkgrey;
+      text-decoration: none;
+    }*/
   /*&.ref-note,
     &.ptr-note{
       text-decoration: none;
@@ -93,12 +102,6 @@
       }
     }*/
 }
-.tapas-generic a:link,
-.tapas-generic a:visited,
-.tapas-generic aactive {
-  color: #337dd3;
-  text-decoration: none;
-}
 .tapas-generic a:hover {
   color: #337dd3;
   text-decoration: underline;
@@ -106,7 +109,6 @@
 .tapas-generic a.ref-not-found,
 .tapas-generic a.ptr-not-found,
 .tapas-generic a[class$="-not-found"] {
-  text-decoration: none;
   color: inherit;
   pointer: text;
 }
@@ -114,11 +116,6 @@
   padding: 0 0.2em;
   vertical-align: super;
   font-size: 80%;
-}
-.tapas-generic a.ref-external:link,
-.tapas-generic a.ptr-external:link {
-  border-bottom: 1px solid #333333;
-  text-decoration: none;
 }
 .tapas-generic .-teibp-thumbnail {
   max-height: 60px;
@@ -282,7 +279,7 @@
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;
-  color: #888;
+  color: #555;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   background-color: inherit;
@@ -311,7 +308,7 @@
   /* XML serialization */
   /* TAPAS interventions into the content of TEI encoding */
   /* TAPAS labels on the content of TEI encoding */
-  /* Elements that should be kept to their context within the TEI document (rather 
+  /* Elements that should be kept to their context within the TEI document (rather
   than to a fragment in a popup) */
 }
 .tapas-generic #tei_wrapper .heading-og,
@@ -568,7 +565,7 @@
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;
-  color: #888;
+  color: #555;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "\2014";
@@ -609,7 +606,6 @@
 }
 .tapas-generic #tei_wrapper list label,
 #tapas-ref-dialog list label {
-  float: left;
   display: inline-block;
   min-width: 1.5em;
 }
@@ -917,7 +913,7 @@
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;
-  color: #888;
+  color: #555;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "* * * * *";
@@ -1141,7 +1137,7 @@
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;
-  color: #888;
+  color: #555;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "Activity: ";
@@ -1157,7 +1153,7 @@
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;
-  color: #888;
+  color: #555;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "Significant additions within the document: ";
@@ -1173,7 +1169,7 @@
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;
-  color: #888;
+  color: #555;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "Alternate ID: ";
@@ -1189,7 +1185,7 @@
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;
-  color: #888;
+  color: #555;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "Application information: ";
@@ -1205,7 +1201,7 @@
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;
-  color: #888;
+  color: #555;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "Binding: \A";
@@ -1216,7 +1212,7 @@
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;
-  color: #888;
+  color: #555;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "Binding: \A" "Contemporary: " attr(contemporary) "\A";
@@ -1414,7 +1410,7 @@
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;
-  color: #888;
+  color: #555;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
   content: "[column break]";
