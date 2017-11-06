@@ -13,6 +13,8 @@
   exclude-result-prefixes="#all">
   
   <xsl:import href="ography.xsl"/>
+  <xsl:include href="xml-to-string.xsl"/>
+  <xsl:output method="xhtml" indent="no"/>
 
   <xd:doc scope="stylesheet">
     <xd:desc>
@@ -28,7 +30,8 @@
       <xd:p><xd:b>change log:</xd:b></xd:p>
       <xd:ul>
         <xd:li>2017-11-06 by Ashley: Disambiguated input element names from HTML 
-          names.</xd:li>
+          names. Reorganized the file by XSLT element type and template mode, 
+          converting some comments into documentation.</xd:li>
         <xd:li>2017-10-27 by Ashley: Added a LESS file (generic.less) to remove 
           duplication in the diplomatic/normalized LESS files.</xd:li>
         <xd:li>2017-10-18 by Ashley: Created a convenience wrapper for creating 
@@ -44,9 +47,10 @@
     </xd:desc>
   </xd:doc>
 
-  <xsl:include href="xml-to-string.xsl"/>
 
-  <xsl:output method="xhtml" indent="no"/>
+<!-- 
+  ~~ PARAMETERS and VARIABLES
+  -->
 
   <xsl:param name="teibpHome"  select="'http://dcl.slis.indiana.edu/teibp/'"/>
   <xsl:param name="tapasHome"  select="'http://tapasproject.org/'"/>
@@ -79,6 +83,23 @@
     <xsl:variable name="nNF2" select="substring( $nNF1, 1, string-length( $nNF1 ) - 1 )"/>
     <xsl:value-of select="concat( $nNF2, '1' )"/>
   </xsl:variable>
+    
+  <!-- special characters -->
+  <xsl:variable name="quot"><text>"</text></xsl:variable>
+  <xsl:variable name="apos"><text>'</text></xsl:variable>
+  <xsl:variable name="lcub" select="'{'"/>
+  <xsl:variable name="rcub" select="'}'"/>
+
+  <!-- interface text -->
+  <xsl:param name="altTextPbFacs" select="'view page image(s)'"/>
+
+  <!-- input document -->
+  <xsl:variable name="input" select="/"/>
+
+
+<!-- 
+  ~~ KEYS
+  -->
 
   <xsl:key name="IDs" match="//*" use="@xml:id"/>
   <xsl:key name="REFs" match="//name" use="@ref"/>
@@ -111,25 +132,18 @@
   <xsl:key name="TOCables" match="//div7" use="count( p | ab ) gt 5  or  lg"/>
   <xsl:key name="TOCables" match="//lg[ not( ancestor::lg | ancestor::sp ) ]"
     use="count( ../lg | ../p | ../ab ) gt 1"/>
-    
-  <!-- special characters -->
-  <xsl:variable name="quot"><text>"</text></xsl:variable>
-  <xsl:variable name="apos"><text>'</text></xsl:variable>
-  <xsl:variable name="lcub" select="'{'"/>
-  <xsl:variable name="rcub" select="'}'"/>
 
-  <!-- interface text -->
-  <xsl:param name="altTextPbFacs" select="'view page image(s)'"/>
 
-  <!-- input document -->
-  <xsl:variable name="input" select="/"/>
+<!-- 
+  ~~ TEMPLATES, MATCHED
+  -->
 
   <xd:doc>
     <xd:desc>
       <xd:p>Match document root, and process the input
-      the TEI document in several passes which copy it, with some modification, into an
-      HTML <tt>&lt;div></tt>. Then, depending on value of the 'fullHTML' parameter,
-      output that <tt>&lt;div></tt> in an HTML5 wrapper (so the result can
+        the TEI document in several passes which copy it, with some modification, into an
+        HTML <tt>&lt;div></tt>. Then, depending on value of the 'fullHTML' parameter,
+        output that <tt>&lt;div></tt> in an HTML5 wrapper (so the result can
         be viewed stand-alone, mostly for debugging), or only the <tt>&lt;div></tt>
         itself.</xd:p>
     </xd:desc>
@@ -150,6 +164,7 @@
       </xsl:for-each>
     </DEBUG>
   </xsl:template>
+  
   <xsl:template match="/" name="htmlShell" priority="42" mode="#default">
     <xsl:message> tei2html( <xsl:value-of
       select="tokenize( document-uri(/),'/')[last()]"/> ) at <xsl:value-of
@@ -158,10 +173,14 @@
     <!-- input is TEI, output is XHTML -->
     <xsl:variable name="pass1">
       <div class="tapas-generic">
-        <xsl:call-template name="toolbox"/>
-        <xsl:call-template name="dialog"/>
-        <xsl:call-template name="wrapper"/>
-        <xsl:call-template name="contextual"/>
+        <xsl:call-template name="generate-toolbox"/>
+        <div id="tapas-ref-dialog"/>
+        <div id="tei_wrapper">
+          <xsl:apply-templates mode="work"/>
+        </div>
+        <div id="tei_contextual">
+          <xsl:copy-of select="$ogEntries"/>
+        </div>
         <!-- commented out 2014-09-28 by Syd xsl:copy-of select="$htmlFooter"/ -->
       </div>
     </xsl:variable>
@@ -183,7 +202,7 @@
     <xsl:choose>
       <xsl:when test="$fullHTML eq 'true'">
         <html>
-          <xsl:call-template name="htmlHead"/>
+          <xsl:call-template name="generateHtmlHead"/>
           <body>
             <xsl:copy-of select="$pass2"/>
           </body>
@@ -198,115 +217,13 @@
     </xsl:choose>
   </xsl:template>
 
-  <!-- ****************************** -->
-  <!-- general-purpose copy templates -->
-  <!-- ****************************** -->
+<!--  GENERAL-PURPOSE COPY TEMPLATES  -->
+  
+  <xd:doc>
+    <xd:desc>Template to omit processing instructions and comments from output.</xd:desc>
+  </xd:doc>
+  <xsl:template match="processing-instruction() | comment()" mode="work"/>
 
-  <xd:doc>
-    <xd:desc>Copy all attribute nodes from source XML tree to
-        output document.</xd:desc>
-  </xd:doc>
-  <xsl:template match="@*" mode="TOCer work makeTOCentry">
-    <xsl:copy/>
-  </xsl:template>
-
-  <xd:doc>
-    <xd:desc>Except @xml:id, which becomes @id</xd:desc>
-  </xd:doc>
-  <xsl:template match="@xml:id" mode="work">
-    <!-- copy @xml:id to @id, which browsers use for internal links. -->
-    <xsl:attribute name="id">
-      <xsl:value-of select="concat($idPrefix,.)"/>
-    </xsl:attribute>
-    <xsl:attribute name="data-tapas-xmlid">
-      <xsl:value-of select="."/>
-    </xsl:attribute>
-  </xsl:template>
-  
-  <!-- Resolve certain types of links only from within the same document. -->
-  <xsl:template match="@parts[parent::nym] 
-                      | @ref | @target" mode="work">
-    <xsl:if test="base-uri(.) eq $starterFile">
-      <xsl:variable name="ident" select="tps:generate-og-id(data(.))"/>
-      <xsl:attribute name="{local-name()}" select="concat('#',$ident)"/>
-      <xsl:variable name="gotoentry" select="$ogEntries[@id eq $ident] or key('IDs',$ident)"/>
-      <xsl:attribute name="data-tapas-gotoentry" select="$gotoentry"/>
-      <!-- If there *is* a valid 'ography entry and there is no user-supplied label, 
-        use a generated header. This template will create the content of an element, 
-        so it MUST be run after all other attributes have been added. -->
-      <xsl:if test="$gotoentry and parent::*[not(*) and not(text())]">
-        <xsl:variable name="ogMatch" as="node()" select="($ogEntries[@id eq $ident], key('IDs',$ident))[1]"/>
-        <xsl:variable name="heading">
-          <xsl:call-template name="get-entry-header">
-            <xsl:with-param name="element" select="$ogMatch"/>
-          </xsl:call-template>
-        </xsl:variable>
-        <xsl:value-of select="normalize-space($heading)"/>
-      </xsl:if>
-    </xsl:if>
-  </xsl:template>
-  
-  <xd:doc>
-    <xd:desc>Resolve attributes for a given element.</xd:desc>
-  </xd:doc>
-  <xsl:template name="set-reliable-attributes">
-    <xsl:call-template name="addID"/>
-    <xsl:call-template name="save-gi"/>
-    <xsl:call-template name="addRend"/>
-    <xsl:apply-templates select="@* except ( @rend, @rendition, @style, @ref, @target )" mode="#current"/>
-    <xsl:apply-templates select="@ref | @target" mode="#current"/>
-  </xsl:template>
-  
-  <xd:doc>
-    <xd:desc>Any element that could be confused for HTML has 'tei-' prepended to 
-      its name.</xd:desc>
-  </xd:doc>
-  <xsl:template match="*[tps:is-htmlish-tag(.)]" mode="work">
-    <xsl:element name="tei-{local-name()}">
-      <xsl:call-template name="set-reliable-attributes"/>
-      <xsl:apply-templates mode="#current"/>
-    </xsl:element>
-  </xsl:template>
-  
-  <xd:doc>
-    <xd:desc>Test if an input element has a name that matches an HTML tag.</xd:desc>
-    <xd:param name="element">The element to test.</xd:param>
-  </xd:doc>
-  <xsl:function name="tps:is-htmlish-tag" as="xs:boolean">
-    <xsl:param name="element" as="element()"/>
-    <xsl:variable name="useName" select="$element/lower-case(local-name(.))"/>
-    <xsl:value-of 
-      select="$useName =  (
-                            'a', 'abbr', 'acronym', 'address', 'applet', 'area', 
-                            'article', 'aside', 'audio', 'b', 'base', 'basefont', 
-                            'bdi', 'bdo', 'bgsound', 'big', 'blink', 
-                            'blockquote', 'body', 'br', 'button', 'canvas', 
-                            'caption', 'center', 'cite', 'code', 'col', 
-                            'colgroup', 'command', 'content', 'data', 'datalist', 
-                            'dd', 'del', 'details', 'dfn', 'dialog', 'dir', 
-                            'dl', 'dt', 'element', 'em', 'embed', 'fieldset', 
-                            'figcaption', 'figure', 'font', 'footer', 'form', 
-                            'frame', 'frameset', 'head', 'header', 'hgroup', 
-                            'hr', 'html', 'i', 'iframe', 'image', 'img', 'input', 
-                            'ins', 'isindex', 'kbd', 'keygen', 'label', 'legend', 
-                            'li', 'link', 'listing', 'main', 'map', 'mark', 
-                            'marquee', 'menu', 'menuitem', 'meta', 'meter', 
-                            'multicol', 'nav', 'nobr', 'noembed', 'noframes', 
-                            'noscript', 'object', 'ol', 'optgroup', 'option', 
-                            'output', 'param', 'picture', 'plaintext', 'pre', 
-                            'progress', 'q', 'rp', 'rt', 'rtc', 'ruby', 's', 
-                            'samp', 'script', 'section', 'select', 'shadow', 
-                            'slot', 'small', 'source', 'spacer', 'span', 
-                            'strike', 'strong', 'style', 'sub', 'summary', 'sup', 
-                            'table', 'tbody', 'td', 'template', 'textarea', 
-                            'tfoot', 'th', 'thead', 'time', 'title', 'tr', 
-                            'track', 'tt', 'u', 'ul', 'var', 'video', 'wbr', 
-                            'xmp'
-                          )
-              (:  SPECIAL CASES  :)
-              or ( $useName = ('p', 'div') and $element[ancestor::*:p] )"/>
-  </xsl:function>
-  
   <xd:doc>
     <xd:desc>Template for elements, main "work" mode
         <xd:ul>
@@ -326,92 +243,134 @@
   </xsl:template>
   
   <xd:doc>
-    <xd:desc>For other modes, copy nodes over</xd:desc>
+    <xd:desc>Copy all attribute nodes from source XML tree to
+        output document.</xd:desc>
   </xd:doc>
-  <xsl:template match="node()" mode="TOCer makeTOCentry">
-    <xsl:copy>
-      <xsl:apply-templates select="@*|node()" mode="#current"/>
-    </xsl:copy>
+  <xsl:template match="@*" mode="work TOCer makeTOCentry">
+    <xsl:copy/>
+  </xsl:template>
+
+  <xd:doc>
+    <xd:desc>Except @xml:id, which becomes @id</xd:desc>
+  </xd:doc>
+  <xsl:template match="@xml:id" mode="work">
+    <!-- copy @xml:id to @id, which browsers use for internal links. -->
+    <xsl:attribute name="id">
+      <xsl:value-of select="concat($idPrefix,.)"/>
+    </xsl:attribute>
+    <xsl:attribute name="data-tapas-xmlid">
+      <xsl:value-of select="."/>
+    </xsl:attribute>
   </xsl:template>
   
   <xd:doc>
-    <xd:desc>Template to omit processing instructions and comments from output.</xd:desc>
+    <xd:desc>Any input element that could be confused for HTML has 'tei-' prepended 
+      to its name.</xd:desc>
   </xd:doc>
-  <xsl:template match="processing-instruction()|comment()" mode="work"/>
+  <xsl:template match="*[tps:is-htmlish-tag(.)]" mode="work">
+    <xsl:element name="tei-{local-name()}">
+      <xsl:call-template name="set-reliable-attributes"/>
+      <xsl:apply-templates mode="#current"/>
+    </xsl:element>
+  </xsl:template>
   
-  <!-- ********************************************* -->
-  <!-- Subroutines of the root "htmlShell" and its   -->
-  <!-- "tapas-generic" <div>: "htmlHead", "toolbox", -->
-  <!-- "dialog", "wrapper", and "contextual".        -->
-  <!-- ********************************************* -->
   
-  <xsl:template name="htmlHead">
-    <head>
-      <meta charset="UTF-8"></meta>
+<!--  MAIN MODE (WORK)  -->
+  
+  <!-- need something else for images with captions; specifically
+       may want to catch figure/p, figure/floatingText, and figure/head
+       with separate templates. -->
+  <xd:doc>
+    <xd:desc>
+      <xd:p>Transforms TEI figure element to html img element.</xd:p>
+    </xd:desc>
+  </xd:doc>
+  <xsl:template match="figure[graphic[@url]]" priority="99" mode="work">
+    <!-- Checking all data as of 2015-08-29, there are no <figure>s -->
+    <!-- that use <media>, <formula>, or <binaryObject>, nor any that -->
+    <!-- have multiple <head>s. However, there are 2 cases (in 7 files -->
+    <!-- due to version duplication, I think) that have multiple -->
+    <!-- <figDesc> children. -->
+    <tei-figure>
+      <xsl:call-template name="set-reliable-attributes"/>
+      <img src="{graphic/@url}">
+        <xsl:if test="figDesc">
+          <xsl:attribute name="alt" select="wfn:mult_to_1(figDesc)"/>
+        </xsl:if>
+      </img>
+      <xsl:apply-templates select="* except ( self::graphic, self::figDesc )" mode="#current"/>
+    </tei-figure>
+  </xsl:template>
+
+  <xsl:template match="pb" mode="work">
+    <xsl:variable name="pn">
+      <xsl:number count="//pb" level="any"/>
+    </xsl:variable>
+    <xsl:variable name="id">
       <xsl:choose>
-        <xsl:when test="$lessSide eq 'client'">
-          <link rel="stylesheet/less" type="text/css" href="{$less}"></link>
-          <script src="{$lessJS}" type="text/javascript"></script>
+        <xsl:when test="@xml:id">
+          <xsl:value-of select="@xml:id"/>
         </xsl:when>
         <xsl:otherwise>
-          <link rel="stylesheet" type="text/css" href="{$view.generic}"></link>
-          <link rel="stylesheet" type="text/css" href="{$view.diplo}"></link>
-          <link rel="stylesheet" type="text/css" href="{$view.norma}"></link>
+          <xsl:value-of select="generate-id()"/>
         </xsl:otherwise>
       </xsl:choose>
-      <xsl:call-template name="javascript"/>
-      <xsl:call-template name="css"/>
-      <xsl:call-template name="tagUsage2style"/>
-      <xsl:call-template name="rendition2style"/>
-      <xsl:call-template name="generate-html-title"/>
-    </head>
+    </xsl:variable>
+    <span class="-teibp-pb">
+      <xsl:call-template name="set-reliable-attributes"/>
+      <a class="-teibp-pageNum" data-tapas-n="{$pn}">
+        <xsl:if test="@n">
+          <xsl:attribute name="data-tei-n">
+            <xsl:value-of select="@n"/>
+          </xsl:attribute>
+        </xsl:if>
+        <xsl:text> </xsl:text>
+      </a>
+      <xsl:if test="@facs">
+        <span class="-teibp-pbFacs">
+          <a class="gallery-facs" rel="prettyPhoto[gallery1]">
+            <xsl:attribute name="onclick">
+              <xsl:value-of select="concat('showFacs(',$apos,@n,$apos,',',$apos,@facs,$apos,',',$apos,$id,$apos,')')"/>
+            </xsl:attribute>
+            <img  alt="{$altTextPbFacs}" class="-teibp-thumbnail">
+              <xsl:attribute name="src">
+                <xsl:value-of select="@facs"/>
+              </xsl:attribute>
+            </img>
+          </a>
+        </span>
+      </xsl:if>
+    </span>
   </xsl:template>
   
-  <xsl:template name="toolbox">
-    <div id="tapasToolbox">
-      <!--<div id="tapasToolbox-pb">
-        <label for="pbToggle">Hide page breaks</label>
-        <input type="checkbox" id="pbToggle"></input>
-      </div>-->
-      <div id="tapasToolbox-views">
-        <label for="viewBox">Views</label>
-        <select id="viewBox">
-          <!-- this <select> used to have on[cC]hange="switchThemes(this);", but -->
-          <!-- that was incorporated into the javascript 2014-04-20 by PMJ. -->
-          <option value="diplomatic" selected="selected">diplomatic</option>
-          <option value="normal">normalized</option>
-        </select>
-      </div>
-    </div>
+  <xsl:template match="head" mode="work" priority="10">
+    <tei-head class="heading">
+      <xsl:call-template name="set-reliable-attributes"/>
+      <xsl:apply-templates mode="#current"/>
+    </tei-head>
   </xsl:template>
-
-  <xsl:template name="dialog">
-    <div id="tapas-ref-dialog"></div>
+  
+  <xsl:template match="gap | supplied | unclear" mode="work">
+    <xsl:call-template name="create-mouseover-intervention"/>
   </xsl:template>
-
-  <xsl:template name="wrapper">
-    <div id="tei_wrapper">
-      <xsl:apply-templates mode="work"/>
-    </div>
+  
+  <xsl:template match="subst" mode="work">
+    <xsl:call-template name="create-mouseover-intervention">
+      <xsl:with-param name="gi-gloss">Substitution</xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
-
-  <xsl:template name="contextual">
-    <div id="tei_contextual">
-      <!--<xsl:variable name="list_of_refs"
-        select="tokenize( string-join(
-            //name/@ref
-          | //orgName/@ref
-          | //persName/@ref
-          | //placeName/@ref
-          | //rs/@ref,' '),'\s+')"/>
-      <xsl:for-each select="distinct-values( $list_of_refs )">
-        <xsl:variable name="thisRef" select="."/>
-        <xsl:call-template name="generateContextItem">
-          <xsl:with-param name="ref" select="$thisRef"/>
-        </xsl:call-template>
-      </xsl:for-each>-->
-      <xsl:copy-of select="$ogEntries"/>
-    </div>
+  
+  <xd:doc>
+    <xd:desc>Template to drop insignificant whitespace nodes</xd:desc>
+  </xd:doc>
+  <xsl:template match="choice/text()[normalize-space(.) eq '']" mode="work"/>
+  
+  <xsl:template match="@style | @html:style" mode="work">
+    <xsl:variable name="result" select="normalize-space(.)"/>
+    <xsl:value-of select="$result"/>
+    <xsl:if test="substring($result,string-length($result),1) ne ';'">
+      <xsl:text>; </xsl:text>
+    </xsl:if>
   </xsl:template>
 
   <xd:doc>
@@ -476,6 +435,31 @@
       <xsl:value-of select="."/>
     </xsl:attribute>
   </xsl:template>
+  
+  <xd:doc>
+    <xd:desc>Resolve certain types of links only from within the same document.</xd:desc>
+  </xd:doc>
+  <xsl:template match="@parts[parent::nym] 
+                      | @ref | @target" mode="work">
+    <xsl:if test="base-uri(.) eq $starterFile">
+      <xsl:variable name="ident" select="tps:generate-og-id(data(.))"/>
+      <xsl:attribute name="{local-name()}" select="concat('#',$ident)"/>
+      <xsl:variable name="gotoentry" select="$ogEntries[@id eq $ident] or key('IDs',$ident)"/>
+      <xsl:attribute name="data-tapas-gotoentry" select="$gotoentry"/>
+      <!-- If there *is* a valid 'ography entry and there is no user-supplied label, 
+        use a generated header. This template will create the content of an element, 
+        so it MUST be run after all other attributes have been added. -->
+      <xsl:if test="$gotoentry and parent::*[not(*) and not(text())]">
+        <xsl:variable name="ogMatch" as="node()" select="($ogEntries[@id eq $ident], key('IDs',$ident))[1]"/>
+        <xsl:variable name="heading">
+          <xsl:call-template name="get-entry-header">
+            <xsl:with-param name="element" select="$ogMatch"/>
+          </xsl:call-template>
+        </xsl:variable>
+        <xsl:value-of select="normalize-space($heading)"/>
+      </xsl:if>
+    </xsl:if>
+  </xsl:template>
 
   <xd:doc>
     <xd:desc>Add an attribute explaining list layout to the CSS</xd:desc>
@@ -528,8 +512,8 @@
   <xd:doc>
     <xd:desc>Try to tease out which <gi>quote</gi>s are block-level and which are inline</xd:desc>
   </xd:doc>
-  <xsl:template match="q[not(@style|@rend|@rendition)]
-                 | quote[not(@style|@rend|@rendition)]" mode="work">
+  <xsl:template match="q[not(@style | @rend | @rendition)]
+                 | quote[not(@style | @rend | @rendition)]" mode="work">
     <!-- BUG: should also be checking for a default <rendition> that applies -->
     <xsl:variable name="gi" select="local-name(.)"/>
     <!-- If preceding (non-whitespace only) text ends in whitespace, then -->
@@ -546,7 +530,7 @@
         <xsl:otherwise> display: inline; </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <xsl:element name="{$gi}">
+    <xsl:element name="{ if ( $gi = 'q' ) then 'tei-q' else $gi }">
       <xsl:call-template name="set-reliable-attributes">
         <xsl:with-param name="additional-styles" select="$style" tunnel="yes"/>
       </xsl:call-template>
@@ -594,6 +578,27 @@
       <xsl:apply-templates mode="#current"/>
     </xsl:element>
   </xsl:template>
+
+  <xd:doc>
+    <xd:desc>add line numbers to poetry</xd:desc>
+  </xd:doc>
+  <xsl:template match="lg/l[ not(@prev) and not( @part = ('M','F') )]" mode="work">
+    <xsl:variable name="cnt" select="count(
+      preceding::l
+        [ not(@prev) and not( @part = ('M','F') ) ]
+        [ ancestor::lg[ not( ancestor::lg ) ] is current()/ancestor::lg[ not( ancestor::lg ) ] ]
+      ) +1"/>
+    <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
+      <xsl:call-template name="set-reliable-attributes"/>
+      <xsl:apply-templates mode="#current"/>
+      <xsl:if test="( $cnt mod 5 ) eq 0">
+        <xsl:text>&#xA0;</xsl:text>
+        <span class="poem-line-count">
+          <xsl:value-of select="$cnt"/>
+        </span>
+      </xsl:if>
+    </xsl:element>
+  </xsl:template>
   
   <xd:doc>
     <xd:desc>Insert an HTML note-anchor before each <tt>&lt;note></tt>, except those
@@ -628,69 +633,329 @@
       <xsl:apply-templates mode="#current"/>
     </xsl:element>
   </xsl:template>
-  
-  <!-- need something else for images with captions; specifically
-       may want to catch figure/p, figure/floatingText, and figure/head
-       with separate templates. -->
-  <xd:doc>
-    <xd:desc>
-      <xd:p>Transforms TEI figure element to html img element.</xd:p>
-    </xd:desc>
-  </xd:doc>
-  <xsl:template match="figure[graphic[@url]]" priority="99" mode="work">
-    <!-- Checking all data as of 2015-08-29, there are no <figure>s -->
-    <!-- that use <media>, <formula>, or <binaryObject>, nor any that -->
-    <!-- have multiple <head>s. However, there are 2 cases (in 7 files -->
-    <!-- due to version duplication, I think) that have multiple -->
-    <!-- <figDesc> children. -->
-    <xsl:element name="{local-name(.)}">
+
+  <xsl:template match="eg:egXML" mode="work">
+    <xsl:element name="{local-name()}">
       <xsl:call-template name="set-reliable-attributes"/>
-      <img src="{graphic/@url}">
-        <xsl:if test="figDesc">
-          <xsl:attribute name="alt" select="wfn:mult_to_1(figDesc)"/>
-        </xsl:if>
-      </img>
-      <xsl:apply-templates select="* except ( self::graphic, self::figDesc )" mode="#current"/>
+      <xsl:call-template name="xml-to-string">
+        <xsl:with-param name="node-set">
+          <xsl:copy-of select="node()"/>
+        </xsl:with-param>
+      </xsl:call-template>
     </xsl:element>
   </xsl:template>
 
-  <xsl:template name="addID">
-    <xsl:if test="not( @xml:id ) and not( ancestor::eg:egXML )">
-      <xsl:attribute name="id">
-        <xsl:call-template name="generate-unique-id">
-          <xsl:with-param name="base" select="generate-id()"/>
-        </xsl:call-template>
-      </xsl:attribute>
-    </xsl:if>
+  <xsl:template match="eg:egXML//comment()" mode="work">
+    <xsl:comment><xsl:value-of select="."/></xsl:comment>
   </xsl:template>
 
-  <xsl:template name="addRend">
-    <xsl:param name="additional-styles" as="xs:string*" tunnel="yes"/>
-    <xsl:variable name="actionableStyles" as="xs:string*"
-      select="$additional-styles[normalize-space(.) ne '']"/>
-    <xsl:apply-templates select="@rendition" mode="#current"/>
-    <xsl:if test="exists($actionableStyles) or @rend or @style or @html:style">
-      <xsl:attribute name="style">
-        <xsl:apply-templates select="@rend" mode="rendition2style"/>
-        <xsl:apply-templates select="@style" mode="#current"/>
-        <xsl:apply-templates select="@html:style" mode="#current"/>
-        <xsl:if test="count($actionableStyles) gt 0">
-          <xsl:for-each select="$actionableStyles">
-            <xsl:variable name="normalized" select="normalize-space(.)"/>
-            <xsl:value-of select="if ( ends-with($normalized, ';') ) then $normalized
-                                  else concat($normalized, ';')"/>
+
+<!--  CONTEXTUAL INFORMATION  -->
+  
+  <xsl:template match="*[tps:is-list-like(.)]" mode="work">
+    <div>
+      <xsl:attribute name="class" select="'list-contextual'"/>
+      <xsl:call-template name="set-reliable-attributes"/>
+      <xsl:choose>
+        <!-- Prefer headings that are the direct children of the 'ography. -->
+        <xsl:when test="head">
+          <xsl:attribute name="data-tapas-tocme" select="true()"/>
+          <xsl:apply-templates select="head" mode="work"/>
+        </xsl:when>
+        <!-- Accept <head> when it occurs immediately before an 'ography, and there 
+          are no following siblings of the 'ography to which the <head> might refer. 
+          These have already been processed. -->
+        <xsl:when test="preceding-sibling::*[1][self::head] and 
+          ( not(following-sibling::*) or following-sibling::*[1][self::head] )">
+          <!-- This list is only TOC-able if there are other preceding siblings 
+            which are not <head>. -->
+          <xsl:if test="preceding-sibling::*[not(self::head)]">
+            <xsl:attribute name="data-tapas-tocme" select="true()"/>
+          </xsl:if>
+        </xsl:when>
+        <!-- If there is no user-created <head>, generate one. -->
+        <xsl:otherwise>
+          <xsl:attribute name="data-tapas-tocme" select="true()"/>
+          <span class="heading heading-listtype">
+            <xsl:call-template name="set-label">
+              <xsl:with-param name="is-field-label" select="false()"/>
+            </xsl:call-template>
+          </span>
+        </xsl:otherwise>
+      </xsl:choose>
+      <xsl:apply-templates select="* except head" mode="og-gen">
+        <xsl:with-param name="doc-uri" select="base-uri()" tunnel="yes"/>
+      </xsl:apply-templates>
+    </div>
+  </xsl:template>
+  
+  <!-- 'ographies and entries we are currently not equipped to handle. -->
+  <xsl:template match="custodialHist | listRef | listRelation | listTranspose" mode="work"/>
+  
+  <xsl:template match="head[following-sibling::*[not(self::head)][1][tps:is-list-like(.)]]" priority="30" mode="work">
+    <tei-head class="heading heading-listtype">
+      <xsl:call-template name="set-reliable-attributes"/>
+      <xsl:apply-templates mode="#current"/>
+    </tei-head>
+  </xsl:template>
+  
+  
+<!--  GENCON MODE  -->
+  
+   <xd:doc>
+     <xd:desc>In general, just copy stuff over, changing namespace and ditching 
+      xml:id=, comments, and PIs</xd:desc>
+   </xd:doc>
+  <xsl:template match="*" mode="genCon">
+    <xsl:element name="{local-name()}" namespace="http://www.w3.org/1999/xhtml">
+      <xsl:apply-templates select="*|@*|text()" mode="genCon"/>
+    </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="@*" mode="genCon" priority="2">
+    <xsl:copy/>
+  </xsl:template>
+  
+  <xsl:template match="@xml:id" mode="genCon"/>
+  
+  <xsl:template match="html:script
+                      |script
+                      |processing-instruction()
+                      |comment()" mode="genCon"/>
+  
+   <xd:doc>
+     <xd:desc>For the outer contextual element we want to 
+      generate output in a particular order. Note that we are ignoring 
+      the possibility of &lt;personGrp> or &lt;nym> because there are *none* in 
+      the profiling data.</xd:desc>
+   </xd:doc>
+  <xsl:template match="org | person | place" mode="genCon">
+    <div class="contextualItem-{local-name(.)}">
+      <!-- This node *has* to have an @xml:id, or we would never have gotten here -->
+      <a id="{@xml:id}"/>
+      <p class="identifier">
+        <!-- We're relying on the fact that <orgName> does not appear as -->
+        <!-- a child of <person> or <place>, <persName> does not appear -->
+        <!-- as a child of <org> or <place>, etc. -->
+        <xsl:choose>
+          <xsl:when test="
+               self::org and not( orgName )
+            or self::person and not( persName )
+            or self::place and not( placeName )
+            ">
+            <xsl:choose>
+              <xsl:when test="@xml:id">
+                <xsl:value-of select="@xml:id"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="concat(
+                  local-name(.),
+                  '-',
+                  count( preceding::*[ local-name(.) eq local-name(current()) ] )
+                  )"/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:when>
+          <xsl:when test="count( orgName | persName | placeName ) eq 1">
+            <xsl:apply-templates select="orgName | persName | placeName" mode="string"/>
+          </xsl:when>
+          <xsl:when test="( orgName | persName | placeName )[ @type eq 'main']">
+            <xsl:apply-templates select="( orgName | persName | placeName )[ @type eq 'main'][1]" mode="string"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:message>WARNING: not doing a good job of identifying <xsl:value-of
+              select="local-name(.)"/> #<xsl:value-of
+                select="count(preceding::*[local-name(.) eq local-name(current())])+1"/>, “<xsl:value-of
+                  select="normalize-space(.)"/>”</xsl:message>
+            <xsl:apply-templates select="( orgName | persName | placeName )[1]" mode="string"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </p>
+      <xsl:comment>debug: Y; <xsl:value-of select="count( persName )"/></xsl:comment>
+      <xsl:apply-templates select="orgName | persName | placeName" mode="genCon"/>
+      <xsl:comment>debug: Z</xsl:comment>
+      <xsl:apply-templates select="ab | p|desc" mode="genCon"/>
+      <xsl:choose>
+        <xsl:when test="sex">
+          <xsl:apply-templates select="sex" mode="genCon"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates select="@sex" mode="genCon"/>
+        </xsl:otherwise>
+      </xsl:choose>
+      <xsl:apply-templates select="birth" mode="genCon"/>
+      <xsl:apply-templates select="location" mode="genCon"/>
+      <xsl:apply-templates select="death" mode="genCon"/>
+      <xsl:apply-templates select="*[ not(
+            self::orgName
+         or self::persName
+         or self::placeName
+         or self::ab
+         or self::p
+         or self::desc
+         or self::sex
+         or self::birth
+         or self::location
+         or self::death
+         or self::note ) ]" mode="genCon">
+        <xsl:sort select="concat( local-name(.), @when, @from, @notBefore, @to, @notAfter )"/>
+      </xsl:apply-templates>
+      <xsl:apply-templates select="note" mode="genCon"/>
+    </div>
+  </xsl:template>
+
+  <!-- In all our test data there is only 1 <org> that has > 1 <orgName>, and -->
+  <!-- it looks like an error. So for <org>s, we just presume the identifier  -->
+  <!-- above is sufficient. -->
+  <xsl:template match="orgName" mode="genCon" priority="3"/>
+  
+  <!-- We have no test gazeteers, so for the moment presume that the identifier -->
+  <!-- above is sufficient for <place>s, too. -->
+  <xsl:template match="placeName" mode="genCon" priority="3"/>
+  
+  <!-- <persName>s, however, are a pain -->
+  <xsl:template match="persName" mode="genCon" priority="3">
+    <xsl:choose>
+      <xsl:when test="not( preceding-sibling::persName | following-sibling::persName )">
+        <xsl:comment>debug A</xsl:comment>
+        <!-- No siblings, I was used for the identifier, ignore me -->
+      </xsl:when>
+      <xsl:when test="not(*) and @type eq 'main'">
+        <xsl:comment>debug B</xsl:comment>
+        <!-- there are sibling <persName>s, but this one was already used -->
+        <!-- for the identifier, so ignore it -->
+      </xsl:when>
+      <xsl:when test="*">
+        <xsl:comment>debug C</xsl:comment>
+        <xsl:apply-templates select="*" mode="genCon" >
+          <xsl:with-param name="labelPart" select="@type"/>
+        </xsl:apply-templates>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:comment>debug D</xsl:comment>
+        <xsl:variable name="label">
+          <xsl:choose>
+            <xsl:when test="@type">
+              <xsl:value-of select="@type"/>
+            </xsl:when>
+            <xsl:otherwise>alternate</xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <p data-tapas-label="name, {$label}">
+          <span><xsl:value-of select="normalize-space(.)"/></span>
+        </p>        
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="forename | surname | genName | roleName" mode="genCon" priority="3">
+    <xsl:param name="labelPart"/>
+    <xsl:param name="labelAdd">
+      <xsl:choose>
+        <xsl:when test="$labelPart">
+          <xsl:value-of select="concat('-',$labelPart)"/>
+        </xsl:when>
+        <xsl:otherwise/>
+      </xsl:choose>
+    </xsl:param>
+    <xsl:variable name="label" select="concat( local-name(.), $labelAdd )"/>
+    <span data-tapas-label="{$label}"><xsl:apply-templates mode="#current"/></span>
+  </xsl:template>
+  
+  <xd:doc>
+     <xd:desc>If an element has no descendants, don't transform it.</xd:desc>
+  </xd:doc> 
+  <xsl:template match="*[normalize-space(.) eq '' and not( descendant-or-self::*/@* )]" priority="50" mode="genCon"/>
+  
+  <xsl:template match="person/* | place/* | org/*" mode="genCon">
+    <xsl:variable name="me" select="local-name(.)"/>
+    <xsl:choose>
+      <xsl:when test="self::socecStatus[@scheme]">
+        <xsl:variable name="sesLabel">
+          <xsl:text>status (</xsl:text>
+          <xsl:value-of select="substring-after(@scheme,'#')"/>
+          <xsl:text>)</xsl:text>
+        </xsl:variable>
+        <p data-tapas-label="{$sesLabel}">
+          <span><xsl:apply-templates select="node()" mode="#current"/></span>
+        </p>
+      </xsl:when>
+      <xsl:when test="self::note"> <!-- Notes can contain problematic child elements, so flatten for now. -->
+        <p data-tapas-label="note">
+          <span><xsl:apply-templates select="node()" mode="string"/></span>
+        </p>
+      </xsl:when>
+      <xsl:when test="not( preceding-sibling::*[ local-name(.) eq $me ] )">
+        <xsl:variable name="mylabel">
+          <xsl:choose>
+            <xsl:when test="self::socecStatus">social-economic status</xsl:when>
+            <xsl:when test="self::death">died</xsl:when>
+            <xsl:when test="self::birth">born</xsl:when>
+            <xsl:when test="self::bibl">citation</xsl:when><!-- only 1, and it's empty -->
+            <xsl:otherwise><xsl:value-of select="local-name(.)"/></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="label">
+          <xsl:choose>
+            <xsl:when test="$me = ('affiliation','residence','faith','age','bibl','occupation')
+              and
+              following-sibling::*[local-name(.) eq $me]">
+              <xsl:value-of select="concat( $mylabel,'s')"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="$mylabel"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <p data-tapas-label="{$label}">
+          <xsl:call-template name="processGenCon">
+            <xsl:with-param name="this" select="."/>
+          </xsl:call-template>
+          <xsl:for-each select="( following-sibling::*[local-name(.) eq $me] )">
+            <xsl:call-template name="processGenCon">
+              <xsl:with-param name="this" select="."/>
+            </xsl:call-template>
           </xsl:for-each>
-        </xsl:if>
-      </xsl:attribute>
-    </xsl:if>
+        </p>
+      </xsl:when>
+      <xsl:otherwise/>
+    </xsl:choose>
   </xsl:template>
-  <xsl:template match="@style | @html:style" mode="work">
-    <xsl:variable name="result" select="normalize-space(.)"/>
-    <xsl:value-of select="$result"/>
-    <xsl:if test="substring($result,string-length($result),1) ne ';'">
-      <xsl:text>; </xsl:text>
-    </xsl:if>
+
+  <xsl:template match="sex | @sex" mode="genCon" priority="3">
+    <p data-tapas-label="sex">
+      <span>
+        <xsl:choose>
+          <xsl:when test="not( self::sex )">
+            <!-- this is an attribute -->
+            <xsl:call-template name="getSex">
+              <xsl:with-param name="sexCode" select="normalize-space(.)"/>
+            </xsl:call-template>
+          </xsl:when>
+          <xsl:when test="normalize-space(.) ne ''">
+            <!-- this is an element with content, use the content -->
+            <xsl:apply-templates select="." mode="string"/>
+          </xsl:when>
+          <xsl:when test="@value">
+            <!-- this is an element w/ a value= attr, use it -->
+            <xsl:call-template name="getSex">
+              <xsl:with-param name="sexCode" select="normalize-space(@value)"/>
+            </xsl:call-template>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:comment>where am I supposed to find sex?</xsl:comment>
+            <xsl:call-template name="getSex">
+              <xsl:with-param name="sexCode" select="'?'"/>
+            </xsl:call-template>
+          </xsl:otherwise>
+        </xsl:choose>
+      </span>
+    </p>
   </xsl:template>
+  
+  
+<!--  RENDITION2STYLE MODE  -->
+  
   <xsl:template match="@rend" mode="rendition2style">
     <xsl:variable name="rendVal" select="normalize-space(.)"/>
     <!-- Try to categorize the use of @rend:
@@ -810,58 +1075,6 @@
     <xsl:value-of select="string-join($css,' ')"/>
   </xsl:template>
 
-  <xd:doc>
-    <xd:desc>
-      <xd:p>The generate-id() function does not guarantee the generated id will not conflict
-      with existing ids in the document. This template checks for conflicts and appends a
-      number (hexedecimal 'f') to the id. The template is recursive and continues until no
-      conflict is found</xd:p>
-    </xd:desc>
-    <xd:param name="root">The root, or base, id used to check for conflicts</xd:param>
-    <xd:param name="suffix">The suffix added to the root id if a conflict is
-    detected.</xd:param>
-  </xd:doc>
-  <xsl:template name="generate-unique-id">
-    <xsl:param name="base"/>
-    <xsl:param name="suffix"/>
-    <xsl:variable name="id" select="concat($idPrefix,$base,$suffix)"/>
-    <xsl:choose>
-      <xsl:when test="key('IDs', $id, $input)">
-        <xsl:call-template name="generate-unique-id">
-          <xsl:with-param name="base" select="$base"/>
-          <xsl:with-param name="suffix" select="concat($suffix,'f')"/>
-        </xsl:call-template>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="$id"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <xsl:template name="javascript">
-    <script type="text/javascript" src="{$jqueryJS}"></script>
-    <script type="text/javascript" src="{$jqueryUIJS}"></script>
-    <script type="text/javascript" src="{$jqueryBlockUIJS}"></script>
-    <script type="text/javascript" src="{$contextualJS}"></script>
-    <link rel="stylesheet" href="{$jqueryUIcss}"></link>
-    <script type="text/javascript" src="{$genericJS}"></script>
-  </xsl:template>
-
-  <xsl:template name="css">
-    <xsl:variable name="rendStyles">
-      <xsl:call-template name="rendition2style"/>
-    </xsl:variable>
-    <xsl:if test="normalize-space($rendStyles) ne ''">
-      <style type="text/css">
-        <xsl:copy-of select="$rendStyles"/>
-      </style>
-    </xsl:if>
-  </xsl:template>
-
-  <xsl:template name="rendition2style">
-    <xsl:apply-templates select="//rendition" mode="rendition2style"/>
-  </xsl:template>
-
   <xsl:template match="rendition[@xml:id and @scheme eq 'css']" mode="rendition2style">
     <xsl:value-of select="concat('[rendition~=&quot;#',@xml:id,'&quot;]')"/>
     <xsl:if test="@scope">
@@ -877,449 +1090,11 @@
     </xsl:if>
     <xsl:value-of select="concat('{ ',normalize-space(.),'}&#x000A;')"/>
   </xsl:template>
-
-  <xsl:template match="pb" mode="work">
-    <xsl:variable name="pn">
-      <xsl:number count="//pb" level="any"/>
-    </xsl:variable>
-    <xsl:variable name="id">
-      <xsl:choose>
-        <xsl:when test="@xml:id">
-          <xsl:value-of select="@xml:id"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:value-of select="generate-id()"/>
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-    <span class="-teibp-pb">
-      <xsl:call-template name="set-reliable-attributes"/>
-      <a class="-teibp-pageNum" data-tapas-n="{$pn}">
-        <xsl:if test="@n">
-          <xsl:attribute name="data-tei-n">
-            <xsl:value-of select="@n"/>
-          </xsl:attribute>
-        </xsl:if>
-        <xsl:text> </xsl:text>
-      </a>
-      <xsl:if test="@facs">
-        <span class="-teibp-pbFacs">
-          <a class="gallery-facs" rel="prettyPhoto[gallery1]">
-            <xsl:attribute name="onclick">
-              <xsl:value-of select="concat('showFacs(',$apos,@n,$apos,',',$apos,@facs,$apos,',',$apos,$id,$apos,')')"/>
-            </xsl:attribute>
-            <img  alt="{$altTextPbFacs}" class="-teibp-thumbnail">
-              <xsl:attribute name="src">
-                <xsl:value-of select="@facs"/>
-              </xsl:attribute>
-            </img>
-          </a>
-        </span>
-      </xsl:if>
-    </span>
-  </xsl:template>
-
-  <xsl:template match="eg:egXML" mode="work">
-    <xsl:element name="{local-name()}">
-      <xsl:call-template name="set-reliable-attributes"/>
-      <xsl:call-template name="xml-to-string">
-        <xsl:with-param name="node-set">
-          <xsl:copy-of select="node()"/>
-        </xsl:with-param>
-      </xsl:call-template>
-    </xsl:element>
-  </xsl:template>
-
-  <xsl:template match="eg:egXML//comment()" mode="work">
-    <xsl:comment><xsl:value-of select="."/></xsl:comment>
-  </xsl:template>
-
-  <xsl:template name="tagUsage2style">
-    <xsl:variable name="tagusage-css">
-      <xsl:for-each select="//namespace[@name eq 'http://www.tei-c.org/ns/1.0']/tagUsage">
-        <xsl:value-of select="concat('&#x0A;',@gi,' { ')"/>
-        <xsl:call-template name="tokenize">
-          <xsl:with-param name="string" select="@render"/>
-        </xsl:call-template>
-        <xsl:value-of select="'}&#x0A;'"/>
-      </xsl:for-each>
-    </xsl:variable>
-    <xsl:if test="normalize-space($tagusage-css) ne ''">
-      <style type="text/css" id="tagusage-css">
-        <xsl:copy-of select="$tagusage-css"/>
-      </style>
-    </xsl:if>
-  </xsl:template>
-
-  <xsl:template name="tokenize">
-    <xsl:param name="string" />
-    <xsl:param name="delimiter" select="' '" />
-    <xsl:choose>
-      <xsl:when test="$delimiter and contains($string, $delimiter)">
-        <xsl:call-template name="grab-css">
-          <xsl:with-param name="rendition-id" select="substring-after(substring-before($string, $delimiter),'#')" />
-        </xsl:call-template>
-        <xsl:text> </xsl:text>
-        <xsl:call-template name="tokenize">
-          <xsl:with-param name="string"
-                          select="substring-after($string, $delimiter)" />
-          <xsl:with-param name="delimiter" select="$delimiter" />
-        </xsl:call-template>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:call-template name="grab-css">
-          <xsl:with-param name="rendition-id" select="substring-after($string,'#')"/>
-        </xsl:call-template>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <xsl:template name="grab-css">
-    <xsl:param name="rendition-id"/>
-    <xsl:value-of select="normalize-space(key('IDs',$rendition-id)/text())"/>
-  </xsl:template>
-
-  <xsl:template name="generate-html-title">
-    <title>
-      <xsl:value-of select="$tapasTitle"/>
-      <xsl:choose>
-        <xsl:when test="count( /TEI/teiHeader/fileDesc/titleStmt/title ) eq 1">
-          <xsl:value-of select="/TEI/teiHeader/fileDesc/titleStmt/title"/>
-        </xsl:when>
-        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'short']">
-          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'short']">
-            <xsl:value-of select="concat(.,' ')"/>
-          </xsl:for-each>
-        </xsl:when>
-        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'filing']">
-          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'filing']">
-            <xsl:value-of select="concat(.,' ')"/>
-          </xsl:for-each>
-        </xsl:when>
-        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'uniform']">
-          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'uniform']">
-            <xsl:value-of select="concat(.,' ')"/>
-          </xsl:for-each>
-        </xsl:when>
-        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'main']">
-          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'main']">
-            <xsl:value-of select="concat(.,' ')"/>
-          </xsl:for-each>
-        </xsl:when>
-        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'marc245a']">
-          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'marc245a']">
-            <xsl:value-of select="concat(.,' ')"/>
-          </xsl:for-each>
-        </xsl:when>
-        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@level eq 'a']">
-          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@level eq 'a']">
-            <xsl:value-of select="concat(.,' ')"/>
-          </xsl:for-each>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title">
-            <xsl:value-of select="concat(.,' ')"/>
-          </xsl:for-each>
-        </xsl:otherwise>
-      </xsl:choose>
-    </title>
-  </xsl:template>
-  
-  <xsl:template match="head" mode="work" priority="10">
-    <tei-head class="heading">
-      <xsl:call-template name="set-reliable-attributes"/>
-      <xsl:apply-templates mode="#current"/>
-    </tei-head>
-  </xsl:template>
-
-  <xd:doc>
-    <xd:desc>add line numbers to poetry</xd:desc>
-  </xd:doc>
-  <xsl:template match="lg/l[ not(@prev) and not( @part = ('M','F') )]" mode="work">
-    <xsl:variable name="cnt" select="count(
-      preceding::l
-        [ not(@prev) and not( @part = ('M','F') ) ]
-        [ ancestor::lg[ not( ancestor::lg ) ] is current()/ancestor::lg[ not( ancestor::lg ) ] ]
-      ) +1"/>
-    <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
-      <xsl:call-template name="set-reliable-attributes"/>
-      <xsl:apply-templates mode="#current"/>
-      <xsl:if test="( $cnt mod 5 ) eq 0">
-        <xsl:text>&#xA0;</xsl:text>
-        <span class="poem-line-count">
-          <xsl:value-of select="$cnt"/>
-        </span>
-      </xsl:if>
-    </xsl:element>
-  </xsl:template>
-  
-  <xd:doc>
-    <xd:desc>Template to drop insignificant whitespace nodes</xd:desc>
-  </xd:doc>
-  <xsl:template match="choice/text()[normalize-space(.) eq '']" mode="work"/>
-
-  <!-- ***************************** -->
-  <!-- handle contextual information -->
-  <!-- ***************************** -->
-  
-  <!-- ignore lists of contextual info when they occur in normal processing -->
-  <!--<xsl:template match="nymList | listOrg | listPerson | placeList | nym | org | person | place" mode="work"/>-->
-  
-  <xsl:template match="*[tps:is-list-like(.)]" mode="work">
-    <div>
-      <xsl:attribute name="class" select="'list-contextual'"/>
-      <xsl:call-template name="set-reliable-attributes"/>
-      <xsl:choose>
-        <!-- Prefer headings that are the direct children of the 'ography. -->
-        <xsl:when test="head">
-          <xsl:attribute name="data-tapas-tocme" select="true()"/>
-          <xsl:apply-templates select="head" mode="work"/>
-        </xsl:when>
-        <!-- Accept <head> when it occurs immediately before an 'ography, and there 
-          are no following siblings of the 'ography to which the <head> might refer. 
-          These have already been processed. -->
-        <xsl:when test="preceding-sibling::*[1][self::head] and 
-          ( not(following-sibling::*) or following-sibling::*[1][self::head] )">
-          <!-- This list is only TOC-able if there are other preceding siblings 
-            which are not <head>. -->
-          <xsl:if test="preceding-sibling::*[not(self::head)]">
-            <xsl:attribute name="data-tapas-tocme" select="true()"/>
-          </xsl:if>
-        </xsl:when>
-        <!-- If there is no user-created <head>, generate one. -->
-        <xsl:otherwise>
-          <xsl:attribute name="data-tapas-tocme" select="true()"/>
-          <span class="heading heading-listtype">
-            <xsl:call-template name="set-label">
-              <xsl:with-param name="is-field-label" select="false()"/>
-            </xsl:call-template>
-          </span>
-        </xsl:otherwise>
-      </xsl:choose>
-      <xsl:apply-templates select="* except head" mode="og-gen">
-        <xsl:with-param name="doc-uri" select="base-uri()" tunnel="yes"/>
-      </xsl:apply-templates>
-    </div>
-  </xsl:template>
-  
-  <!-- 'ographies and entries we are currently not equipped to handle. -->
-  <xsl:template match="custodialHist | listRef | listRelation | listTranspose" mode="work"/>
-  
-  <xsl:template match="head[following-sibling::*[not(self::head)][1][tps:is-list-like(.)]]" priority="30" mode="work">
-    <tei-head class="heading heading-listtype">
-      <xsl:call-template name="set-reliable-attributes"/>
-      <!--<xsl:attribute name="data-tapas-tocme" select="true()"/>-->
-      <xsl:apply-templates mode="#current"/>
-    </tei-head>
-  </xsl:template>
-  
-  <xd:doc>
-    <xd:desc>Generate an entry for the separate "contextual information" block</xd:desc>
-  </xd:doc>
-  <xsl:template name="generateContextItem">
-    <xsl:param name="ref"/>
-    <xsl:variable name="uri" select="normalize-space($ref)"/>
-    <xsl:variable name="scheme" select="substring-before($uri,':')"/>
-    <xsl:variable name="fragID" select="substring-after($uri,'#')"/>
-    <xsl:variable name="non-NCName-chars" select="concat(';?~ !@$%^&amp;*()+=[]&lt;&gt;,/\',$lcub,$rcub,$quot,$apos)"/>
-    <xsl:choose>
-      <xsl:when test="$scheme eq ''  and  $fragID eq ''  and
-        translate( $uri, $non-NCName-chars, '') eq $uri">
-        <!-- looks like encoder probably forgot initial sharp symbol ("#") -->
-        <xsl:comment> debug 1: </xsl:comment>
-        <xsl:comment> uri=<xsl:value-of select="$uri"/> </xsl:comment>
-        <xsl:comment> scheme=<xsl:value-of select="$scheme"/> </xsl:comment>
-        <xsl:comment> fragID=<xsl:value-of select="$fragID"/> </xsl:comment>
-        <xsl:variable name="IDentified" as="element()?">
-          <xsl:for-each select="$input">
-            <xsl:copy-of select="id( $uri )"/>
-          </xsl:for-each>
-        </xsl:variable>
-        <xsl:comment> IDentified, which is a <xsl:value-of select="local-name($IDentified)"/>=<xsl:value-of select="$IDentified"/>.</xsl:comment>
-        <xsl:if test="$IDentified">
-          <xsl:apply-templates select="$IDentified" mode="genCon">
-            <xsl:with-param name="ref" select="$ref"/>
-          </xsl:apply-templates>
-        </xsl:if>
-      </xsl:when>
-      <xsl:when test="$scheme eq ''  and  $fragID ne ''  and  substring-before($uri,'#') eq ''">
-        <xsl:comment> debug 2: </xsl:comment>
-        <xsl:comment> uri=<xsl:value-of select="$uri"/> </xsl:comment>
-        <xsl:comment> scheme=<xsl:value-of select="$scheme"/> </xsl:comment>
-        <xsl:comment> fragID=<xsl:value-of select="$fragID"/> </xsl:comment>
-        <!-- just a bare name identifier, i.e. local -->
-        <xsl:variable name="IDentified" as="element()?">
-          <xsl:for-each select="$input">
-            <xsl:copy-of select="id( $fragID )"/>
-          </xsl:for-each>
-        </xsl:variable>
-        <xsl:comment> IDentified, which is a <xsl:value-of select="local-name($IDentified)"/>=<xsl:value-of select="$IDentified"/>.</xsl:comment>
-        <xsl:if test="$IDentified">
-          <xsl:apply-templates select="$IDentified" mode="genCon">
-            <xsl:with-param name="ref" select="$ref"/>
-          </xsl:apply-templates>
-        </xsl:if>
-      </xsl:when>
-      <xsl:when test="starts-with( $scheme,'http')  and  contains($uri,'wikipedia.org/')">
-        <xsl:comment> debug 3: Wikipedia!</xsl:comment>
-        <div class="contextualItem-world-wide-web">
-          <a name="{$uri}" href="{$uri}">Wikipedia article</a>          
-        </div>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:comment> debug 4: </xsl:comment>
-        <xsl:comment> uri=<xsl:value-of select="$uri"/> </xsl:comment>
-        <xsl:comment> scheme=<xsl:value-of select="$scheme"/> </xsl:comment>
-        <xsl:comment> fragID=<xsl:value-of select="$fragID"/> </xsl:comment>
-        <xsl:if test="doc-available( $uri )">
-          <xsl:apply-templates select="document( $uri, $input )" mode="genCon">
-            <xsl:with-param name="ref" select="$ref"/>
-          </xsl:apply-templates>
-        </xsl:if>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
   
   
-  <!-- In general, just copy stuff over, changing namespace and ditching -->
-  <!-- xml:id=, comments, and PIs -->
-  <xsl:template match="*" mode="genCon">
-    <xsl:element name="{local-name()}" namespace="http://www.w3.org/1999/xhtml">
-      <xsl:apply-templates select="*|@*|text()" mode="genCon"/>
-    </xsl:element>
-  </xsl:template>
-  <xsl:template match="@*" mode="genCon" priority="2">
-    <xsl:copy/>
-  </xsl:template>
-  <xsl:template match="@xml:id" mode="genCon"/>
-  <xsl:template match="html:script
-                      |script
-                      |processing-instruction()
-                      |comment()" mode="genCon"/>
+<!--  STRING MODE  -->
   
-  <!-- For the outer contextual element we want to -->
-  <!-- generate output in a particular order. Note that we are ignoring -->
-  <!-- the possibility of <personGrp> or <nym> because there are *none* in -->
-  <!-- the profiling data. -->
-  <xsl:template match="org | person | place" mode="genCon">
-    <div class="contextualItem-{local-name(.)}">
-      <!-- This node *has* to have an @xml:id, or we would never have gotten here -->
-      <a id="{@xml:id}"/>
-      <p class="identifier">
-        <!-- We're relying on the fact that <orgName> does not appear as -->
-        <!-- a child of <person> or <place>, <persName> does not appear -->
-        <!-- as a child of <org> or <place>, etc. -->
-        <xsl:choose>
-          <xsl:when test="
-               self::org and not( orgName )
-            or self::person and not( persName )
-            or self::place and not( placeName )
-            ">
-            <xsl:choose>
-              <xsl:when test="@xml:id">
-                <xsl:value-of select="@xml:id"/>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:value-of select="concat(
-                  local-name(.),
-                  '-',
-                  count( preceding::*[ local-name(.) eq local-name(current()) ] )
-                  )"/>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:when>
-          <xsl:when test="count( orgName | persName | placeName ) eq 1">
-            <xsl:apply-templates select="orgName | persName | placeName" mode="string"/>
-          </xsl:when>
-          <xsl:when test="( orgName | persName | placeName )[ @type eq 'main']">
-            <xsl:apply-templates select="( orgName | persName | placeName )[ @type eq 'main'][1]" mode="string"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:message>WARNING: not doing a good job of identifying <xsl:value-of
-              select="local-name(.)"/> #<xsl:value-of
-                select="count(preceding::*[local-name(.) eq local-name(current())])+1"/>, “<xsl:value-of
-                  select="normalize-space(.)"/>”</xsl:message>
-            <xsl:apply-templates select="( orgName | persName | placeName )[1]" mode="string"/>
-          </xsl:otherwise>
-        </xsl:choose>
-      </p>
-      <xsl:comment>debug: Y; <xsl:value-of select="count( persName )"/></xsl:comment>
-      <xsl:apply-templates select="orgName | persName | placeName" mode="genCon"/>
-      <xsl:comment>debug: Z</xsl:comment>
-      <xsl:apply-templates select="ab | p|desc" mode="genCon"/>
-      <xsl:choose>
-        <xsl:when test="sex">
-          <xsl:apply-templates select="sex" mode="genCon"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:apply-templates select="@sex" mode="genCon"/>
-        </xsl:otherwise>
-      </xsl:choose>
-      <xsl:apply-templates select="birth" mode="genCon"/>
-      <xsl:apply-templates select="location" mode="genCon"/>
-      <xsl:apply-templates select="death" mode="genCon"/>
-      <xsl:apply-templates select="*[ not(
-            self::orgName
-         or self::persName
-         or self::placeName
-         or self::ab
-         or self::p
-         or self::desc
-         or self::sex
-         or self::birth
-         or self::location
-         or self::death
-         or self::note ) ]" mode="genCon">
-        <xsl:sort select="concat( local-name(.), @when, @from, @notBefore, @to, @notAfter )"/>
-      </xsl:apply-templates>
-      <xsl:apply-templates select="note" mode="genCon"/>
-    </div>
-  </xsl:template>
-
-  <!-- In all our test data there is only 1 <org> that has > 1 <orgName>, and -->
-  <!-- it looks like an error. So for <org>s, we just presume the identifier  -->
-  <!-- above is sufficient. -->
-  <xsl:template match="orgName" mode="genCon" priority="3"/>
-  
-  <!-- We have no test gazeteers, so for the moment presume that the identifier -->
-  <!-- above is sufficient for <place>s, too. -->
-  <xsl:template match="placeName" mode="genCon" priority="3"/>
-  
-  <!-- <persName>s, however, are a pain -->
-  <xsl:template match="persName" mode="genCon" priority="3">
-    <xsl:choose>
-      <xsl:when test="not( preceding-sibling::persName | following-sibling::persName )">
-        <xsl:comment>debug A</xsl:comment>
-        <!-- No siblings, I was used for the identifier, ignore me -->
-      </xsl:when>
-      <xsl:when test="not(*) and @type eq 'main'">
-        <xsl:comment>debug B</xsl:comment>
-        <!-- there are sibling <persName>s, but this one was already used -->
-        <!-- for the identifier, so ignore it -->
-      </xsl:when>
-      <xsl:when test="*">
-        <xsl:comment>debug C</xsl:comment>
-        <xsl:apply-templates select="*" mode="genCon" >
-          <xsl:with-param name="labelPart" select="@type"/>
-        </xsl:apply-templates>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:comment>debug D</xsl:comment>
-        <xsl:variable name="label">
-          <xsl:choose>
-            <xsl:when test="@type">
-              <xsl:value-of select="@type"/>
-            </xsl:when>
-            <xsl:otherwise>alternate</xsl:otherwise>
-          </xsl:choose>
-        </xsl:variable>
-        <p data-tapas-label="name, {$label}">
-          <span><xsl:value-of select="normalize-space(.)"/></span>
-        </p>        
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-  <xsl:template mode="string" match="persName | placeName | orgName">
+  <xsl:template match="persName | placeName | orgName" mode="string">
     <xsl:choose>
       <xsl:when test="not(*)">
         <!-- only text, no child elements -->
@@ -1337,255 +1112,36 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  <xsl:template match="forename | surname | genName | roleName" mode="genCon" priority="3">
-    <xsl:param name="labelPart"/>
-    <xsl:param name="labelAdd">
-      <xsl:choose>
-        <xsl:when test="$labelPart">
-          <xsl:value-of select="concat('-',$labelPart)"/>
-        </xsl:when>
-        <xsl:otherwise/>
-      </xsl:choose>
-    </xsl:param>
-    <xsl:variable name="label" select="concat( local-name(.), $labelAdd )"/>
-    <span data-tapas-label="{$label}"><xsl:apply-templates mode="#current"/></span>
-  </xsl:template>
-  <xsl:template mode="string" match="text()">
+  
+  <xsl:template match="text()" mode="string">
     <!-- regularize the whitespace, but leave leading or trailing iff present -->
     <xsl:variable name="mePlus" select="normalize-space( concat('␀',.,'␀') )"/>
     <xsl:variable name="regularized" select="substring( $mePlus, 2, string-length( $mePlus ) -2 )"/>
     <xsl:value-of select="$regularized"/>
   </xsl:template>
-  <xsl:template mode="string" match="*">
+  
+  <xsl:template match="*" mode="string">
     <xsl:apply-templates select="node()" mode="#current"/>
   </xsl:template>
+  
   <xd:doc>
     <xd:desc>Some of the mode "string" templates have to match in both namespaces,
     as I'm overloading use of this mode for both ogrophy processing (which happens
     in pass 1 on TEI data) and TOC processing (which happens in pass 2 on XHTML
     data).</xd:desc>
   </xd:doc>
-  <xsl:template mode="string" match="choice | html:choice">
+  <xsl:template match="choice | html:choice" mode="string">
     <xsl:copy-of select="."/>
   </xsl:template>
-  <xsl:template mode="string" match="cb | gb | lb | pb | milestone | html:cb | html:gb | html:lb | html:pb | html:milestone">
+  
+  <xsl:template match="cb | gb | lb | pb | milestone | html:cb | html:gb | html:lb | html:pb | html:milestone" mode="string">
     <xsl:text>&#x20;</xsl:text>
   </xsl:template>
-  <xsl:template mode="string" match="fw | html:fw"/>
   
-  <!-- If an element has no descendants, don't transform it. -->
-  <xsl:template match="*[normalize-space(.) eq '' and not( descendant-or-self::*/@* )]" priority="50" mode="genCon"/>
-  <xsl:template match="person/* | place/* | org/*" mode="genCon">
-    <xsl:variable name="me" select="local-name(.)"/>
-    <xsl:choose>
-      <xsl:when test="self::socecStatus[@scheme]">
-        <xsl:variable name="sesLabel">
-          <xsl:text>status (</xsl:text>
-          <xsl:value-of select="substring-after(@scheme,'#')"/>
-          <xsl:text>)</xsl:text>
-        </xsl:variable>
-        <p data-tapas-label="{$sesLabel}">
-          <span><xsl:apply-templates select="node()" mode="#current"/></span>
-        </p>
-      </xsl:when>
-      <xsl:when test="self::note"> <!-- Notes can contain problematic child elements, so flatten for now. -->
-        <p data-tapas-label="note">
-          <span><xsl:apply-templates select="node()" mode="string"/></span>
-        </p>
-      </xsl:when>
-      <xsl:when test="not( preceding-sibling::*[ local-name(.) eq $me ] )">
-        <xsl:variable name="mylabel">
-          <xsl:choose>
-            <xsl:when test="self::socecStatus">social-economic status</xsl:when>
-            <xsl:when test="self::death">died</xsl:when>
-            <xsl:when test="self::birth">born</xsl:when>
-            <xsl:when test="self::bibl">citation</xsl:when><!-- only 1, and it's empty -->
-            <xsl:otherwise><xsl:value-of select="local-name(.)"/></xsl:otherwise>
-          </xsl:choose>
-        </xsl:variable>
-        <xsl:variable name="label">
-          <xsl:choose>
-            <xsl:when test="$me = ('affiliation','residence','faith','age','bibl','occupation')
-              and
-              following-sibling::*[local-name(.) eq $me]">
-              <xsl:value-of select="concat( $mylabel,'s')"/>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:value-of select="$mylabel"/>
-            </xsl:otherwise>
-          </xsl:choose>
-        </xsl:variable>
-        <p data-tapas-label="{$label}">
-          <xsl:call-template name="processGenCon">
-            <xsl:with-param name="this" select="."/>
-          </xsl:call-template>
-          <xsl:for-each select="( following-sibling::*[local-name(.) eq $me] )">
-            <xsl:call-template name="processGenCon">
-              <xsl:with-param name="this" select="."/>
-            </xsl:call-template>
-          </xsl:for-each>
-        </p>
-      </xsl:when>
-      <xsl:otherwise/>
-    </xsl:choose>
-  </xsl:template>
-
-  <xsl:template match="sex|@sex" mode="genCon" priority="3">
-    <p data-tapas-label="sex">
-      <span>
-        <xsl:choose>
-          <xsl:when test="not( self::sex )">
-            <!-- this is an attribute -->
-            <xsl:call-template name="getSex">
-              <xsl:with-param name="sexCode" select="normalize-space(.)"/>
-            </xsl:call-template>
-          </xsl:when>
-          <xsl:when test="normalize-space(.) ne ''">
-            <!-- this is an element with content, use the content -->
-            <xsl:apply-templates select="." mode="string"/>
-          </xsl:when>
-          <xsl:when test="@value">
-            <!-- this is an element w/ a value= attr, use it -->
-            <xsl:call-template name="getSex">
-              <xsl:with-param name="sexCode" select="normalize-space(@value)"/>
-            </xsl:call-template>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:comment>where am I supposed to find sex?</xsl:comment>
-            <xsl:call-template name="getSex">
-              <xsl:with-param name="sexCode" select="'?'"/>
-            </xsl:call-template>
-          </xsl:otherwise>
-        </xsl:choose>
-      </span>
-    </p>
-  </xsl:template>
-  
-  <xsl:template name="getSex">
-    <xsl:param name="sexCode" select="lower-case(.)"/>
-    <xsl:choose>
-      <xsl:when test="$sexCode eq '0'">unknown</xsl:when>
-      <xsl:when test="$sexCode eq 'u'">unknown</xsl:when>
-      <xsl:when test="$sexCode eq '1'">male</xsl:when>
-      <xsl:when test="$sexCode eq 'm'">male</xsl:when>
-      <xsl:when test="$sexCode eq '2'">female</xsl:when>
-      <xsl:when test="$sexCode eq 'f'">female</xsl:when>
-      <xsl:when test="$sexCode eq 'O'">other</xsl:when>
-      <xsl:when test="$sexCode eq '9'">not applicable</xsl:when>
-      <xsl:when test="$sexCode eq 'n'">none or not applicable</xsl:when>
-      <xsl:otherwise><xsl:value-of select="$sexCode"/></xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <xsl:template name="processGenCon">
-    <xsl:param name="this"/>
-    <xsl:for-each select="$this">
-      <span>
-        <xsl:if test="@when|@notBefore|@from|@to|@notAfter">
-          <span class="normalized-date">
-            <xsl:choose>
-              <xsl:when test="@when">
-                <xsl:value-of select="@when"/>
-              </xsl:when>
-              <xsl:when test="@from and @to">
-                <xsl:value-of select="concat(@from,'–',@to)"/>
-              </xsl:when>
-              <xsl:when test="@notBefore and @notAfter">
-                <xsl:text>sometime between </xsl:text>
-                <xsl:value-of select="concat( @notBefore, ' and ', @notAfter )"/>
-              </xsl:when>
-              <xsl:when test="
-                   ( @notAfter  and @to   )
-                or ( @notBefore and @from )
-                or ( @notAfter  and @from )
-                or ( @notBefore and @to   )
-                ">
-                <xsl:message>unable to determine normalized date of <xsl:value-of
-                  select="concat( local-name(.),' with ' )"
-                /><xsl:for-each select="@*"><xsl:value-of select="concat( name(.),' ')"/></xsl:for-each>.</xsl:message>
-                <xsl:apply-templates select="./node()" mode="#current"/>
-              </xsl:when>
-              <xsl:when test="@notAfter">
-                <xsl:text>sometime before </xsl:text>
-                <xsl:value-of select="@notAfter"/>
-              </xsl:when>
-              <xsl:when test="@notBefore">
-                <xsl:text>sometime after </xsl:text>
-                <xsl:value-of select="@notBefore"/>
-              </xsl:when>
-              <xsl:when test="@from">
-                <xsl:value-of select="concat(@from,'–present')"/>
-              </xsl:when>
-              <xsl:when test="@to">
-                <xsl:value-of select="concat('?–',@to)"/>
-              </xsl:when>
-            </xsl:choose>
-          </span>
-        </xsl:if>
-        <xsl:apply-templates select="./node()" mode="#current"/>
-      </span>
-    </xsl:for-each>
-  </xsl:template>
+  <xsl:template match="fw | html:fw" mode="string"/>
   
   
-  
-  <!-- TAPAS INTERVENTIONS -->
-  
-  <xd:doc>
-    <xd:desc>Represent the current element as accurately as possible, but also 
-      create an explanation of what the element is. This is especially important for 
-      transcriptional markers like &lt;gap> and for children of &lt;choice>.</xd:desc>
-    <xd:param name="content">The content of the current element. Defaults to 
-      applying templates in the current mode.</xd:param>
-    <xd:param name="gi-gloss">The label or term used to gloss the current element. 
-      Defaults to the name of the element, with the first letter capitalized.</xd:param>
-    <xd:param name="tooltip-content">The text to use in a tooltip when the current 
-      element (as represented in HTML) is moused-over or tabbed to. The default is 
-      the $gi-gloss, followed by any useful information in the attributes of the 
-      current element.</xd:param>
-  </xd:doc>
-  <xsl:template name="create-mouseover-intervention">
-    <xsl:param name="content" as="node()*">
-      <xsl:apply-templates mode="#current"/>
-    </xsl:param>
-    <xsl:param name="gi-gloss" as="xs:string">
-      <xsl:variable name="firstLetter"
-        select="upper-case(substring(local-name(.),1,1))"/>
-      <xsl:value-of 
-        select="concat($firstLetter,substring(local-name(.),2))"/>
-    </xsl:param>
-    <xsl:param name="tooltip-content" as="xs:string*">
-      <xsl:apply-templates select="@*" mode="att-intervention"/>
-    </xsl:param>
-    <xsl:variable name="tooltipPhrases" as="xs:string*">
-      <xsl:for-each select="( $gi-gloss, $tooltip-content )">
-        <xsl:value-of select="normalize-space(.)"/>
-      </xsl:for-each>
-    </xsl:variable>
-    <xsl:element name="{local-name()}">
-      <xsl:call-template name="set-reliable-attributes"/>
-      <xsl:if test="count($tooltipPhrases[. ne '']) gt 0">
-        <xsl:attribute name="data-tapas-tooltip">
-          <xsl:copy-of select="string-join($tooltipPhrases,'. ')"/>
-          <xsl:text>.</xsl:text>
-        </xsl:attribute>
-      </xsl:if>
-      <xsl:attribute name="tabindex" select="0"/>
-      <xsl:if test="$content">
-        <xsl:copy-of select="$content"/>
-      </xsl:if>
-    </xsl:element>
-  </xsl:template>
-  
-  <xsl:template match="gap | supplied | unclear" mode="work">
-    <xsl:call-template name="create-mouseover-intervention"/>
-  </xsl:template>
-  
-  <xsl:template match="subst" mode="work">
-    <xsl:call-template name="create-mouseover-intervention">
-      <xsl:with-param name="gi-gloss">Substitution</xsl:with-param>
-    </xsl:call-template>
-  </xsl:template>
+<!--  ATT-INTERVENTION MODE  -->
   
   <xsl:template match="@*" mode="att-intervention" priority="-4"/>
   
@@ -1609,8 +1165,17 @@
   </xsl:template>
   
   
-  <!--  POSTPROCESSING  -->
-
+<!--  POSTPROCESSING (TOC MODES)  -->
+  
+  <xd:doc>
+    <xd:desc>Copy nodes over</xd:desc>
+  </xd:doc>
+  <xsl:template match="node()" mode="TOCer makeTOCentry">
+    <xsl:copy>
+      <xsl:apply-templates select="@*|node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
   <xd:doc>
     <xd:desc>Generate a table of contents, if needed</xd:desc>
   </xd:doc>
@@ -1740,10 +1305,458 @@
     <xd:desc>Don't show any TOC entries that may have been flagged in the &lt;teiHeader&gt;</xd:desc>
   </xd:doc>
   <xsl:template match="html:teiHeader//*[@data-tapas-tocme]" mode="makeTOCentry" priority="11"/>
+
+
+<!-- 
+  ~~ TEMPLATES, NAMED
+  -->
+
+  <xsl:template name="addID">
+    <xsl:if test="not( @xml:id ) and not( ancestor::eg:egXML )">
+      <xsl:attribute name="id">
+        <xsl:call-template name="generate-unique-id">
+          <xsl:with-param name="base" select="generate-id()"/>
+        </xsl:call-template>
+      </xsl:attribute>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template name="addRend">
+    <xsl:param name="additional-styles" as="xs:string*" tunnel="yes"/>
+    <xsl:variable name="actionableStyles" as="xs:string*"
+      select="$additional-styles[normalize-space(.) ne '']"/>
+    <xsl:apply-templates select="@rendition" mode="#current"/>
+    <xsl:if test="exists($actionableStyles) or @rend or @style or @html:style">
+      <xsl:attribute name="style">
+        <xsl:apply-templates select="@rend" mode="rendition2style"/>
+        <xsl:apply-templates select="@style" mode="#current"/>
+        <xsl:apply-templates select="@html:style" mode="#current"/>
+        <xsl:if test="count($actionableStyles) gt 0">
+          <xsl:for-each select="$actionableStyles">
+            <xsl:variable name="normalized" select="normalize-space(.)"/>
+            <xsl:value-of select="if ( ends-with($normalized, ';') ) then $normalized
+                                  else concat($normalized, ';')"/>
+          </xsl:for-each>
+        </xsl:if>
+      </xsl:attribute>
+    </xsl:if>
+  </xsl:template>
+  
+  <xsl:template name="generateHtmlHead">
+    <head>
+      <meta charset="UTF-8"></meta>
+      <xsl:call-template name="generate-html-title"/>
+      <xsl:choose>
+        <xsl:when test="$lessSide eq 'client'">
+          <link rel="stylesheet/less" type="text/css" href="{$less}"></link>
+          <script src="{$lessJS}" type="text/javascript"></script>
+        </xsl:when>
+        <xsl:otherwise>
+          <link rel="stylesheet" type="text/css" href="{$view.generic}"></link>
+          <link rel="stylesheet" type="text/css" href="{$view.diplo}"></link>
+          <link rel="stylesheet" type="text/css" href="{$view.norma}"></link>
+        </xsl:otherwise>
+      </xsl:choose>
+      <!-- Javascript -->
+      <script type="text/javascript" src="{$jqueryJS}"></script>
+      <script type="text/javascript" src="{$jqueryUIJS}"></script>
+      <script type="text/javascript" src="{$jqueryBlockUIJS}"></script>
+      <script type="text/javascript" src="{$contextualJS}"></script>
+      <link rel="stylesheet" href="{$jqueryUIcss}"></link>
+      <script type="text/javascript" src="{$genericJS}"></script>
+      <!-- CSS -->
+      <xsl:variable name="rendStyles">
+        <xsl:call-template name="rendition2style"/>
+      </xsl:variable>
+      <xsl:if test="normalize-space($rendStyles) ne ''">
+        <style type="text/css">
+          <xsl:copy-of select="$rendStyles"/>
+        </style>
+      </xsl:if>
+      <!-- Create CSS rules based on TEI document definitions -->
+      <xsl:call-template name="tagUsage2style"/>
+      <xsl:call-template name="rendition2style"/>
+    </head>
+  </xsl:template>
+  
+  <xd:doc>
+    <xd:desc>Represent the current element as accurately as possible, but also 
+      create an explanation of what the element is. This is especially important for 
+      transcriptional markers like &lt;gap> and for children of &lt;choice>.</xd:desc>
+    <xd:param name="content">The content of the current element. Defaults to 
+      applying templates in the current mode.</xd:param>
+    <xd:param name="gi-gloss">The label or term used to gloss the current element. 
+      Defaults to the name of the element, with the first letter capitalized.</xd:param>
+    <xd:param name="tooltip-content">The text to use in a tooltip when the current 
+      element (as represented in HTML) is moused-over or tabbed to. The default is 
+      the $gi-gloss, followed by any useful information in the attributes of the 
+      current element.</xd:param>
+  </xd:doc>
+  <xsl:template name="create-mouseover-intervention">
+    <xsl:param name="content" as="node()*">
+      <xsl:apply-templates mode="#current"/>
+    </xsl:param>
+    <xsl:param name="gi-gloss" as="xs:string">
+      <xsl:variable name="firstLetter"
+        select="upper-case(substring(local-name(.),1,1))"/>
+      <xsl:value-of 
+        select="concat($firstLetter,substring(local-name(.),2))"/>
+    </xsl:param>
+    <xsl:param name="tooltip-content" as="xs:string*">
+      <xsl:apply-templates select="@*" mode="att-intervention"/>
+    </xsl:param>
+    <xsl:variable name="tooltipPhrases" as="xs:string*">
+      <xsl:for-each select="( $gi-gloss, $tooltip-content )">
+        <xsl:value-of select="normalize-space(.)"/>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:element name="{local-name()}">
+      <xsl:call-template name="set-reliable-attributes"/>
+      <xsl:if test="count($tooltipPhrases[. ne '']) gt 0">
+        <xsl:attribute name="data-tapas-tooltip">
+          <xsl:copy-of select="string-join($tooltipPhrases,'. ')"/>
+          <xsl:text>.</xsl:text>
+        </xsl:attribute>
+      </xsl:if>
+      <xsl:attribute name="tabindex" select="0"/>
+      <xsl:if test="$content">
+        <xsl:copy-of select="$content"/>
+      </xsl:if>
+    </xsl:element>
+  </xsl:template>
+  
+  <xd:doc>
+    <xd:desc>Generate an entry for the separate "contextual information" block</xd:desc>
+  </xd:doc>
+  <xsl:template name="generateContextItem">
+    <xsl:param name="ref"/>
+    <xsl:variable name="uri" select="normalize-space($ref)"/>
+    <xsl:variable name="scheme" select="substring-before($uri,':')"/>
+    <xsl:variable name="fragID" select="substring-after($uri,'#')"/>
+    <xsl:variable name="non-NCName-chars" select="concat(';?~ !@$%^&amp;*()+=[]&lt;&gt;,/\',$lcub,$rcub,$quot,$apos)"/>
+    <xsl:choose>
+      <xsl:when test="$scheme eq ''  and  $fragID eq ''  and
+        translate( $uri, $non-NCName-chars, '') eq $uri">
+        <!-- looks like encoder probably forgot initial sharp symbol ("#") -->
+        <xsl:comment> debug 1: </xsl:comment>
+        <xsl:comment> uri=<xsl:value-of select="$uri"/> </xsl:comment>
+        <xsl:comment> scheme=<xsl:value-of select="$scheme"/> </xsl:comment>
+        <xsl:comment> fragID=<xsl:value-of select="$fragID"/> </xsl:comment>
+        <xsl:variable name="IDentified" as="element()?">
+          <xsl:for-each select="$input">
+            <xsl:copy-of select="id( $uri )"/>
+          </xsl:for-each>
+        </xsl:variable>
+        <xsl:comment> IDentified, which is a <xsl:value-of select="local-name($IDentified)"/>=<xsl:value-of select="$IDentified"/>.</xsl:comment>
+        <xsl:if test="$IDentified">
+          <xsl:apply-templates select="$IDentified" mode="genCon">
+            <xsl:with-param name="ref" select="$ref"/>
+          </xsl:apply-templates>
+        </xsl:if>
+      </xsl:when>
+      <xsl:when test="$scheme eq ''  and  $fragID ne ''  and  substring-before($uri,'#') eq ''">
+        <xsl:comment> debug 2: </xsl:comment>
+        <xsl:comment> uri=<xsl:value-of select="$uri"/> </xsl:comment>
+        <xsl:comment> scheme=<xsl:value-of select="$scheme"/> </xsl:comment>
+        <xsl:comment> fragID=<xsl:value-of select="$fragID"/> </xsl:comment>
+        <!-- just a bare name identifier, i.e. local -->
+        <xsl:variable name="IDentified" as="element()?">
+          <xsl:for-each select="$input">
+            <xsl:copy-of select="id( $fragID )"/>
+          </xsl:for-each>
+        </xsl:variable>
+        <xsl:comment> IDentified, which is a <xsl:value-of select="local-name($IDentified)"/>=<xsl:value-of select="$IDentified"/>.</xsl:comment>
+        <xsl:if test="$IDentified">
+          <xsl:apply-templates select="$IDentified" mode="genCon">
+            <xsl:with-param name="ref" select="$ref"/>
+          </xsl:apply-templates>
+        </xsl:if>
+      </xsl:when>
+      <xsl:when test="starts-with( $scheme,'http')  and  contains($uri,'wikipedia.org/')">
+        <xsl:comment> debug 3: Wikipedia!</xsl:comment>
+        <div class="contextualItem-world-wide-web">
+          <a name="{$uri}" href="{$uri}">Wikipedia article</a>          
+        </div>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:comment> debug 4: </xsl:comment>
+        <xsl:comment> uri=<xsl:value-of select="$uri"/> </xsl:comment>
+        <xsl:comment> scheme=<xsl:value-of select="$scheme"/> </xsl:comment>
+        <xsl:comment> fragID=<xsl:value-of select="$fragID"/> </xsl:comment>
+        <xsl:if test="doc-available( $uri )">
+          <xsl:apply-templates select="document( $uri, $input )" mode="genCon">
+            <xsl:with-param name="ref" select="$ref"/>
+          </xsl:apply-templates>
+        </xsl:if>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="generate-html-title">
+    <title>
+      <xsl:value-of select="$tapasTitle"/>
+      <xsl:choose>
+        <xsl:when test="count( /TEI/teiHeader/fileDesc/titleStmt/title ) eq 1">
+          <xsl:value-of select="/TEI/teiHeader/fileDesc/titleStmt/title"/>
+        </xsl:when>
+        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'short']">
+          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'short']">
+            <xsl:value-of select="concat(.,' ')"/>
+          </xsl:for-each>
+        </xsl:when>
+        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'filing']">
+          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'filing']">
+            <xsl:value-of select="concat(.,' ')"/>
+          </xsl:for-each>
+        </xsl:when>
+        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'uniform']">
+          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'uniform']">
+            <xsl:value-of select="concat(.,' ')"/>
+          </xsl:for-each>
+        </xsl:when>
+        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'main']">
+          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'main']">
+            <xsl:value-of select="concat(.,' ')"/>
+          </xsl:for-each>
+        </xsl:when>
+        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'marc245a']">
+          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@type eq 'marc245a']">
+            <xsl:value-of select="concat(.,' ')"/>
+          </xsl:for-each>
+        </xsl:when>
+        <xsl:when test="/TEI/teiHeader/fileDesc/titleStmt/title[@level eq 'a']">
+          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title[@level eq 'a']">
+            <xsl:value-of select="concat(.,' ')"/>
+          </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:for-each select="/TEI/teiHeader/fileDesc/titleStmt/title">
+            <xsl:value-of select="concat(.,' ')"/>
+          </xsl:for-each>
+        </xsl:otherwise>
+      </xsl:choose>
+    </title>
+  </xsl:template>
+  
+  <xsl:template name="generate-toolbox">
+    <div id="tapasToolbox">
+      <!--<div id="tapasToolbox-pb">
+        <label for="pbToggle">Hide page breaks</label>
+        <input type="checkbox" id="pbToggle"></input>
+      </div>-->
+      <div id="tapasToolbox-views">
+        <label for="viewBox">Views</label>
+        <select id="viewBox">
+          <!-- this <select> used to have on[cC]hange="switchThemes(this);", but -->
+          <!-- that was incorporated into the javascript 2014-04-20 by PMJ. -->
+          <option value="diplomatic" selected="selected">diplomatic</option>
+          <option value="normal">normalized</option>
+        </select>
+      </div>
+    </div>
+  </xsl:template>
+  
+  <xsl:template name="getSex">
+    <xsl:param name="sexCode" select="lower-case(.)"/>
+    <xsl:choose>
+      <xsl:when test="$sexCode eq '0'">unknown</xsl:when>
+      <xsl:when test="$sexCode eq 'u'">unknown</xsl:when>
+      <xsl:when test="$sexCode eq '1'">male</xsl:when>
+      <xsl:when test="$sexCode eq 'm'">male</xsl:when>
+      <xsl:when test="$sexCode eq '2'">female</xsl:when>
+      <xsl:when test="$sexCode eq 'f'">female</xsl:when>
+      <xsl:when test="$sexCode eq 'O'">other</xsl:when>
+      <xsl:when test="$sexCode eq '9'">not applicable</xsl:when>
+      <xsl:when test="$sexCode eq 'n'">none or not applicable</xsl:when>
+      <xsl:otherwise><xsl:value-of select="$sexCode"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xd:doc>
+    <xd:desc>
+      <xd:p>The generate-id() function does not guarantee the generated id will not conflict
+      with existing ids in the document. This template checks for conflicts and appends a
+      number (hexedecimal 'f') to the id. The template is recursive and continues until no
+      conflict is found</xd:p>
+    </xd:desc>
+    <xd:param name="root">The root, or base, id used to check for conflicts</xd:param>
+    <xd:param name="suffix">The suffix added to the root id if a conflict is
+    detected.</xd:param>
+  </xd:doc>
+  <xsl:template name="generate-unique-id">
+    <xsl:param name="base"/>
+    <xsl:param name="suffix"/>
+    <xsl:variable name="id" select="concat($idPrefix,$base,$suffix)"/>
+    <xsl:choose>
+      <xsl:when test="key('IDs', $id, $input)">
+        <xsl:call-template name="generate-unique-id">
+          <xsl:with-param name="base" select="$base"/>
+          <xsl:with-param name="suffix" select="concat($suffix,'f')"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$id"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="grab-css">
+    <xsl:param name="rendition-id"/>
+    <xsl:value-of select="normalize-space(key('IDs',$rendition-id)/text())"/>
+  </xsl:template>
+
+  <xsl:template name="processGenCon">
+    <xsl:param name="this"/>
+    <xsl:for-each select="$this">
+      <span>
+        <xsl:if test="@when|@notBefore|@from|@to|@notAfter">
+          <span class="normalized-date">
+            <xsl:choose>
+              <xsl:when test="@when">
+                <xsl:value-of select="@when"/>
+              </xsl:when>
+              <xsl:when test="@from and @to">
+                <xsl:value-of select="concat(@from,'–',@to)"/>
+              </xsl:when>
+              <xsl:when test="@notBefore and @notAfter">
+                <xsl:text>sometime between </xsl:text>
+                <xsl:value-of select="concat( @notBefore, ' and ', @notAfter )"/>
+              </xsl:when>
+              <xsl:when test="
+                   ( @notAfter  and @to   )
+                or ( @notBefore and @from )
+                or ( @notAfter  and @from )
+                or ( @notBefore and @to   )
+                ">
+                <xsl:message>unable to determine normalized date of <xsl:value-of
+                  select="concat( local-name(.),' with ' )"
+                /><xsl:for-each select="@*"><xsl:value-of select="concat( name(.),' ')"/></xsl:for-each>.</xsl:message>
+                <xsl:apply-templates select="./node()" mode="#current"/>
+              </xsl:when>
+              <xsl:when test="@notAfter">
+                <xsl:text>sometime before </xsl:text>
+                <xsl:value-of select="@notAfter"/>
+              </xsl:when>
+              <xsl:when test="@notBefore">
+                <xsl:text>sometime after </xsl:text>
+                <xsl:value-of select="@notBefore"/>
+              </xsl:when>
+              <xsl:when test="@from">
+                <xsl:value-of select="concat(@from,'–present')"/>
+              </xsl:when>
+              <xsl:when test="@to">
+                <xsl:value-of select="concat('?–',@to)"/>
+              </xsl:when>
+            </xsl:choose>
+          </span>
+        </xsl:if>
+        <xsl:apply-templates select="./node()" mode="#current"/>
+      </span>
+    </xsl:for-each>
+  </xsl:template>
+  
+  <xsl:template name="rendition2style">
+    <xsl:apply-templates select="//rendition" mode="rendition2style"/>
+  </xsl:template>
+  
+  <xd:doc>
+    <xd:desc>Resolve attributes for a given element.</xd:desc>
+  </xd:doc>
+  <xsl:template name="set-reliable-attributes">
+    <xsl:call-template name="addID"/>
+    <xsl:call-template name="save-gi"/>
+    <xsl:call-template name="addRend"/>
+    <xsl:apply-templates select="@* except ( @rend, @rendition, @style, @ref, @target )" mode="#current"/>
+    <xsl:apply-templates select="@ref | @target" mode="#current"/>
+  </xsl:template>
+  
+  <xsl:template name="tagUsage2style">
+    <xsl:variable name="tagusage-css">
+      <xsl:for-each select="//namespace[@name eq 'http://www.tei-c.org/ns/1.0']/tagUsage">
+        <xsl:value-of select="concat('&#x0A;',@gi,' { ')"/>
+        <xsl:call-template name="tokenize">
+          <xsl:with-param name="string" select="@render"/>
+        </xsl:call-template>
+        <xsl:value-of select="'}&#x0A;'"/>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:if test="normalize-space($tagusage-css) ne ''">
+      <style type="text/css" id="tagusage-css">
+        <xsl:copy-of select="$tagusage-css"/>
+      </style>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template name="tokenize">
+    <xsl:param name="string" />
+    <xsl:param name="delimiter" select="' '" />
+    <xsl:choose>
+      <xsl:when test="$delimiter and contains($string, $delimiter)">
+        <xsl:call-template name="grab-css">
+          <xsl:with-param name="rendition-id" select="substring-after(substring-before($string, $delimiter),'#')" />
+        </xsl:call-template>
+        <xsl:text> </xsl:text>
+        <xsl:call-template name="tokenize">
+          <xsl:with-param name="string"
+                          select="substring-after($string, $delimiter)" />
+          <xsl:with-param name="delimiter" select="$delimiter" />
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="grab-css">
+          <xsl:with-param name="rendition-id" select="substring-after($string,'#')"/>
+        </xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+
+<!-- 
+  ~~ FUNCTIONS
+  -->
+  
+  <xd:doc>
+    <xd:desc>Test if an input element has a name that matches an HTML tag.</xd:desc>
+    <xd:param name="element">The element to test.</xd:param>
+  </xd:doc>
+  <xsl:function name="tps:is-htmlish-tag" as="xs:boolean">
+    <xsl:param name="element" as="element()"/>
+    <xsl:variable name="useName" select="$element/lower-case(local-name(.))"/>
+    <xsl:value-of 
+      select="$useName =  (
+                            'a', 'abbr', 'acronym', 'address', 'applet', 'area', 
+                            'article', 'aside', 'audio', 'b', 'base', 'basefont', 
+                            'bdi', 'bdo', 'bgsound', 'big', 'blink', 
+                            'blockquote', 'body', 'br', 'button', 'canvas', 
+                            'caption', 'center', 'cite', 'code', 'col', 
+                            'colgroup', 'command', 'content', 'data', 'datalist', 
+                            'dd', 'del', 'details', 'dfn', 'dialog', 'dir', 
+                            'dl', 'dt', 'element', 'em', 'embed', 'fieldset', 
+                            'figcaption', 'figure', 'font', 'footer', 'form', 
+                            'frame', 'frameset', 'head', 'header', 'hgroup', 
+                            'hr', 'html', 'i', 'iframe', 'image', 'img', 'input', 
+                            'ins', 'isindex', 'kbd', 'keygen', 'label', 'legend', 
+                            'li', 'link', 'listing', 'main', 'map', 'mark', 
+                            'marquee', 'menu', 'menuitem', 'meta', 'meter', 
+                            'multicol', 'nav', 'nobr', 'noembed', 'noframes', 
+                            'noscript', 'object', 'ol', 'optgroup', 'option', 
+                            'output', 'param', 'picture', 'plaintext', 'pre', 
+                            'progress', 'q', 'rp', 'rt', 'rtc', 'ruby', 's', 
+                            'samp', 'script', 'section', 'select', 'shadow', 
+                            'slot', 'small', 'source', 'spacer', 'span', 
+                            'strike', 'strong', 'style', 'sub', 'summary', 'sup', 
+                            'table', 'tbody', 'td', 'template', 'textarea', 
+                            'tfoot', 'th', 'thead', 'time', 'title', 'tr', 
+                            'track', 'tt', 'u', 'ul', 'var', 'video', 'wbr', 
+                            'xmp'
+                          )
+              (:  SPECIAL CASES  :)
+              or ( $useName = ('p', 'div') and $element[ancestor::*:p] )"/>
+  </xsl:function>
   
   <xd:doc>
     <xd:desc>Take one or more nodes (most likely child elements),
-    and convert to a single string</xd:desc>
+      and convert to a single string</xd:desc>
   </xd:doc>
   <xsl:function name="wfn:mult_to_1">
     <xsl:param name="nodes"/>
