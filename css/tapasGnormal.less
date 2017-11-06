@@ -8,7 +8,7 @@
       border-bottom: @hoverunderline;
     }
     
-    orig, sic, abbr {
+    orig, sic, tei-abbr {
       border: @noteborder;
       padding: @boxpadding;
       .hide;
@@ -17,13 +17,13 @@
     
     &:hover {
       
-      orig, sic, abbr {
+      orig, sic, tei-abbr {
         display: inline;
       }
     } // choice:hover
   } // choice
 
-  del, subst del, fw {
+  tei-del, subst tei-del, fw {
     .hide;
   }
 

@@ -1,5 +1,5 @@
-@import url('http://fonts.googleapis.com/css?family=Arvo:400,700,400italic,700italic|Gentium+Book+Basic:400,400italic,700,700italic');
 /* IMPORTS */
+@import url('http://fonts.googleapis.com/css?family=Arvo:400,700,400italic,700italic|Gentium+Book+Basic:400,400italic,700,700italic');
 /* NAMESPACES */
 /* @namespace "http://www.tei-c.org/ns/1.0"; */
 /* @namespace with prefix, as below, throws an error in less. */
@@ -59,7 +59,8 @@
 .tapas-generic #footer > p {
   text-align: center;
 }
-.tapas-generic table {
+.tapas-generic table,
+.tapas-generic tei-table {
   display: block;
   margin-top: 0;
   margin-bottom: 0;
@@ -70,10 +71,12 @@
   font-size: 12pt;
   /* for cell or row with @role = label */
 }
-.tapas-generic table > head {
+.tapas-generic table > tei-head,
+.tapas-generic tei-table > tei-head {
   text-align: center;
 }
-.tapas-generic table [role=label] {
+.tapas-generic table [role=label],
+.tapas-generic tei-table [role=label] {
   font-weight: bold;
 }
 .tapas-generic img {
@@ -296,11 +299,6 @@
   /* Need to handle attributes for custEvent. All the att.datable* attributes will be tricky.
       custodialHist and custEvent may normally be hidden along with other header metadata, but
       we'll have other datable elements that may be tricky. */
-  /* When TEI document is embedded in HTML page,
-       TEI's <s> element can be interpreted by
-       browser as HTML <s>, which results in
-       a strike-through from the "user agent"
-       styles. */
   /* Letters */
   /* Drama */
   /* Editorial */
@@ -439,8 +437,8 @@
 }
 .tapas-generic #tei_wrapper ab,
 #tapas-ref-dialog ab,
-.tapas-generic #tei_wrapper caption,
-#tapas-ref-dialog caption,
+.tapas-generic #tei_wrapper tei-caption,
+#tapas-ref-dialog tei-caption,
 .tapas-generic #tei_wrapper castGroup,
 #tapas-ref-dialog castGroup,
 .tapas-generic #tei_wrapper climate,
@@ -455,10 +453,14 @@
 #tapas-ref-dialog custodialHist,
 .tapas-generic #tei_wrapper div[type=poem],
 #tapas-ref-dialog div[type=poem],
+.tapas-generic #tei_wrapper tei-div[type=poem],
+#tapas-ref-dialog tei-div[type=poem],
 .tapas-generic #tei_wrapper msContents,
 #tapas-ref-dialog msContents,
 .tapas-generic #tei_wrapper p,
 #tapas-ref-dialog p,
+.tapas-generic #tei_wrapper tei-p,
+#tapas-ref-dialog tei-p,
 .tapas-generic #tei_wrapper performance,
 #tapas-ref-dialog performance,
 .tapas-generic #tei_wrapper person,
@@ -578,12 +580,12 @@
   margin-bottom: 1em;
   padding-bottom: 1em;
 }
-.tapas-generic #tei_wrapper table row,
-#tapas-ref-dialog table row {
+.tapas-generic #tei_wrapper tei-table row,
+#tapas-ref-dialog tei-table row {
   display: table-row;
 }
-.tapas-generic #tei_wrapper table row cell,
-#tapas-ref-dialog table row cell {
+.tapas-generic #tei_wrapper tei-table row cell,
+#tapas-ref-dialog tei-table row cell {
   display: table-cell;
   padding: 1em 1.5em 1em 1em;
   border: 1px dotted #333333;
@@ -595,8 +597,8 @@
   margin-bottom: 1em;
   margin-left: 1.75em;
 }
-.tapas-generic #tei_wrapper list > head,
-#tapas-ref-dialog list > head {
+.tapas-generic #tei_wrapper list > tei-head,
+#tapas-ref-dialog list > tei-head {
   font-size: 120%;
 }
 .tapas-generic #tei_wrapper list item,
@@ -604,27 +606,27 @@
   margin: 0.125em 1em 0.25em 0;
   display: list-item;
 }
-.tapas-generic #tei_wrapper list label,
-#tapas-ref-dialog list label {
+.tapas-generic #tei_wrapper list tei-label,
+#tapas-ref-dialog list tei-label {
   display: inline-block;
   min-width: 1.5em;
 }
-.tapas-generic #tei_wrapper list label:after,
-#tapas-ref-dialog list label:after {
+.tapas-generic #tei_wrapper list tei-label:after,
+#tapas-ref-dialog list tei-label:after {
   content: " ";
 }
-.tapas-generic #tei_wrapper list label + item,
-#tapas-ref-dialog list label + item {
+.tapas-generic #tei_wrapper list tei-label + item,
+#tapas-ref-dialog list tei-label + item {
   list-style-type: none;
   margin-left: 0em;
 }
-.tapas-generic #tei_wrapper list label + item:after,
-#tapas-ref-dialog list label + item:after {
+.tapas-generic #tei_wrapper list tei-label + item:after,
+#tapas-ref-dialog list tei-label + item:after {
   content: "\A";
   white-space: pre;
 }
-.tapas-generic #tei_wrapper list label + item a[rend~="right"],
-#tapas-ref-dialog list label + item a[rend~="right"] {
+.tapas-generic #tei_wrapper list tei-label + item a[rend~="right"],
+#tapas-ref-dialog list tei-label + item a[rend~="right"] {
   float: right;
 }
 .tapas-generic #tei_wrapper list item > list,
@@ -649,8 +651,8 @@
   counter-reset: items 0;
   margin-left: 1em;
 }
-.tapas-generic #tei_wrapper list[type=ordered] label,
-#tapas-ref-dialog list[type=ordered] label {
+.tapas-generic #tei_wrapper list[type=ordered] tei-label,
+#tapas-ref-dialog list[type=ordered] tei-label {
   display: none;
 }
 .tapas-generic #tei_wrapper list[type=ordered] > item,
@@ -695,8 +697,8 @@
 }
 .tapas-generic #tei_wrapper list[type=toc] a,
 #tapas-ref-dialog list[type=toc] a,
-.tapas-generic #tei_wrapper list[type=toc] label,
-#tapas-ref-dialog list[type=toc] label,
+.tapas-generic #tei_wrapper list[type=toc] tei-label,
+#tapas-ref-dialog list[type=toc] tei-label,
 .tapas-generic #tei_wrapper list[type=toc] rs,
 #tapas-ref-dialog list[type=toc] rs {
   display: inline-block;
@@ -714,8 +716,8 @@
   border-bottom: 0;
   text-decoration: none;
 }
-.tapas-generic #tei_wrapper list[type=toc] label,
-#tapas-ref-dialog list[type=toc] label {
+.tapas-generic #tei_wrapper list[type=toc] tei-label,
+#tapas-ref-dialog list[type=toc] tei-label {
   background-color: transparent;
   float: left;
   padding: 0 2px 3px 0;
@@ -788,44 +790,52 @@
 #tapas-ref-dialog soCalled[prev]:before {
   content: '' !important;
 }
-.tapas-generic #tei_wrapper q lg:first-child,
-#tapas-ref-dialog q lg:first-child,
+.tapas-generic #tei_wrapper tei-q lg:first-child,
+#tapas-ref-dialog tei-q lg:first-child,
 .tapas-generic #tei_wrapper quote lg:first-child,
 #tapas-ref-dialog quote lg:first-child {
   display: inline;
 }
-.tapas-generic #tei_wrapper q l:first-child,
-#tapas-ref-dialog q l:first-child,
+.tapas-generic #tei_wrapper tei-q l:first-child,
+#tapas-ref-dialog tei-q l:first-child,
 .tapas-generic #tei_wrapper quote l:first-child,
 #tapas-ref-dialog quote l:first-child {
   display: inline;
   padding-left: 0;
   text-indent: 0;
 }
-.tapas-generic #tei_wrapper q l:last-child,
-#tapas-ref-dialog q l:last-child,
+.tapas-generic #tei_wrapper tei-q l:last-child,
+#tapas-ref-dialog tei-q l:last-child,
 .tapas-generic #tei_wrapper quote l:last-child,
 #tapas-ref-dialog quote l:last-child {
   display: inline;
   padding-left: 0;
   text-indent: 0;
 }
-.tapas-generic #tei_wrapper q p:first-child,
-#tapas-ref-dialog q p:first-child,
+.tapas-generic #tei_wrapper tei-q p:first-child,
+#tapas-ref-dialog tei-q p:first-child,
 .tapas-generic #tei_wrapper quote p:first-child,
-#tapas-ref-dialog quote p:first-child {
+#tapas-ref-dialog quote p:first-child,
+.tapas-generic #tei_wrapper tei-q tei-p:first-child,
+#tapas-ref-dialog tei-q tei-p:first-child,
+.tapas-generic #tei_wrapper quote tei-p:first-child,
+#tapas-ref-dialog quote tei-p:first-child {
   margin-top: 0;
   display: inline;
 }
-.tapas-generic #tei_wrapper q p:last-child,
-#tapas-ref-dialog q p:last-child,
+.tapas-generic #tei_wrapper tei-q p:last-child,
+#tapas-ref-dialog tei-q p:last-child,
 .tapas-generic #tei_wrapper quote p:last-child,
-#tapas-ref-dialog quote p:last-child {
+#tapas-ref-dialog quote p:last-child,
+.tapas-generic #tei_wrapper tei-q tei-p:last-child,
+#tapas-ref-dialog tei-q tei-p:last-child,
+.tapas-generic #tei_wrapper quote tei-p:last-child,
+#tapas-ref-dialog quote tei-p:last-child {
   margin-bottom: 0;
   display: inline;
 }
-.tapas-generic #tei_wrapper figure,
-#tapas-ref-dialog figure {
+.tapas-generic #tei_wrapper tei-figure,
+#tapas-ref-dialog tei-figure {
   display: block;
   margin-top: 0;
   margin-bottom: 0;
@@ -833,8 +843,8 @@
   margin-left: auto;
   margin-right: auto;
 }
-.tapas-generic #tei_wrapper figure > .heading,
-#tapas-ref-dialog figure > .heading {
+.tapas-generic #tei_wrapper tei-figure > .heading,
+#tapas-ref-dialog tei-figure > .heading {
   display: block;
   margin-top: 0;
   margin-bottom: 0;
@@ -954,12 +964,8 @@
 #tapas-ref-dialog custEvent {
   display: list-item;
 }
-.tapas-generic #tei_wrapper s,
-#tapas-ref-dialog s {
-  text-decoration: none;
-}
-.tapas-generic #tei_wrapper u:before,
-#tapas-ref-dialog u:before {
+.tapas-generic #tei_wrapper tei-u:before,
+#tapas-ref-dialog tei-u:before {
   content: "-";
 }
 .tapas-generic #tei_wrapper opener,
@@ -1058,8 +1064,8 @@
 }
 .tapas-generic #tei_wrapper att,
 #tapas-ref-dialog att,
-.tapas-generic #tei_wrapper code,
-#tapas-ref-dialog code,
+.tapas-generic #tei_wrapper tei-code,
+#tapas-ref-dialog tei-code,
 .tapas-generic #tei_wrapper gi,
 #tapas-ref-dialog gi,
 .tapas-generic #tei_wrapper ident,

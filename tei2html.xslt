@@ -87,7 +87,7 @@
   <!-- algorithm for DIV and LG depth here should match that for $myDepth in the -->
   <!-- template that matches <div>s and <lg>s in mode "work" -->
   <xsl:key name="DIVs-and-LGs-by-depth"
-           match="//lg|//div|//div1|//div2|//div3|//div4|//div5|//div6|//div7"
+           match="//lg | //div | //div1 | //div2 | //div3 | //div4 | //div5 | //div6 | //div7"
            use="count(
                        ancestor-or-self::div
                      | ancestor-or-self::div1
@@ -255,6 +255,49 @@
     <xsl:apply-templates select="@ref | @target" mode="#current"/>
   </xsl:template>
   
+  <xsl:template match="*[tps:is-htmlish-tag(.)]" mode="work">
+    <xsl:element name="tei-{local-name()}">
+      <xsl:call-template name="set-reliable-attributes"/>
+      <xsl:apply-templates mode="#current"/>
+    </xsl:element>
+  </xsl:template>
+  
+  <xsl:function name="tps:is-htmlish-tag" as="xs:boolean">
+    <xsl:param name="element" as="element()"/>
+    <xsl:variable name="useName" select="$element/lower-case(local-name(.))"/>
+    <xsl:value-of 
+      select="$useName =  (
+                            'a', 'abbr', 'acronym', 'address', 'applet', 'area', 
+                            'article', 'aside', 'audio', 'b', 'base', 'basefont', 
+                            'bdi', 'bdo', 'bgsound', 'big', 'blink', 
+                            'blockquote', 'body', 'br', 'button', 'canvas', 
+                            'caption', 'center', 'cite', 'code', 'col', 
+                            'colgroup', 'command', 'content', 'data', 'datalist', 
+                            'dd', 'del', 'details', 'dfn', 'dialog', 'dir', 
+                            'dl', 'dt', 'element', 'em', 'embed', 'fieldset', 
+                            'figcaption', 'figure', 'font', 'footer', 'form', 
+                            'frame', 'frameset', 'head', 'header', 'hgroup', 
+                            'hr', 'html', 'i', 'iframe', 'image', 'img', 'input', 
+                            'ins', 'isindex', 'kbd', 'keygen', 'label', 'legend', 
+                            'li', 'link', 'listing', 'main', 'map', 'mark', 
+                            'marquee', 'menu', 'menuitem', 'meta', 'meter', 
+                            'multicol', 'nav', 'nobr', 'noembed', 'noframes', 
+                            'noscript', 'object', 'ol', 'optgroup', 'option', 
+                            'output', 'param', 'picture', 'plaintext', 'pre', 
+                            'progress', 'q', 'rp', 'rt', 'rtc', 'ruby', 's', 
+                            'samp', 'script', 'section', 'select', 'shadow', 
+                            'slot', 'small', 'source', 'spacer', 'span', 
+                            'strike', 'strong', 'style', 'sub', 'summary', 'sup', 
+                            'table', 'tbody', 'td', 'template', 'textarea', 
+                            'tfoot', 'th', 'thead', 'time', 'title', 'tr', 
+                            'track', 'tt', 'u', 'ul', 'var', 'video', 'wbr', 
+                            'xmp'
+                          )
+              (:  SPECIAL CASES  :)
+              or ( $useName = ('p', 'div') and $element[ancestor::*:p] )
+                            ])"/>
+  </xsl:function>
+  
   <xd:doc>
     <xd:desc>Template for elements, main "work" mode
         <xd:ul>
@@ -311,7 +354,7 @@
       <xsl:call-template name="css"/>
       <xsl:call-template name="tagUsage2style"/>
       <xsl:call-template name="rendition2style"/>
-      <xsl:call-template name="generate-title"/>
+      <xsl:call-template name="generate-html-title"/>
     </head>
   </xsl:template>
   
@@ -363,42 +406,10 @@
   </xsl:template>
 
   <xd:doc>
-    <xd:desc>
-      <xd:p>A hack because JavaScript was doing weird things with
-        &lt;title>, probably due to confusion with HTML title. There is
-        no TEI namespace in the TEI Boilerplate output because
-        JavaScript, or at least JQuery, cannot manipulate the TEI
-        elements/attributes if they are in the TEI namespace, so the TEI
-        namespace is stripped from the output.</xd:p>
-      <xd:p>2015-09-18: Changed the match expression to affect all TEI titles.
-        ~Ashley</xd:p>
-    </xd:desc>
-  </xd:doc>
-  <xsl:template match="title" mode="work">
-    <tei-title>
-      <xsl:call-template name="set-reliable-attributes"/>
-      <xsl:apply-templates mode="#current"/>
-    </tei-title>
-  </xsl:template>
-
-  <xd:doc>
-    <xd:desc>
-      <xd:p>Rename the &lt;body> so that the HTML-ified version isn't eaten 
-        by browsers.</xd:p>
-    </xd:desc>
-  </xd:doc>
-  <xsl:template match="body" mode="work">
-    <tei-body>
-      <xsl:call-template name="set-reliable-attributes"/>
-      <xsl:apply-templates mode="#current"/>
-    </tei-body>
-  </xsl:template>
-
-  <xd:doc>
     <xd:desc>Transforms each TEI <tt>&lt;ref></tt> or <tt>&lt;ptr></tt>
       to an HTML <tt>&lt;a></tt> (link) element.</xd:desc>
   </xd:doc>
-  <xsl:template match="ref[@target]|ptr[@target]" mode="work" priority="99">
+  <xsl:template match="ref[@target] | ptr[@target]" mode="work" priority="99">
     <xsl:variable name="gi">
       <xsl:choose>
         <xsl:when test="normalize-space(.) eq ''">ptr</xsl:when>
@@ -451,7 +462,7 @@
     </a>
   </xsl:template>
   
-  <xsl:template match="ref/@target|ptr/@target" mode="work">
+  <xsl:template match="ref/@target | ptr/@target" mode="work">
     <xsl:attribute name="href">
       <xsl:value-of select="."/>
     </xsl:attribute>
@@ -519,7 +530,7 @@
       select="(preceding-sibling::text()|preceding-sibling::*)
       [last()][self::text()][not(normalize-space(.)='')]"/>
     <xsl:variable name="must-be-inline" select="matches( $pre,'\s$')"/>-->
-    <xsl:variable name="must-be-block" select="l|p|ab|table|floatingText|figure|list"/>
+    <xsl:variable name="must-be-block" select="l | p | ab | table | floatingText | figure | list"/>
     <xsl:variable name="style">
       <xsl:choose>
         <xsl:when test="$must-be-block"> display: block; </xsl:when>
@@ -541,7 +552,8 @@
       was a TEI numbered division.</xd:p>
     </xd:desc>
   </xd:doc>
-  <xsl:template match="lg[ not( ancestor::lg )]|div|div1|div2|div3|div4|div5|div6|div7" mode="work">
+  <xsl:template match="lg[ not( ancestor::lg )] | div | div1 | div2 | div3 
+                      | div4 | div5 | div6 | div7" mode="work">
     <xsl:variable name="gi" select="replace( local-name(.),'[1-7]$','')"/>
     <xsl:element name="{$gi}" namespace="http://www.w3.org/1999/xhtml">
       <!-- algorithm for calculating $myDepth should match that for the use= of -->
@@ -750,7 +762,7 @@
               <xsl:when test="$thisVal = ('crossout', 'strike', 'strikethrough')"
                 >text-decoration: line-through;</xsl:when>
               <!-- distinct? -->
-              <xsl:when test="$thisVal = ('hidden')"
+              <xsl:when test="$thisVal = ('hidden', 'hide')"
                 >display: none;</xsl:when>
               <xsl:when test="$thisVal = ('i', 'ital', 'italic', 'italics', 'italicized')"
                 >font-style: italic;</xsl:when>
@@ -958,7 +970,7 @@
     <xsl:value-of select="normalize-space(key('IDs',$rendition-id)/text())"/>
   </xsl:template>
 
-  <xsl:template name="generate-title">
+  <xsl:template name="generate-html-title">
     <title>
       <xsl:value-of select="$tapasTitle"/>
       <xsl:choose>
@@ -1004,7 +1016,7 @@
     </title>
   </xsl:template>
   
-  <xsl:template match="head" mode="work">
+  <xsl:template match="head" mode="work" priority="10">
     <tei-head class="heading">
       <xsl:call-template name="set-reliable-attributes"/>
       <xsl:apply-templates mode="#current"/>
@@ -1042,7 +1054,7 @@
   <!-- ***************************** -->
   
   <!-- ignore lists of contextual info when they occur in normal processing -->
-  <!--<xsl:template match="nymList|listOrg|listPerson|placeList|nym|org|person|place" mode="work"/>-->
+  <!--<xsl:template match="nymList | listOrg | listPerson | placeList | nym | org | person | place" mode="work"/>-->
   
   <xsl:template match="*[tps:is-list-like(.)]" mode="work">
     <div>
@@ -1082,7 +1094,7 @@
   </xsl:template>
   
   <!-- 'ographies and entries we are currently not equipped to handle. -->
-  <xsl:template match="custodialHist|listRef|listRelation|listTranspose" mode="work"/>
+  <xsl:template match="custodialHist | listRef | listRelation | listTranspose" mode="work"/>
   
   <xsl:template match="head[following-sibling::*[not(self::head)][1][tps:is-list-like(.)]]" priority="30" mode="work">
     <tei-head class="heading heading-listtype">
@@ -1180,7 +1192,7 @@
   <!-- generate output in a particular order. Note that we are ignoring -->
   <!-- the possibility of <personGrp> or <nym> because there are *none* in -->
   <!-- the profiling data. -->
-  <xsl:template match="org|person|place" mode="genCon">
+  <xsl:template match="org | person | place" mode="genCon">
     <div class="contextualItem-{local-name(.)}">
       <!-- This node *has* to have an @xml:id, or we would never have gotten here -->
       <a id="{@xml:id}"/>
@@ -1223,9 +1235,9 @@
         </xsl:choose>
       </p>
       <xsl:comment>debug: Y; <xsl:value-of select="count( persName )"/></xsl:comment>
-      <xsl:apply-templates select="orgName|persName|placeName" mode="genCon"/>
+      <xsl:apply-templates select="orgName | persName | placeName" mode="genCon"/>
       <xsl:comment>debug: Z</xsl:comment>
-      <xsl:apply-templates select="ab|p|desc" mode="genCon"/>
+      <xsl:apply-templates select="ab | p|desc" mode="genCon"/>
       <xsl:choose>
         <xsl:when test="sex">
           <xsl:apply-templates select="sex" mode="genCon"/>
@@ -1298,7 +1310,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  <xsl:template mode="string" match="persName|placeName|orgName">
+  <xsl:template mode="string" match="persName | placeName | orgName">
     <xsl:choose>
       <xsl:when test="not(*)">
         <!-- only text, no child elements -->
@@ -1316,7 +1328,7 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  <xsl:template match="forename|surname|genName|roleName" mode="genCon" priority="3">
+  <xsl:template match="forename | surname | genName | roleName" mode="genCon" priority="3">
     <xsl:param name="labelPart"/>
     <xsl:param name="labelAdd">
       <xsl:choose>
@@ -1344,13 +1356,13 @@
     in pass 1 on TEI data) and TOC processing (which happens in pass 2 on XHTML
     data).</xd:desc>
   </xd:doc>
-  <xsl:template mode="string" match="choice|html:choice">
+  <xsl:template mode="string" match="choice | html:choice">
     <xsl:copy-of select="."/>
   </xsl:template>
-  <xsl:template mode="string" match="cb|gb|lb|pb|milestone|html:cb|html:gb|html:lb|html:pb|html:milestone">
+  <xsl:template mode="string" match="cb | gb | lb | pb | milestone | html:cb | html:gb | html:lb | html:pb | html:milestone">
     <xsl:text>&#x20;</xsl:text>
   </xsl:template>
-  <xsl:template mode="string" match="fw|html:fw"/>
+  <xsl:template mode="string" match="fw | html:fw"/>
   
   <!-- If an element has no descendants, don't transform it. -->
   <xsl:template match="*[normalize-space(.) eq '' and not( descendant-or-self::*/@* )]" priority="50" mode="genCon"/>

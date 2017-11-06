@@ -1,5 +1,5 @@
-@import url('http://fonts.googleapis.com/css?family=Arvo:400,700,400italic,700italic|Gentium+Book+Basic:400,400italic,700,700italic');
 /* IMPORTS */
+@import url('http://fonts.googleapis.com/css?family=Arvo:400,700,400italic,700italic|Gentium+Book+Basic:400,400italic,700,700italic');
 /* NAMESPACES */
 /* @namespace "http://www.tei-c.org/ns/1.0"; */
 /* @namespace with prefix, as below, throws an error in less. */
@@ -32,7 +32,7 @@
 }
 .tapas-generic.diplomatic choice orig,
 .tapas-generic.diplomatic choice sic,
-.tapas-generic.diplomatic choice abbr {
+.tapas-generic.diplomatic choice tei-abbr {
   border-bottom: 1px dotted #000000;
 }
 .tapas-generic.diplomatic choice reg,
@@ -48,7 +48,7 @@
 .tapas-generic.diplomatic choice:hover expan {
   display: inline;
 }
-.tapas-generic.diplomatic del {
+.tapas-generic.diplomatic tei-del {
   text-decoration: line-through;
 }
 .tapas-generic.diplomatic subst,

@@ -22,7 +22,7 @@
     }
   } // div#footer
   
-  table {
+  table, tei-table {
     .block;
     border-collapse: separate;
     border-spacing: 2px;
@@ -30,7 +30,7 @@
     margin-bottom:2em;
     font-size:12pt;
     
-    > head {
+    > tei-head {
       text-align: center;
     }
     
@@ -377,9 +377,9 @@
     }
     
 /* Elements that should display as blocks with a 1em margin on the top and bottom */
-    ab, caption, castGroup, climate, collation, colophon, condition, custodialHist,
-    div[type=poem], msContents, p, performance, person, personGrp, recordHist,
-    scriptNote, sealDesc, stamp {
+    ab, tei-caption, castGroup, climate, collation, colophon, condition, custodialHist,
+    div[type=poem], tei-div[type=poem], msContents, p, tei-p, performance, person, 
+    personGrp, recordHist, scriptNote, sealDesc, stamp {
       .block-margins;
     }
     
@@ -449,7 +449,7 @@
       //border-bottom: @darkunderline;
     }
     
-    table {
+    tei-table {
       
       row {
         display: table-row;
@@ -467,7 +467,7 @@
       .block-margins;
       margin-left: 1.75em;
       
-      > head {
+      > tei-head {
         font-size: 120%;
       }
       
@@ -476,7 +476,7 @@
         .list-item;
       } // item
       
-      label {
+      tei-label {
         //float: left;
         display: inline-block;
         min-width: 1.5em;
@@ -484,9 +484,9 @@
         &:after {
           content: " ";
         }
-      } // label
+      } // tei-label
   
-      label + item {
+      tei-label + item {
         list-style-type: none;
         margin-left: 0em;
     
@@ -521,7 +521,7 @@
         counter-reset: items 0;
         margin-left:1em;
     
-        label {
+        tei-label {
           .hide;
         }
     
@@ -565,7 +565,7 @@
           list-style-type: none;
         }
 
-        a, label, rs {
+        a, tei-label, rs {
           display: inline-block;
           background: @background-color;
           position: relative;
@@ -582,7 +582,7 @@
           text-decoration: none;
         }
 
-        label {
+        tei-label {
           background-color:@background-color;
           float:left;
           padding: 0 2px 3px 0;
@@ -634,7 +634,7 @@
       }
     } // q, quote, soCalled
     
-    q, quote {
+    tei-q, quote {
   
       lg {
     
@@ -658,7 +658,7 @@
         }
       } // l
   
-      p {
+      p, tei-p {
     
         &:first-child {
           margin-top: 0;
@@ -672,7 +672,7 @@
       } // p
     } // q, quote
     
-    figure {
+    tei-figure {
       .block;
       text-align:center;
       margin-left:auto;
@@ -769,16 +769,7 @@
       .list-item
     }
     
-    /* When TEI document is embedded in HTML page,
-       TEI's <s> element can be interpreted by
-       browser as HTML <s>, which results in
-       a strike-through from the "user agent"
-       styles. */
-    s {
-      text-decoration:none;
-    }
-    
-    u:before {
+    tei-u:before {
       content: "-";
     }
     
@@ -847,7 +838,7 @@
     
 /* Code */
     
-    att, code, gi, ident {
+    att, tei-code, gi, ident {
       .mono;
     }
     
