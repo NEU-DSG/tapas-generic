@@ -64,8 +64,8 @@
   display: block;
   margin-top: 0;
   margin-bottom: 0;
-  border-collapse: separate;
-  border-spacing: 2px;
+  display: table;
+  border-collapse: collapse;
   margin-top: 2em;
   margin-bottom: 2em;
   font-size: 12pt;
@@ -588,7 +588,7 @@
 #tapas-ref-dialog tei-table row cell {
   display: table-cell;
   padding: 1em 1.5em 1em 1em;
-  border: 1px dotted #333333;
+  border: 1px solid #808080;
 }
 .tapas-generic #tei_wrapper list,
 #tapas-ref-dialog list {
