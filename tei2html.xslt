@@ -277,30 +277,12 @@
   
 <!--  MAIN MODE (WORK)  -->
   
-  <!-- need something else for images with captions; specifically
-       may want to catch figure/p, figure/floatingText, and figure/head
-       with separate templates. -->
   <xd:doc>
-    <xd:desc>
-      <xd:p>Transforms TEI figure element to html img element.</xd:p>
-    </xd:desc>
+    <xd:desc>Drop insignificant whitespace nodes.</xd:desc>
   </xd:doc>
-  <xsl:template match="figure[graphic[@url]]" priority="99" mode="work">
-    <!-- Checking all data as of 2015-08-29, there are no <figure>s -->
-    <!-- that use <media>, <formula>, or <binaryObject>, nor any that -->
-    <!-- have multiple <head>s. However, there are 2 cases (in 7 files -->
-    <!-- due to version duplication, I think) that have multiple -->
-    <!-- <figDesc> children. -->
-    <tei-figure>
-      <xsl:call-template name="set-reliable-attributes"/>
-      <img src="{graphic/@url}">
-        <xsl:if test="figDesc">
-          <xsl:attribute name="alt" select="wfn:mult_to_1(figDesc)"/>
-        </xsl:if>
-      </img>
-      <xsl:apply-templates select="* except ( self::graphic, self::figDesc )" mode="#current"/>
-    </tei-figure>
-  </xsl:template>
+  <xsl:template match=" text[descendant::c[matches(text(), '^\s$')]]
+                          //text()[normalize-space(.) eq ''][not(parent::c)] 
+                      | choice/text()[normalize-space(.) eq '']" mode="work"/>
 
   <xsl:template match="pb" mode="work">
     <xsl:variable name="pn">
@@ -332,7 +314,7 @@
             <xsl:attribute name="onclick">
               <xsl:value-of select="concat('showFacs(',$apos,@n,$apos,',',$apos,@facs,$apos,',',$apos,$id,$apos,')')"/>
             </xsl:attribute>
-            <img  alt="{$altTextPbFacs}" class="-teibp-thumbnail">
+            <img alt="{$altTextPbFacs}" class="-teibp-thumbnail">
               <xsl:attribute name="src">
                 <xsl:value-of select="@facs"/>
               </xsl:attribute>
@@ -359,11 +341,6 @@
       <xsl:with-param name="gi-gloss">Substitution</xsl:with-param>
     </xsl:call-template>
   </xsl:template>
-  
-  <xd:doc>
-    <xd:desc>Template to drop insignificant whitespace nodes</xd:desc>
-  </xd:doc>
-  <xsl:template match="choice/text()[normalize-space(.) eq '']" mode="work"/>
   
   <xsl:template match="@style | @html:style" mode="work">
     <xsl:variable name="result" select="normalize-space(.)"/>
@@ -632,6 +609,31 @@
       <xsl:call-template name="set-reliable-attributes"/>
       <xsl:apply-templates mode="#current"/>
     </xsl:element>
+  </xsl:template>
+  
+  <!-- need something else for images with captions; specifically
+       may want to catch figure/p, figure/floatingText, and figure/head
+       with separate templates. -->
+  <xd:doc>
+    <xd:desc>
+      <xd:p>Transforms TEI figure element to html img element.</xd:p>
+    </xd:desc>
+  </xd:doc>
+  <xsl:template match="figure[graphic[@url]]" priority="99" mode="work">
+    <!-- Checking all data as of 2015-08-29, there are no <figure>s -->
+    <!-- that use <media>, <formula>, or <binaryObject>, nor any that -->
+    <!-- have multiple <head>s. However, there are 2 cases (in 7 files -->
+    <!-- due to version duplication, I think) that have multiple -->
+    <!-- <figDesc> children. -->
+    <tei-figure>
+      <xsl:call-template name="set-reliable-attributes"/>
+      <img src="{graphic/@url}">
+        <xsl:if test="figDesc">
+          <xsl:attribute name="alt" select="wfn:mult_to_1(figDesc)"/>
+        </xsl:if>
+      </img>
+      <xsl:apply-templates select="* except ( self::graphic, self::figDesc )" mode="#current"/>
+    </tei-figure>
   </xsl:template>
 
   <xsl:template match="eg:egXML" mode="work">
