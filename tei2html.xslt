@@ -27,6 +27,8 @@
       
       <xd:p><xd:b>change log:</xd:b></xd:p>
       <xd:ul>
+        <xd:li>2017-11-06 by Ashley: Disambiguated input element names from HTML 
+          names.</xd:li>
         <xd:li>2017-10-27 by Ashley: Added a LESS file (generic.less) to remove 
           duplication in the diplomatic/normalized LESS files.</xd:li>
         <xd:li>2017-10-18 by Ashley: Created a convenience wrapper for creating 
@@ -255,6 +257,10 @@
     <xsl:apply-templates select="@ref | @target" mode="#current"/>
   </xsl:template>
   
+  <xd:doc>
+    <xd:desc>Any element that could be confused for HTML has 'tei-' prepended to 
+      its name.</xd:desc>
+  </xd:doc>
   <xsl:template match="*[tps:is-htmlish-tag(.)]" mode="work">
     <xsl:element name="tei-{local-name()}">
       <xsl:call-template name="set-reliable-attributes"/>
@@ -262,6 +268,10 @@
     </xsl:element>
   </xsl:template>
   
+  <xd:doc>
+    <xd:desc>Test if an input element has a name that matches an HTML tag.</xd:desc>
+    <xd:param name="element">The element to test.</xd:param>
+  </xd:doc>
   <xsl:function name="tps:is-htmlish-tag" as="xs:boolean">
     <xsl:param name="element" as="element()"/>
     <xsl:variable name="useName" select="$element/lower-case(local-name(.))"/>
@@ -294,8 +304,7 @@
                             'xmp'
                           )
               (:  SPECIAL CASES  :)
-              or ( $useName = ('p', 'div') and $element[ancestor::*:p] )
-                            ])"/>
+              or ( $useName = ('p', 'div') and $element[ancestor::*:p] )"/>
   </xsl:function>
   
   <xd:doc>
