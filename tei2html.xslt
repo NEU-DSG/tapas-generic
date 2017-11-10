@@ -236,7 +236,7 @@
     </xd:desc>
   </xd:doc>
   <xsl:template match="*" mode="work">
-    <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
+    <xsl:element name="{ tps:use-tag-name(.) }" namespace="http://www.w3.org/1999/xhtml">
       <xsl:call-template name="set-reliable-attributes"/>
       <xsl:apply-templates select="node()" mode="#current"/>
     </xsl:element>
@@ -261,17 +261,6 @@
     <xsl:attribute name="data-tapas-xmlid">
       <xsl:value-of select="."/>
     </xsl:attribute>
-  </xsl:template>
-  
-  <xd:doc>
-    <xd:desc>Any input element that could be confused for HTML has 'tei-' prepended 
-      to its name.</xd:desc>
-  </xd:doc>
-  <xsl:template match="*[tps:is-htmlish-tag(.)]" mode="work">
-    <xsl:element name="tei-{local-name()}">
-      <xsl:call-template name="set-reliable-attributes"/>
-      <xsl:apply-templates mode="#current"/>
-    </xsl:element>
   </xsl:template>
   
   
@@ -334,6 +323,40 @@
   
   <xsl:template match="gap | supplied | unclear" mode="work">
     <xsl:call-template name="create-mouseover-intervention"/>
+  </xsl:template>
+  
+  <xsl:template match="choice" mode="work">
+    <xsl:variable name="childrenSeq" select="*" as="item()*"/>
+    <xsl:variable name="numChildren" select="count($childrenSeq)"/>
+    <choice>
+      <xsl:call-template name="set-reliable-attributes"/>
+      <xsl:for-each select="1 to $numChildren">
+        <xsl:variable name="currentIndex" select="."/>
+        <xsl:variable name="siblingEntries" as="item()*">
+          <xsl:if test="$currentIndex gt 1">
+            <xsl:copy-of select="subsequence($childrenSeq, 1, $currentIndex - 1)"/>
+          </xsl:if>
+          <xsl:if test="$currentIndex lt $numChildren">
+            <xsl:copy-of select="subsequence($childrenSeq, $currentIndex + 1)"/>
+          </xsl:if>
+        </xsl:variable>
+        <xsl:apply-templates select="$childrenSeq[$currentIndex]" mode="#current">
+          <xsl:with-param name="siblings" select="$siblingEntries"/>
+        </xsl:apply-templates>
+      </xsl:for-each>
+    </choice>
+  </xsl:template>
+  
+  <xsl:template match="choice/*" mode="work"
+    name="create-choice-intervention">
+    <xsl:param name="siblings" as="node()*"/>
+    <xsl:call-template name="create-mouseover-intervention">
+      <xsl:with-param name="tooltip-content" as="xs:string*">
+        <xsl:for-each select="$siblings">
+          <xsl:value-of select="concat( local-name(.), ': &quot;', normalize-space(.), '&quot;' )"/>
+        </xsl:for-each>
+      </xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
   
   <xsl:template match="subst" mode="work">
@@ -1412,7 +1435,7 @@
         <xsl:value-of select="normalize-space(.)"/>
       </xsl:for-each>
     </xsl:variable>
-    <xsl:element name="{local-name()}">
+    <xsl:element name="{ tps:use-tag-name(.) }">
       <xsl:call-template name="set-reliable-attributes"/>
       <xsl:if test="count($tooltipPhrases[. ne '']) gt 0">
         <xsl:attribute name="data-tapas-tooltip">
@@ -1754,6 +1777,19 @@
                           )
               (:  SPECIAL CASES  :)
               or ( $useName = ('p', 'div') and $element[ancestor::*:p] )"/>
+  </xsl:function>
+  
+  <xd:doc>
+    <xd:desc>Get the name to use for the output (HTML) element. Any input (TEI) 
+      element that could be confused for HTML has 'tei-' prepended to its name.</xd:desc>
+    <xd:param name="element">The element for which a name should be created.</xd:param>
+  </xd:doc>
+  <xsl:function name="tps:use-tag-name" as="xs:string">
+    <xsl:param name="element" as="element()"/>
+    <xsl:variable name="localName" select="local-name($element)"/>
+    <xsl:value-of select="if ( tps:is-htmlish-tag($element) ) then
+                            concat('tei-', $localName)
+                          else $localName"/>
   </xsl:function>
   
   <xd:doc>

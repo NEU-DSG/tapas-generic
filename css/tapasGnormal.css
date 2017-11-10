@@ -1,5 +1,5 @@
-/* IMPORTS */
 @import url('http://fonts.googleapis.com/css?family=Arvo:400,700,400italic,700italic|Gentium+Book+Basic:400,400italic,700,700italic');
+/* IMPORTS */
 /* NAMESPACES */
 /* @namespace "http://www.tei-c.org/ns/1.0"; */
 /* @namespace with prefix, as below, throws an error in less. */
@@ -21,76 +21,18 @@
   clear: both;
 }
 /* TAPAS-generated labels */
-.tapas-generic.normal choice reg,
-.tapas-generic.normal choice corr,
-.tapas-generic.normal choice expan {
+.tapas-generic.normal choice {
   border-bottom: 1px dotted #000000;
 }
 .tapas-generic.normal choice orig,
 .tapas-generic.normal choice sic,
 .tapas-generic.normal choice tei-abbr {
-  border: 1px solid #cccccc;
-  padding: 5px;
   display: none;
-  background: #ffffff;
-}
-.tapas-generic.normal choice:hover orig,
-.tapas-generic.normal choice:hover sic,
-.tapas-generic.normal choice:hover tei-abbr {
-  display: inline;
 }
 .tapas-generic.normal tei-del,
 .tapas-generic.normal subst tei-del,
 .tapas-generic.normal fw {
   display: none;
-}
-.tapas-generic.normal gap {
-  border-bottom: 1px dotted #000000;
-}
-.tapas-generic.normal gap:before {
-  padding: 0 0.25em;
-  display: inline;
-  background-color: #DDD;
-  color: #555;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-style: italic;
-  content: '[';
-}
-.tapas-generic.normal gap:after {
-  padding: 0 0.25em;
-  display: inline;
-  background-color: #DDD;
-  color: #555;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-style: italic;
-  content: "(Unclear text)]";
-}
-.tapas-generic.normal gap[reason]:after {
-  padding: 0 0.25em;
-  display: inline;
-  background-color: #DDD;
-  color: #555;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-style: italic;
-  content: "(Gap reason: " attr(reason) ")]";
-}
-.tapas-generic.normal gap[reason][unit][extent]:after {
-  padding: 0 0.25em;
-  display: inline;
-  background-color: #DDD;
-  color: #555;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-style: italic;
-  content: "(Gap of " attr(extent) " " attr(unit) "; reason: " attr(reason) ")]";
-}
-.tapas-generic.normal gap[reason][unit][quantity]:after {
-  padding: 0 0.25em;
-  display: inline;
-  background-color: #DDD;
-  color: #555;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-style: italic;
-  content: "(Gap of " attr(quantity) " " attr(unit) "; reason: " attr(reason) ")]";
 }
 .tapas-generic.normal .-teibp-pb a {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;

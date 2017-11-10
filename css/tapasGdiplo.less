@@ -11,24 +11,14 @@
   } // add
   
   choice {
+    border-bottom: @hoverunderline;
     
     orig, sic, tei-abbr {
-      border-bottom: @hoverunderline;
     }
     
     reg, corr, expan {
-      border: @noteborder;
-      padding: @boxpadding;
       .hide;
-      background: @whitebackground;
     }
-    
-    &:hover {
-      
-      reg, corr, expan {
-        display: inline;
-      }
-    } // choice:hover
   } // choice
 
   tei-del {
@@ -47,7 +37,7 @@
   } // supplied
   
   gap {
-    .intervention-after("gap");
+    //.intervention-after("gap"); <-- moved to generic.less; preserved for reference
     
     /*&[reason] {
       .intervention-after("(Gap reason: " attr(reason) ")]");

@@ -3,50 +3,16 @@
 .tapas-generic.normal {
   
   choice {
-    
-    reg, corr, expan {
-      border-bottom: @hoverunderline;
-    }
+    border-bottom: @hoverunderline;
     
     orig, sic, tei-abbr {
-      border: @noteborder;
-      padding: @boxpadding;
       .hide;
-      background: @whitebackground;
     }
-    
-    &:hover {
-      
-      orig, sic, tei-abbr {
-        display: inline;
-      }
-    } // choice:hover
   } // choice
 
   tei-del, subst tei-del, fw {
     .hide;
   }
-
-  gap { // TODO: this is basically the same ruleset as the one in diplomatic. Make sure we don't want to differentiate!
-    border-bottom: @hoverunderline;
-    .intervention-before('[');
-    .intervention-after("(Unclear text)]");
-    
-    &[reason] {
-      .intervention-after("(Gap reason: " attr(reason) ")]");
-    
-      &[unit] {
-      
-        &[extent] {
-          .intervention-after("(Gap of " attr(extent) " " attr(unit) "; reason: " attr(reason) ")]");
-        } // gap[reason][unit][extent]
-  
-        &[quantity] {
-          .intervention-after("(Gap of " attr(quantity) " " attr(unit) "; reason: " attr(reason) ")]");
-        } // gap[reason][unit][quantity]
-      } // gap[reason][unit]
-    } // gap[reason]
-  } // gap
 
   .-teibp-pb {
     

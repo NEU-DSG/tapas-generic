@@ -1,5 +1,5 @@
-/* IMPORTS */
 @import url('http://fonts.googleapis.com/css?family=Arvo:400,700,400italic,700italic|Gentium+Book+Basic:400,400italic,700,700italic');
+/* IMPORTS */
 /* NAMESPACES */
 /* @namespace "http://www.tei-c.org/ns/1.0"; */
 /* @namespace with prefix, as below, throws an error in less. */
@@ -30,23 +30,13 @@
   font-style: italic;
   content: "(Added by: " attr(hand) " ) ";
 }
-.tapas-generic.diplomatic choice orig,
-.tapas-generic.diplomatic choice sic,
-.tapas-generic.diplomatic choice tei-abbr {
+.tapas-generic.diplomatic choice {
   border-bottom: 1px dotted #000000;
 }
 .tapas-generic.diplomatic choice reg,
 .tapas-generic.diplomatic choice corr,
 .tapas-generic.diplomatic choice expan {
-  border: 1px solid #cccccc;
-  padding: 5px;
   display: none;
-  background: #ffffff;
-}
-.tapas-generic.diplomatic choice:hover reg,
-.tapas-generic.diplomatic choice:hover corr,
-.tapas-generic.diplomatic choice:hover expan {
-  display: inline;
 }
 .tapas-generic.diplomatic tei-del {
   text-decoration: line-through;
@@ -76,15 +66,6 @@
         } // gap[reason][unit][quantity]
       } // gap[reason][unit]
     } // gap[reason]*/
-}
-.tapas-generic.diplomatic gap:after {
-  padding: 0 0.25em;
-  display: inline;
-  background-color: #DDD;
-  color: #555;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-style: italic;
-  content: "gap";
 }
 .tapas-generic.diplomatic lb:after {
   content: '\a';

@@ -47,6 +47,9 @@ $(document).ready(function(){
     if ( $("#TOC").length > 0 ) {
       var toc = $('#TOC').offset().top;
     }
+    $(".tapas-generic #viewBox").change(function(e){
+      switchTapasThemes(e);
+    });
   }
 
   function showFacs(num, url, id) {
@@ -56,14 +59,11 @@ $(document).ready(function(){
     $("#modal_"+id).modal('show');
     $("#resizable_"+id).resizable({minWidth: 150});
   }
-  
-  function showTooltip(event) {
-    var tooltipBase = $(event.target);
-    tooltipBase.co
-  }
 
   function switchTapasThemes(event) {
-    $(".tapas-generic").removeClass('diplomatic').removeClass('normal').addClass($(event.target).val());
-    Tapas.currentTheme = $(event.target).val();
+    var newTheme = $(event.target).val();
+    $(".tapas-generic").removeClass('diplomatic').removeClass('normal').addClass(newTheme);
+    Tapas.currentTheme = newTheme;
+    console.log(newTheme);
   }
 });

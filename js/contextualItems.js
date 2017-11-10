@@ -157,9 +157,6 @@ function initialize_tapas_generic(){
   $(".tapas-generic").addClass('diplomatic');
   Tapas.showPbs = true;
   $("#tapas-ref-dialog").dialog({autoOpen: false}); //initialize the dialog, placing and data in it handled by Tapas.displayRefData
-  $(".tapas-generic #viewBox").change(function(e){
-    switchTapasThemes(e);
-  });
 }
 
 // Slap on the events/eventHandlers
