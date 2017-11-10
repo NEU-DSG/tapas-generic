@@ -21,15 +21,11 @@
   clear: both;
 }
 /* TAPAS-generated labels */
-.tapas-generic.normal choice {
-  border-bottom: 1px dotted #000000;
-}
 .tapas-generic.normal choice orig,
 .tapas-generic.normal choice sic,
 .tapas-generic.normal choice tei-abbr {
   display: none;
 }
-.tapas-generic.normal tei-del,
 .tapas-generic.normal subst tei-del,
 .tapas-generic.normal fw {
   display: none;

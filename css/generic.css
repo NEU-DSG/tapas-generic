@@ -81,8 +81,10 @@
 }
 .tapas-generic img {
   border: 1px solid #4d88cd;
+  height: auto;
   min-width: 1em;
   min-height: 1em;
+  max-width: 100%;
 }
 .tapas-generic a {
   color: #337dd3;
@@ -836,12 +838,14 @@
 }
 .tapas-generic #tei_wrapper tei-figure,
 #tapas-ref-dialog tei-figure {
+  margin-left: 1em;
+  margin-right: 1em;
   display: block;
   margin-top: 0;
   margin-bottom: 0;
+  border: 1px solid #4d88cd;
+  padding: 1em;
   text-align: center;
-  margin-left: auto;
-  margin-right: auto;
 }
 .tapas-generic #tei_wrapper tei-figure > .heading,
 #tapas-ref-dialog tei-figure > .heading {
@@ -1061,6 +1065,24 @@
 .tapas-generic #tei_wrapper add[place=below],
 #tapas-ref-dialog add[place=below] {
   vertical-align: sub;
+}
+.tapas-generic #tei_wrapper damage,
+#tapas-ref-dialog damage,
+.tapas-generic #tei_wrapper choice,
+#tapas-ref-dialog choice,
+.tapas-generic #tei_wrapper gap,
+#tapas-ref-dialog gap,
+.tapas-generic #tei_wrapper subst,
+#tapas-ref-dialog subst,
+.tapas-generic #tei_wrapper supplied,
+#tapas-ref-dialog supplied,
+.tapas-generic #tei_wrapper unclear,
+#tapas-ref-dialog unclear {
+  border-bottom: 1px dotted #000000;
+}
+.tapas-generic #tei_wrapper tei-del,
+#tapas-ref-dialog tei-del {
+  text-decoration: line-through;
 }
 .tapas-generic #tei_wrapper gap:after,
 #tapas-ref-dialog gap:after {

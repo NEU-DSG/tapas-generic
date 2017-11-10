@@ -42,8 +42,10 @@
   
   img {
     border: 1px solid @border-color;
+    height: auto;
     min-width: 1em;
     min-height: 1em;
+    max-width: 100%;
   }
 
   a {
@@ -234,12 +236,12 @@
   
 /* TEI WRAPPER */
   #TOC + #tei_wrapper {
-    width:73%;
-    float:right;
+    width: 73%;
+    float: right;
     
     @media(max-width: 1000px) {
-      width:100%;
-      float:none;
+      width: 100%;
+      float: none;
     }
   } // #TOC + #tei_wrapper
 } // .tapas-generic
@@ -673,18 +675,20 @@
     } // q, quote
     
     tei-figure {
+      margin-left: 1em;
+      margin-right: 1em;
       .block;
-      text-align:center;
-      margin-left:auto;
-      margin-right:auto;
+      border: 1px solid @border-color;
+      padding: 1em;
+      text-align: center;
   
       > .heading {
         .note-like;
-        width:85%;
-        font-family:@body-font-family;
-        font-size:@body-font-size;
+        width: 85%;
+        font-family: @body-font-family;
+        font-size: @body-font-size;
       }
-    } // figure
+    } // tei-figure
     
     castList,
     castGroup {
@@ -827,6 +831,7 @@
     }
     
 /* Editorial */
+    
     add {
       vertical-align:super;
       font-size:90%;
@@ -836,6 +841,13 @@
       }
     } // add
     
+    damage, choice, gap, subst, supplied, unclear {
+      border-bottom: @hoverunderline;
+    }
+    
+    tei-del {
+      text-decoration: line-through;
+    }
     
     gap {
       .intervention-after("gap");
