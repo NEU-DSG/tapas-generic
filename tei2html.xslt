@@ -353,7 +353,12 @@
     <xsl:call-template name="create-mouseover-intervention">
       <xsl:with-param name="tooltip-content" as="xs:string*">
         <xsl:for-each select="$siblings">
-          <xsl:value-of select="concat( local-name(.), ': &quot;', normalize-space(.), '&quot;' )"/>
+          <xsl:variable name="useName">
+            <xsl:variable name="base" select="local-name(.)"/>
+            <xsl:value-of 
+              select="concat( upper-case(substring($base,1,1)), substring($base,2) )"/>
+          </xsl:variable>
+          <xsl:value-of select="concat( $useName, ': &quot;', normalize-space(.), '&quot;' )"/>
         </xsl:for-each>
       </xsl:with-param>
     </xsl:call-template>
