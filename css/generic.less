@@ -93,11 +93,12 @@
   
 /* TEIBP CLASSES */
   img.-teibp-thumbnail {
-    max-height: 60px;
+    max-height: 50px;
     width: auto;
   }
 
   .-teibp-pbFacs {
+    padding-left: 0.25em;
     display: inline-block;
     // .hide;
   }
@@ -380,8 +381,8 @@
 /* Elements that should generally display as blocks */
     accMat, acquisition, additional, addrLine, address, adminInfo, app, argument,
     biblFull, bindingDesc, byline, cb, dateline, docAuthor, docDate, docEdition,
-    docImprint, docTitle, l, lb, provenance, docImprint pubPlace, quote, re,
-    respStmt, samplingDecl, sense, setting, source, sponsor {
+    docImprint, docTitle, l, provenance, docImprint pubPlace, quote, re, respStmt, 
+    samplingDecl, sense, setting, source, sponsor {
       .block;
     }
     
@@ -685,15 +686,17 @@
       margin-left: 1em;
       margin-right: 1em;
       .block;
-      border: 1px solid @border-color;
+      border: 1px solid @linkgrey;
       padding: 1em;
       text-align: center;
   
-      > .heading {
-        .note-like;
-        width: 85%;
-        font-family: @body-font-family;
-        font-size: @body-font-size;
+      > tei-head.heading {
+        margin-top: 1em;
+        font-size: 1.1em;
+        //.note-like;
+        //width: 85%;
+        //font-family: @body-font-family;
+        //font-size: @body-font-size;
       }
     } // tei-figure
     

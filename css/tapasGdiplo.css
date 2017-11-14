@@ -95,6 +95,12 @@
     }*/
 }
 .tapas-generic.diplomatic .-teibp-pb {
+  padding: 0 0.25em;
+  display: inline;
+  background-color: #DDD;
+  color: #555;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-style: italic;
   display: block;
   margin-top: 1em;
   margin-bottom: 1em;
@@ -103,14 +109,8 @@
   color: gray;
   padding: 1em 0;
   font-size: 11pt;
-  padding: 0.2em;
   margin: 2em 0;
-  padding: 0 0.25em;
-  display: inline;
-  background-color: #DDD;
-  color: #555;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-style: italic;
+  padding: 0.2em;
 }
 .tapas-generic.diplomatic .-teibp-pb a.-teibp-pageNum:before {
   padding: 0 0.25em;
@@ -135,7 +135,7 @@
   content: "Page " attr(data-tei-n);
 }
 .tapas-generic.diplomatic .-teibp-pb a.gallery-facs {
-  padding-left: 1em;
+  margin: 0.2em 0;
   display: inline-block;
 }
 .tapas-generic.diplomatic .-teibp-pb a.gallery-facs .-teibp-thumbnail {

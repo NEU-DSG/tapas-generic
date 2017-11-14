@@ -3,21 +3,21 @@ var Tapas = {};
 
 (function() {
   
-  this.addPageBreaks = function() {
+  /*this.addPageBreaks = function() {
     console.log("in add page breaks");
-    if (this.currentTheme == 'diplomatic') {
+    if ( this.currentTheme == 'diplomatic' ) {
       $(".tapas-generic pb").css("display","block");
       $(".tapas-generic .-teibp-pb").css("display","block");
     } else {
       $(".tapas-generic pb").css("display","inline");
       $(".tapas-generic .-teibp-pb").css("display","inline");
     }
-  };
+  };*/ // <- removed by Ashley, 2017-11-14
   
   this.findATarget = function(ref) {
       var aTarget = $("[id='" + ref + "']");
 
-      if(aTarget.length !=0 ) {
+      if ( aTarget.length !=0 ) {
           return aTarget;
       }
       // ref = ref.replace('#', '');
@@ -25,7 +25,7 @@ var Tapas = {};
       ref = ref[1];
       aTarget = $("[id='" + ref + "']");
 
-      if(aTarget.length !=0 ) {
+      if ( aTarget.length !=0 ) {
           return aTarget;
       }
 
@@ -65,7 +65,7 @@ var Tapas = {};
             
               //send the parentTarget (the ography element to the dialog so it can
               //dig up the identifier text
-              this.refreshDialog(html, aTarget, coords);
+              Tapas.refreshDialog(html, aTarget, coords);
           /*} else {
               console.log('failed finding target');
           }*/
@@ -158,6 +158,14 @@ var Tapas = {};
     return aEl;
   };
   
+  this.showFacs = function(num, url, id) {
+    console.log("showing facs for num:"+num+" , url:"+url+", id:"+id);
+    $(".tapas-generic").append(
+      '<div class="modal fade" id="modal_'+id+'"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body"><img src="'+url+'" id="resizable_'+id+'" class="img-resizable ui-widget-content"/></div></div><!-- /.modal-content --></div><!-- /.modal-dialog --></div><!-- /.modal -->');
+    $("#modal_"+id).modal('show');
+    $("#resizable_"+id).resizable({minWidth: 150});
+  };
+  
 }).apply(Tapas);
 
 
@@ -165,7 +173,7 @@ var Tapas = {};
 
 $(document).ready(function() {
   //console.log(Tapas);
-  Tapas.addPageBreaks();
+  //Tapas.addPageBreaks();
   var refs = $(".tapas-generic [ref]");
   refs.click(Tapas.displayRefData);
   var notes = $(".tapas-generic [class='note-marker']");

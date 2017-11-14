@@ -125,10 +125,11 @@
   font-size: 80%;
 }
 .tapas-generic img.-teibp-thumbnail {
-  max-height: 60px;
+  max-height: 50px;
   width: auto;
 }
 .tapas-generic .-teibp-pbFacs {
+  padding-left: 0.25em;
   display: inline-block;
 }
 .tapas-generic #tapasToolbox {
@@ -419,8 +420,6 @@
 #tapas-ref-dialog docTitle,
 .tapas-generic #tei_wrapper l,
 #tapas-ref-dialog l,
-.tapas-generic #tei_wrapper lb,
-#tapas-ref-dialog lb,
 .tapas-generic #tei_wrapper provenance,
 #tapas-ref-dialog provenance,
 .tapas-generic #tei_wrapper docImprint pubPlace,
@@ -851,32 +850,14 @@
   display: block;
   margin-top: 0;
   margin-bottom: 0;
-  border: 1px solid #4d88cd;
+  border: 1px solid #808080;
   padding: 1em;
   text-align: center;
 }
-.tapas-generic #tei_wrapper tei-figure > .heading,
-#tapas-ref-dialog tei-figure > .heading {
-  display: block;
-  margin-top: 0;
-  margin-bottom: 0;
-  margin: 1.5em auto 1.5em auto;
-  padding: .5em 1.5em 1.5em 1.5em;
-  border: 1px solid black;
-  border-radius: 15px;
-  width: 325px;
-  position: relative;
-  border: 1px solid #4d88cd;
-  background: #faf3ed;
-  text-indent: 0;
-  font-size: 85%;
-  text-align: justify;
-  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
-  -moz-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
-  -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
-  width: 85%;
-  font-family: Georgia, Baskerville, Palatino, 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
-  font-size: 13pt;
+.tapas-generic #tei_wrapper tei-figure > tei-head.heading,
+#tapas-ref-dialog tei-figure > tei-head.heading {
+  margin-top: 1em;
+  font-size: 1.1em;
 }
 .tapas-generic #tei_wrapper castList,
 #tapas-ref-dialog castList,
