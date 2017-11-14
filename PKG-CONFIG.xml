@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../config.rnc" type="application/relax-ng-compact-syntax"?>
 <view_package xmlns="http://www.wheatoncollege.edu/TAPAS/1.0" 
-  version="1.4.1" xml:id="tapas-generic" dynamic="false" scope="file">
+  version="1.4.2" xml:id="tapas-generic" dynamic="false" scope="file">
+  
   <human_name>TAPAS Generic</human_name>
   <description>A web-friendly, somewhat-generic view. Features include: pop-up notes
     and metadata entries; the ability for readers to decide whether they want to see
     page breaks ("diplomatic") or not ("normalized"); and pop-up facsimiles for page
     images uploaded to TAPAS.</description>
+  
   <file_types>
     <file_type>tei</file_type>
     <file_type>ography</file_type>
