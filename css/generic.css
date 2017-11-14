@@ -1,5 +1,5 @@
-@import url('http://fonts.googleapis.com/css?family=Arvo:400,700,400italic,700italic|Gentium+Book+Basic:400,400italic,700,700italic');
 /* IMPORTS */
+@import url('http://fonts.googleapis.com/css?family=Arvo:400,700,400italic,700italic|Gentium+Book+Basic:400,400italic,700,700italic');
 /* NAMESPACES */
 /* @namespace "http://www.tei-c.org/ns/1.0"; */
 /* @namespace with prefix, as below, throws an error in less. */
@@ -134,13 +134,13 @@
   font-size: 11.5pt;
   position: relative;
   top: 20px;
-  left: 85%;
+  left: 80%;
   padding: 5px 10px 8px;
   display: table;
   line-height: 1.5;
   font-size: 10pt;
   text-transform: uppercase;
-  max-width: 180px;
+  max-width: 200px;
 }
 @media (max-width: 767px) {
   .tapas-generic #tapasToolbox {
@@ -160,6 +160,9 @@
 }
 .tapas-generic #tapasToolbox > div {
   display: table-row;
+}
+.tapas-generic #tapasToolbox #tapasToolbox-pb {
+  display: none;
 }
 .tapas-generic #tapasToolbox input {
   border: 1px solid #4d88cd;

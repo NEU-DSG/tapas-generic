@@ -1,5 +1,3 @@
-var Tapas = {};
-
 Tapas.findATarget = function(ref) {
     var aTarget = $("[id='" + ref + "']");
 
@@ -71,7 +69,7 @@ Tapas.refreshDialog = function(html, target, coords) {
     // Set the position of the dialog.
     $('#tapas-ref-dialog').dialog('option', 'position', {
       my:"left top",
-      at: "left+10 top",
+      at: "left+50 top",
       of: window
     });
     //console.log(target);
@@ -143,7 +141,9 @@ Tapas.linkifyExternalRef = function(el) {
     return aEl;
 }
 
-function initialize_tapas_generic(){
+// Slap on the events/eventHandlers
+
+$(document).ready(
   var refs = $(".tapas-generic [ref]");
   refs.click(Tapas.displayRefData);
   var notes = $(".tapas-generic [class='note-marker']");
@@ -157,10 +157,4 @@ function initialize_tapas_generic(){
   $(".tapas-generic").addClass('diplomatic');
   Tapas.showPbs = true;
   $("#tapas-ref-dialog").dialog({autoOpen: false}); //initialize the dialog, placing and data in it handled by Tapas.displayRefData
-}
-
-// Slap on the events/eventHandlers
-
-$(document).ready(function() {
-  initialize_tapas_generic();
-});
+);
