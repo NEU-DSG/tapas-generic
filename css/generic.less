@@ -42,6 +42,7 @@
   
   img {
     border: 1px solid @border-color;
+    display: inline-block;
     height: auto;
     min-width: 1em;
     min-height: 1em;
@@ -91,11 +92,13 @@
   } // a
   
 /* TEIBP CLASSES */
-  .-teibp-thumbnail {
+  img.-teibp-thumbnail {
     max-height: 60px;
+    width: auto;
   }
 
   .-teibp-pbFacs {
+    display: inline-block;
     // .hide;
   }
   
@@ -207,12 +210,12 @@
   #TOC {
     .widget-base;
     border-color: #AAA;
-    padding: 0 1em;
-    width:22.5%;
+    //padding: 0 1em;
+    width: 25%;
     max-height: 80%;
-    float:left;
-    position:fixed;
-    overflow-y:auto;
+    float: left;
+    //position: fixed;
+    overflow-y: auto;
     
     @media(max-width: 1000px) {
       width:100%;

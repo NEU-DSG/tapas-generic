@@ -29,6 +29,10 @@
       
       <xd:p><xd:b>change log:</xd:b></xd:p>
       <xd:ul>
+        <xd:li>2017-11-14 by Ashley: Added parameter 'defaultViewClass', which 
+          allows one to decide which view should first render when the page is 
+          loaded. The default is 'diplomatic', since that's what TAPAS has used in 
+          the past.</xd:li>
         <xd:li>2017-11-06 by Ashley: Disambiguated input element names from HTML 
           names. Reorganized the file by XSLT element type and template mode, 
           converting some comments into documentation.</xd:li>
@@ -59,6 +63,7 @@
   <xsl:param name="lessJS"     select="'less.js'"/>
   <!-- set assets-base parameter to "../" to use locally; path below is for within-TAPAS use -->
   <xsl:param name="assets-base" select="'../'"/>
+  <xsl:param name="defaultViewClass" select="'diplomatic'"/>
   <xsl:param name="view.generic" select="concat($assets-base,'css/generic.css')"/>
   <xsl:param name="view.diplo" select="concat($assets-base,'css/tapasGdiplo.css')"/>
   <xsl:param name="view.norma" select="concat($assets-base,'css/tapasGnormal.css')"/>
@@ -172,7 +177,7 @@
     <!-- pass 1, "work" = most of the heavy lifting: -->
     <!-- input is TEI, output is XHTML -->
     <xsl:variable name="pass1">
-      <div class="tapas-generic">
+      <div class="tapas-generic { $defaultViewClass }">
         <xsl:call-template name="generate-toolbox"/>
         <div id="tapas-ref-dialog"/>
         <div id="tei_wrapper">
@@ -1579,8 +1584,18 @@
         <select id="viewBox">
           <!-- this <select> used to have on[cC]hange="switchThemes(this);", but -->
           <!-- that was incorporated into the javascript 2014-04-20 by PMJ. -->
-          <option value="diplomatic" selected="selected">diplomatic</option>
-          <option value="normal">normalized</option>
+          <option value="diplomatic">
+            <xsl:if test="$defaultViewClass eq 'diplomatic'">
+              <xsl:attribute name="selected" select="'selected'"/>
+            </xsl:if>
+            <xsl:text>diplomatic</xsl:text>
+          </option>
+          <option value="normal">
+            <xsl:if test="$defaultViewClass eq 'normal'">
+              <xsl:attribute name="selected" select="'selected'"/>
+            </xsl:if>
+            <xsl:text>normalized</xsl:text>
+          </option>
         </select>
       </div>
     </div>

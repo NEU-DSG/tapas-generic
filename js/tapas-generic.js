@@ -1,7 +1,6 @@
 //This JS made possible by the great work done in teibp/js/teibp.js
-var Tapas = {};
 
-$(document).ready(function(){
+$(document).ready(function() {
   initializeTapasGeneric();
   
   // Initialize any tooltips.
@@ -16,17 +15,6 @@ $(document).ready(function(){
   
   
   /*  FUNCTIONS  */
-
-  function addPageBreaks() {
-    console.log("in add page breaks");
-    if (Tapas.currentTheme == 'diplomatic') {
-      $(".tapas-generic pb").css("display","block");
-      $(".tapas-generic .-teibp-pb").css("display","block");
-    } else {
-      $(".tapas-generic pb").css("display","inline");
-      $(".tapas-generic .-teibp-pb").css("display","inline");
-    }
-  }
 
   function clearPageBreaks() {
     $(".tapas-generic pb").css("display","none");
@@ -43,14 +31,11 @@ $(document).ready(function(){
         Tapas.showPbs = true;
       }
     });*/
-    addPageBreaks();
     $(this).checked = false;
     if ( $("#TOC").length > 0 ) {
       var toc = $('#TOC').offset().top;
     }
-    $(".tapas-generic #viewBox").change(function(e){
-      switchTapasThemes(e);
-    });
+    $(".tapas-generic #viewBox").change(switchTapasThemes);
   }
 
   function showFacs(num, url, id) {

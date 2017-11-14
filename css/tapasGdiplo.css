@@ -112,7 +112,7 @@
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: italic;
 }
-.tapas-generic.diplomatic .-teibp-pb a:before {
+.tapas-generic.diplomatic .-teibp-pb a.-teibp-pageNum:before {
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;
@@ -121,11 +121,11 @@
   font-style: italic;
   content: "Page";
 }
-.tapas-generic.diplomatic .-teibp-pb a:hover {
+.tapas-generic.diplomatic .-teibp-pb a.-teibp-pageNum:hover {
   text-decoration: none;
   color: #808080;
 }
-.tapas-generic.diplomatic .-teibp-pb a[data-tei-n]:before {
+.tapas-generic.diplomatic .-teibp-pb a.-teibp-pageNum[data-tei-n]:before {
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;
@@ -134,8 +134,9 @@
   font-style: italic;
   content: "Page " attr(data-tei-n);
 }
-.tapas-generic.diplomatic .-teibp-pb a.gallery-facs:before {
-  content: " ";
+.tapas-generic.diplomatic .-teibp-pb a.gallery-facs {
+  padding-left: 1em;
+  display: inline-block;
 }
 .tapas-generic.diplomatic .-teibp-pb a.gallery-facs .-teibp-thumbnail {
   padding: 0.2em;

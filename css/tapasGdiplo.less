@@ -87,23 +87,24 @@
     margin: 2em 0;
     .intervention;
     
-    a {
-      .intervention-before("Page");
+    a{
       
-      &:hover {
-        text-decoration: none;
-        color: @linkgrey;
-      }
+      &.-teibp-pageNum {
+        .intervention-before("Page");
       
-      &[data-tei-n] {
-        .intervention-before("Page " attr(data-tei-n));
-      }
+        &:hover {
+          text-decoration: none;
+          color: @linkgrey;
+        }
+      
+        &[data-tei-n] {
+          .intervention-before("Page " attr(data-tei-n));
+        }
+      } // a.-teibp-pageNum
       
       &.gallery-facs {
-        
-        &:before {
-          content: " ";
-        }
+        padding-left: 1em;
+        display: inline-block;
         
         .-teibp-thumbnail {
           padding: 0.2em;
