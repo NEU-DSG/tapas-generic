@@ -1214,7 +1214,7 @@
   <xd:doc>
     <xd:desc>Generate a table of contents, if needed</xd:desc>
   </xd:doc>
-  <xsl:template match="html:div[ @class eq 'tapas-generic' ]" mode="TOCer">
+  <xsl:template match="html:div[ @class[ starts-with(., 'tapas-generic') ] ]" mode="TOCer">
     <xsl:copy>
       <xsl:apply-templates mode="TOCer" select="@*"/>
       <xsl:apply-templates mode="TOCer"
