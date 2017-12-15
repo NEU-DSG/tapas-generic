@@ -261,7 +261,10 @@
   <xsl:template match="@xml:id" mode="work">
     <!-- copy @xml:id to @id, which browsers use for internal links. -->
     <xsl:attribute name="id">
-      <xsl:value-of select="concat($idPrefix,.)"/>
+      <xsl:call-template name="generate-unique-id">
+        <xsl:with-param name="base" select="data(.)"/>
+      </xsl:call-template>
+      <!--<xsl:value-of select="concat($idPrefix,.)"/>-->
     </xsl:attribute>
     <xsl:attribute name="data-tapas-xmlid">
       <xsl:value-of select="."/>
@@ -618,13 +621,16 @@
     <xsl:variable name="noteNum">
       <xsl:number value="count( preceding::note[ancestor::text] )+1" format="{$numNoteFmt}"/>
     </xsl:variable>
+    <xsl:variable name="hasXmlID" select="exists(@xml:id)"/>
     <xsl:choose>
-      <xsl:when test="@xml:id  and  ( //@target ) = concat('#', normalize-space( @xml:id ) )"/>
+      <xsl:when test="$hasXmlID  and  ( //@target ) = concat('#', normalize-space(@xml:id))"/>
       <xsl:otherwise>
         <a class="note-marker">
           <xsl:variable name="ID">
+            <xsl:variable name="useID" 
+              select="if ( $hasXmlID ) then @xml:id else generate-id()"/>
             <xsl:call-template name="generate-unique-id">
-              <xsl:with-param name="base" select="generate-id()"/>
+              <xsl:with-param name="base" select="$useID"/>
             </xsl:call-template>
           </xsl:variable>          
           <xsl:attribute name="href">
