@@ -10,7 +10,12 @@ var Tapas = {};
                           (generally event handlers). */
       isVerbose = false,
       validThemes = ['diplomatic', 'normal'],
-      currentTheme = 'diplomatic';
+      currentTheme = 'diplomatic',
+      dialogPos = {
+        my:"left top",
+        at: "left+50 top",
+        of: window
+      };
   
   /*  PUBLIC FUNCTIONS
       By assigning public functions to static 'this', the TAPAS namespace can 
@@ -85,24 +90,23 @@ var Tapas = {};
   
   this.showFacs = function(num, url, id) {
     if ( isVerbose ) console.log("showing facs for num:"+num+" , url:"+url+", id:"+id);
-    $(".tapas-generic").append(
-      '<div class="modal fade" id="modal_'+id+'">'
-      + '<div class="modal-dialog">'
-        + '<div class="modal-content">'
-          + '<div class="modal-header">'
-            + '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-              + '<span aria-hidden="true">&times;</span>'
-            + '</button>'
-          + '</div>'
-          + '<div class="modal-body">'
-            + '<img src="'+url+'" id="resizable_'+id+'" class="img-resizable ui-widget-content" />'
-          + '</div>'
-        + '</div><!-- /.modal-content -->'
-      + '</div><!-- /.modal-dialog -->'
-    + '</div><!-- /.modal -->'
-    );
-    $("#modal_"+id).modal('show');
-    $("#resizable_"+id).resizable({ minWidth: 150 });
+    $("#tapas-ref-dialog").dialog('close');
+    if ( $("#facs_"+id).length === 0 ) {
+      $(".tapas-generic").append(
+        '<div id="facs_'+id+'">'
+        + '<img src="'+url+'" id="resizable_'+id+'" class="img-resizable ui-widget-content"'
+          + ' style="min-height: 30px; min-width: 30px;" />'
+      + '</div>'
+      );
+      $("#facs_"+id).dialog();
+      $("#facs_"+id).dialog('option', 'position', dialogPos);
+    }
+    $("#facs_"+id).dialog('open');
+    $("#resizable_"+id).resizable({
+      aspectRatio: true,
+      containment: "parent",
+      minWidth: 30
+    });
   };
   
   this.switchThemes = function(e) {
@@ -170,11 +174,7 @@ var Tapas = {};
           useHTML = hasEntry ? html : headerTitle;
       if ( isVerbose ) console.log("tapas ref dialog text is '"+useHTML+"'");
       // Set the position of the dialog.
-      $('#tapas-ref-dialog').dialog('option', 'position', {
-        my:"left top",
-        at: "left+50 top",
-        of: window
-      });
+      $('#tapas-ref-dialog').dialog('option', 'position', dialogPos);
       if ( isVerbose ) console.log(target);
       $("#tapas-ref-dialog").html(useHTML);
       $("#tapas-ref-dialog").dialog( "option", "title", useTitle);
