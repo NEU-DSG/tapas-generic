@@ -5,39 +5,46 @@ var Tapas = {};
 
 (function() {
   
+  var context = this, /*  This variable references the current scope so it can 
+                          be referenced within functions where the scope changes 
+                          (generally event handlers). */
+      isVerbose = false,
+      validThemes = ['diplomatic', 'normal'],
+      currentTheme = 'diplomatic';
+  
   /*  PUBLIC FUNCTIONS
       By assigning public functions to static 'this', the TAPAS namespace can 
       be applied to them without unnecessary duplication.
   */
-
+  
   this.displayNoteData = function(e) {
-      var html = '';
-      var target = $(e.target);
-      var coords = [e.pageX, e.pageY];
-      var tapasNoteNum = target.text();
-      var note = $(".tapas-generic note[data-tapas-note-num = '" + tapasNoteNum + "']");
+      var html = '',
+          target = $(e.target),
+          coords = [e.pageX, e.pageY],
+          tapasNoteNum = target.text(),
+          note = $(".tapas-generic note[data-tapas-note-num = '" + tapasNoteNum + "']");
       html = note.html();
       refreshDialog(html, target, coords);
-      console.log("note data is: " + html);
+      if ( isVerbose ) console.log("note data is: " + html);
   };
 
   //Set up an object to help deal with the needs of negotiating through the document-database
   this.displayRefData = function(e) {
-      var html = '';
-      var target = e.target;
-      var ref = $(target).attr('ref');
-      console.log("ref is "+ref);
-      while (typeof ref == "undefined") {
-          var target = target.parentNode;
+      var html = '',
+          target = e.target,
           ref = $(target).attr('ref');
+      if ( isVerbose ) console.log("ref is "+ref);
+      while ( typeof ref == "undefined" ) {
+        var target = target.parentNode;
+        ref = $(target).attr('ref');
       }
-      var coords = [e.clientX, e.clientY];
-
-      var aTarget = findATarget(ref);
-
-      console.log(aTarget);
-      console.log("aTarget length is "+ aTarget.length);
-      if (  aTarget.length !== 0  ) {
+      var coords = [e.clientX, e.clientY],
+          aTarget = findATarget(ref);
+      if ( isVerbose ) { 
+        console.log(aTarget);
+        console.log("aTarget length is "+ aTarget.length);
+      }
+      if ( aTarget.length !== 0 ) {
           //bop back up to the enclosing p@class='contextualItem'. it looks like that's the most reliable container
           //var parentTarget = aTarget.parent("[class='contextualItem']");
         
@@ -56,12 +63,28 @@ var Tapas = {};
               console.log('failed finding target');
           }*/
       } else {
-          console.log('no aTarget!');
+          console.warn('No aTarget!');
       }
   };
   
+  this.getTheme = function() {
+    return currentTheme;
+  };
+  
+  this.setTheme = function(label) {
+    var rmThemes = validThemes.join(" ");
+    if ( validThemes.indexOf(label) !== -1 ) {
+      currentTheme = label;
+      $(".tapas-generic").removeClass(rmThemes).addClass(currentTheme);
+      if ( isVerbose ) console.log('Set theme to '+ currentTheme);
+    } else {
+      console.error('Could not set invalid theme "'+ label +'"');
+    }
+    return this.getTheme();
+  };
+  
   this.showFacs = function(num, url, id) {
-    console.log("showing facs for num:"+num+" , url:"+url+", id:"+id);
+    if ( isVerbose ) console.log("showing facs for num:"+num+" , url:"+url+", id:"+id);
     $(".tapas-generic").append(
       '<div class="modal fade" id="modal_'+id+'">'
       + '<div class="modal-dialog">'
@@ -82,10 +105,24 @@ var Tapas = {};
     $("#resizable_"+id).resizable({ minWidth: 150 });
   };
   
+  this.switchThemes = function(e) {
+    var newTheme = $(e.target).val();
+    context.setTheme(newTheme);
+  };
+  
+  /*  Get and toggle wordy console logs.  */
+  this.getVerbosity = function() {
+    return isVerbose;
+  };
+  this.toggleVerbosity = function() {
+    isVerbose = isVerbose ? false : true;
+    return this.getVerbosity();
+  };
+  
   
   /*  PRIVATE FUNCTIONS
       Private functions are assigned to declared variables, so that they can be 
-      easily referenced from within the anonymous object by the public 
+      easily referenced from within the function wrapper by the public 
       functions and each other. These variables only work within this scope, so 
       they aren't publicly available.
   */
@@ -102,12 +139,12 @@ var Tapas = {};
       aTarget = $("[id='" + ref + "']");
 
       if ( aTarget.length != 0 ) {
-          return aTarget;
+        return aTarget;
       }
 
       //try using the fancy character
       aTarget = $("[id='Ћ." + ref + "']");
-      console.log("[id='Ћ." + ref + "']");
+      if ( isVerbose ) console.log("[id='Ћ." + ref + "']");
       return aTarget;
   };
   
@@ -115,7 +152,7 @@ var Tapas = {};
     var aEl = document.createElement('a');
     $(aEl).text($(el).text());
     $(el.attributes).each(function(index, att) {
-        if(att.nodeName == 'ref') {
+        if ( att.nodeName === 'ref' ) {
             aEl.setAttribute('href', att.nodeValue);
         } else {
             aEl.setAttribute(att.nodeName, att.nodeValue);
@@ -131,14 +168,14 @@ var Tapas = {};
           hasEntry = html.length > 0 || $(html).text() !== '',
           useTitle = hasEntry ? headerTitle : null,
           useHTML = hasEntry ? html : headerTitle;
-      //console.log("tapas ref dialog text is '"+useHTML+"'");
+      if ( isVerbose ) console.log("tapas ref dialog text is '"+useHTML+"'");
       // Set the position of the dialog.
       $('#tapas-ref-dialog').dialog('option', 'position', {
         my:"left top",
         at: "left+50 top",
         of: window
       });
-      //console.log(target);
+      if ( isVerbose ) console.log(target);
       $("#tapas-ref-dialog").html(useHTML);
       $("#tapas-ref-dialog").dialog( "option", "title", useTitle);
       $("#tapas-ref-dialog").dialog('open');
@@ -152,7 +189,7 @@ var Tapas = {};
     });
   };
   
-}).apply(Tapas); // Inject the TAPAS namespace into the anonymous object.
+}).apply(Tapas); // Inject the TAPAS namespace into the self-invoking function.
 
 
 // Slap on the events/eventHandlers
@@ -167,9 +204,9 @@ $(document).ready(function() {
   Tapas.refs = refs; // not sure yet if we'll need this data on the Tapas object
   // Figure out what the starting view is for the TEI document. The default is 'diplomatic'.
   if ( $('.tapas-generic').hasClass('normal') ) {
-    Tapas.currentTheme  = 'normal';
+    Tapas.setTheme('normal');
   } else {
-    Tapas.currentTheme  = 'diplomatic';
+    //Tapas.setTheme('diplomatic');
     if ( !$('.tapas-generic').hasClass('diplomatic') ) {
       $(".tapas-generic").addClass('diplomatic');
     }
@@ -177,4 +214,6 @@ $(document).ready(function() {
   Tapas.showPbs = true;
   // Initialize the dialog, which is handled by Tapas.displayRefData
   $("#tapas-ref-dialog").dialog({autoOpen: false});
+  // Change views when the user selects a different option.
+  $(".tapas-generic #viewBox").change(Tapas.switchThemes);
 });

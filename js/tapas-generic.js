@@ -31,17 +31,9 @@ $(document).ready(function() {
         Tapas.showPbs = true;
       }
     });*/
-    $(this).checked = false;
+    //$(this).checked = false;
     if ( $("#TOC").length > 0 ) {
       var toc = $('#TOC').offset().top;
     }
-    $(".tapas-generic #viewBox").change(switchTapasThemes);
-  }
-
-  function switchTapasThemes(event) {
-    var newTheme = $(event.target).val();
-    $(".tapas-generic").removeClass('diplomatic').removeClass('normal').addClass(newTheme);
-    Tapas.currentTheme = newTheme;
-    console.log(newTheme);
   }
 });
