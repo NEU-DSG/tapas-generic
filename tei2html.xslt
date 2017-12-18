@@ -295,9 +295,9 @@
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <span class="-teibp-pb">
+    <span class="tapas-pb">
       <xsl:call-template name="set-reliable-attributes"/>
-      <a class="-teibp-pageNum" data-tapas-n="{$pn}">
+      <a class="tapas-page-num" data-tapas-n="{$pn}">
         <xsl:if test="@n">
           <xsl:attribute name="data-tei-n">
             <xsl:value-of select="@n"/>
@@ -306,12 +306,12 @@
         <xsl:text> </xsl:text>
       </a>
       <xsl:if test="@facs">
-        <span class="-teibp-pbFacs">
+        <span class="tapas-pb-facs">
           <a class="gallery-facs" rel="prettyPhoto[gallery1]">
             <xsl:attribute name="onclick">
               <xsl:value-of select="concat('Tapas.showFacs(',$apos,@n,$apos,',',$apos,@facs,$apos,',',$apos,$id,$apos,')')"/>
             </xsl:attribute>
-            <img alt="{$altTextPbFacs}" class="-teibp-thumbnail">
+            <img alt="{$altTextPbFacs}" class="tapas-thumbnail">
               <xsl:attribute name="src">
                 <xsl:value-of select="@facs"/>
               </xsl:attribute>

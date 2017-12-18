@@ -30,7 +30,7 @@
 .tapas-generic.normal fw {
   display: none;
 }
-.tapas-generic.normal .-teibp-pb a {
+.tapas-generic.normal .tapas-pb a {
   display: none;
   /*font-family: @sans-font-family;
       display: inline;

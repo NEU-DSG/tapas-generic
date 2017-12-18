@@ -125,11 +125,11 @@
   vertical-align: super;
   font-size: 80%;
 }
-.tapas-generic img.-teibp-thumbnail {
+.tapas-generic img.tapas-thumbnail {
   max-height: 50px;
   width: auto;
 }
-.tapas-generic .-teibp-pbFacs {
+.tapas-generic .tapas-pb-facs {
   padding-left: 0.25em;
   display: inline-block;
 }

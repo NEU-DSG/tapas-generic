@@ -18,7 +18,7 @@ $(document).ready(function() {
 
   function clearPageBreaks() {
     $(".tapas-generic pb").css("display","none");
-    $(".tapas-generic .-teibp-pb").css("display","none");
+    $(".tapas-generic .tapas-pb").css("display","none");
   }
 
   function initializeTapasGeneric() {
