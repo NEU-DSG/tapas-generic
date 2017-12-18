@@ -719,19 +719,19 @@
         .hide;
       }
 
-      &[place~="foot"],
-      &[place~="bottom"] {
+      &[data-tapas-anchored="false"] {
         .block;
         margin: 0.6em 1em 1.5em;
         font-family: @sans-font-family;
         font-size: 85%;
   
-        &[data-tapas-note-num]::before {
-          content: attr(data-tapas-note-num) "\00a0";
-          vertical-align: super;
-          font-size: 70%;
+        &[n]::before {
+          content: attr(n) "\00a0";
+          //vertical-align: super;
+          color: @linkgrey;
+          font-size: 0.9em;
         }
-      }
+      } // note[data-tapas-anchored="false"]
     } // note
     
     milestone {

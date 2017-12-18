@@ -29,6 +29,9 @@
       
       <xd:p><xd:b>change log:</xd:b></xd:p>
       <xd:ul>
+        <xd:li>2017-12-18 by Ashley: Removed vestigal 'genCon' mode. Specified the 
+          only cases where a note anchor should be generated (when the value of 
+          @anchored is true, and the note isn't linked.)</xd:li>
         <xd:li>2017-11-14 by Ashley: Added parameter 'defaultViewClass', which 
           allows one to decide which view should first render when the page is 
           loaded. The default is 'diplomatic', since that's what TAPAS has used in 
@@ -107,11 +110,21 @@
   -->
 
   <xsl:key name="IDs" match="//*" use="@xml:id"/>
-  <xsl:key name="REFs" match="//name" use="@ref"/>
-  <xsl:key name="REFs" match="//orgName" use="@ref"/>
-  <xsl:key name="REFs" match="//persName" use="@ref"/>
-  <xsl:key name="REFs" match="//placeName" use="@ref"/>
-  <xsl:key name="REFs" match="//rs" use="@ref"/>
+  <!--<xsl:key name="localREFs" match="//@corresp[starts-with(.,'#')]">
+    <xsl:for-each select="tokenize(.,'\s+')">
+      <xsl:value-of select="substring-after(.,'#')"/>
+    </xsl:for-each>
+  </xsl:key>-->
+  <xsl:key name="localREFs" match="//@ref[starts-with(.,'#')]">
+    <xsl:for-each select="tokenize(.,'\s+')">
+      <xsl:value-of select="substring-after(.,'#')"/>
+    </xsl:for-each>
+  </xsl:key>
+  <xsl:key name="localREFs" match="//@target[starts-with(.,'#')]">
+    <xsl:for-each select="tokenize(.,'\s+')">
+      <xsl:value-of select="substring-after(.,'#')"/>
+    </xsl:for-each>
+  </xsl:key>
   <!-- algorithm for DIV and LG depth here should match that for $myDepth in the -->
   <!-- template that matches <div>s and <lg>s in mode "work" -->
   <xsl:key name="DIVs-and-LGs-by-depth"
@@ -622,29 +635,49 @@
       <xsl:number value="count( preceding::note[ancestor::text] )+1" format="{$numNoteFmt}"/>
     </xsl:variable>
     <xsl:variable name="hasXmlID" select="exists(@xml:id)"/>
-    <xsl:choose>
-      <xsl:when test="$hasXmlID  and  ( //@target ) = concat('#', normalize-space(@xml:id))"/>
-      <xsl:otherwise>
-        <a class="note-marker">
-          <xsl:variable name="ID">
-            <xsl:variable name="useID" 
-              select="if ( $hasXmlID ) then @xml:id else generate-id()"/>
-            <xsl:call-template name="generate-unique-id">
-              <xsl:with-param name="base" select="$useID"/>
-            </xsl:call-template>
-          </xsl:variable>
-          <xsl:attribute name="href">
-            <xsl:value-of select="concat('#', $ID )"/>
-          </xsl:attribute>
-          <xsl:value-of select="$noteNum"/>
-        </a>
-      </xsl:otherwise>
-    </xsl:choose>
+    <xsl:variable name="pointers" as="item()*">
+      <xsl:for-each select="(@target | @corresp)">
+        <xsl:variable name="tokens" as="xs:string*">
+          <xsl:copy-of select="tokenize(.,'\s+')"/>
+        </xsl:variable>
+        <xsl:for-each select="$tokens">
+          <xsl:if test="matches(., '^#') and key('IDs', replace(.,'^#',''), $input)">
+            <xsl:value-of select="."/>
+          </xsl:if>
+        </xsl:for-each>
+      </xsl:for-each>
+    </xsl:variable>
+    <!-- The note needs a generated anchor if:
+            (1) the value of @anchored is considered to be true, and
+            (2) the note is not linked to any other markup. -->
+    <xsl:variable name="needsAnchor" as="xs:boolean"
+      select="not(@anchored) or ( exists(@anchored) and @anchored = ('1', 'true') )"/>
+    <xsl:variable name="needsGeneratedAnchor" as="xs:boolean"
+      select="$needsAnchor and ( 
+                not($hasXmlID) or 
+                not(key('localREFs', normalize-space(@xml:id))) (:or 
+                count($pointers) eq 0:) 
+              )"/>
+    <xsl:if test="$needsGeneratedAnchor">
+      <a class="note-marker">
+        <xsl:variable name="ID">
+          <xsl:variable name="useID" 
+            select="if ( $hasXmlID ) then @xml:id else generate-id()"/>
+          <xsl:call-template name="generate-unique-id">
+            <xsl:with-param name="base" select="$useID"/>
+          </xsl:call-template>
+        </xsl:variable>
+        <xsl:attribute name="href">
+          <xsl:value-of select="concat('#', $ID )"/>
+        </xsl:attribute>
+        <xsl:value-of select="$noteNum"/>
+      </a>
+    </xsl:if>
     <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
       <xsl:attribute name="data-tapas-note-num">
         <xsl:value-of select="$noteNum"/>
       </xsl:attribute>
-      <xsl:attribute name="data-tapas-anchored" select="'true'"/>
+      <xsl:attribute name="data-tapas-anchored" select="$needsAnchor"/>
       <xsl:call-template name="set-reliable-attributes"/>
       <xsl:apply-templates mode="#current"/>
     </xsl:element>
