@@ -4,10 +4,10 @@
   .page-setup;
 
   footer {
-    margin-top:1em;
+    margin-top: 1em;
     border-top: 1px solid @color;
-    padding-top:.5em;
-    font-size:12pt;
+    padding-top: .5em;
+    font-size: 12pt;
   }
   
   #footer {
@@ -26,9 +26,9 @@
     .block;
     display: table;
     border-collapse: collapse;
-    margin-top:2em;
-    margin-bottom:2em;
-    font-size:12pt;
+    margin-top: 2em;
+    margin-bottom: 2em;
+    font-size: 12pt;
     
     > tei-head {
       text-align: center;
@@ -36,7 +36,7 @@
     
     /* for cell or row with @role = label */
     [role=label] {
-      font-weight:bold;
+      font-weight: bold;
     }
   } // table
   
@@ -132,7 +132,7 @@
     
     label {
       .inline;
-      margin-right:.5em;
+      margin-right: .5em;
     }
     
     > div {
@@ -147,16 +147,16 @@
       border: 1px solid @border-color;
       border-radius: 0px;
       background: @background-color;
-      -webkit-appearance:none;
-      -webkit-box-shadow:none;
-      -webkit-border-radius:0em;
+      -webkit-appearance: none;
+      -webkit-box-shadow: none;
+      -webkit-border-radius: 0em;
       display: inline-block;
       
       &[type=checkbox] {
         width: 14px;
         height: 14px;
-        line-height:normal;
-        padding:0;
+        line-height: normal;
+        padding: 0;
         vertical-align: text-bottom;
         
         :checked {
@@ -220,9 +220,9 @@
     overflow-y: auto;
     
     @media(max-width: 1000px) {
-      width:100%;
-      float:none;
-      position:static;
+      width: 100%;
+      float: none;
+      position: static;
     }
     
     ol {
@@ -440,7 +440,7 @@
       } // .og-label-inner
     } // .heading
     
-    date[when]:empty:before {
+    date[when]:empty::before {
       content: attr(when);
     }
     
@@ -467,8 +467,8 @@
         
       
         cell {
-          display:table-cell;
-          padding:1em 1.5em 1em 1em;
+          display: table-cell;
+          padding: 1em 1.5em 1em 1em;
           .table-border;
         }
       } // row
@@ -492,7 +492,7 @@
         display: inline-block;
         min-width: 1.5em;
     
-        &:after {
+        &::after {
           content: " ";
         }
       } // tei-label
@@ -501,13 +501,13 @@
         list-style-type: none;
         margin-left: 0em;
     
-        &:after {
+        &::after {
           content: "\A" ;
           white-space: pre;
         }
     
         a[rend~="right"] {
-          float:right;
+          float: right;
         }
       } // label + item
       
@@ -516,7 +516,7 @@
       }
       
       &[type=simple] {
-        list-style-type:none;
+        list-style-type: none;
     
         > item {
           margin-left: 0;
@@ -524,13 +524,13 @@
       } // list[type=simple]
   
       &[type=bulleted] {
-        list-style-type:disc;
+        list-style-type: disc;
       }
   
       &[type=ordered] {
-        list-style-type:none;
+        list-style-type: none;
         counter-reset: items 0;
-        margin-left:1em;
+        margin-left: 1em;
     
         tei-label {
           .hide;
@@ -538,10 +538,10 @@
     
         > item {
           .list-item;
-          margin-left:0;
+          margin-left: 0;
       
-          &:before {
-            counter-increment:items 1;
+          &::before {
+            counter-increment: items 1;
             content: counter(items, decimal) ". ";
           }
         } // list[type=ordered] > item
@@ -552,7 +552,7 @@
     
         > label {
           display: inline-block;
-          font-weight:bold;
+          font-weight: bold;
         }
       } // list[type=gloss]
   
@@ -561,7 +561,7 @@
         margin-bottom: 20px;
     
         item {
-          position:relative;
+          position: relative;
           background: url('http://5thirtyone.com/sandbox/share/toc/dot.gif') repeat-x bottom left;
           overflow: hidden;
           padding-bottom: 2px;
@@ -584,18 +584,18 @@
         }
 
         a {
-          position:absolute;
-          right:0;
-          bottom:0;
+          position: absolute;
+          right: 0;
+          bottom: 0;
           padding: 0 0 3px 2px;
-          width:70px;
-          border-bottom:0;
+          width: 70px;
+          border-bottom: 0;
           text-decoration: none;
         }
 
         tei-label {
-          background-color:@background-color;
-          float:left;
+          background-color: @background-color;
+          float: left;
           padding: 0 2px 3px 0;
         }
 
@@ -631,16 +631,16 @@
     q, quote, soCalled {
       .quotes;
   
-      &:before {
+      &::before {
         content: open-quote;
       }
   
-      &:after {
+      &::after {
         content: close-quote;
       }
   
-      &[next]:after,
-      &[prev]:before {
+      &[next]::after,
+      &[prev]::before {
         content: '' !important;
       }
     } // q, quote, soCalled
@@ -704,11 +704,11 @@
     castList,
     castGroup {
       .block-margins;
-      margin-left:2em;
+      margin-left: 2em;
       
       castItem {
         .list-item;
-        list-style-type:none;
+        list-style-type: none;
       }
     } // castList, castGroup
     
@@ -722,25 +722,25 @@
       &[place~="foot"],
       &[place~="bottom"] {
         .block;
-        font-size: 90%;
-        padding: 2px 0;
+        margin: 0.6em 1em 1.5em;
         font-family: @sans-font-family;
+        font-size: 85%;
   
-        &[data-tapas-note-num]:before {
+        &[data-tapas-note-num]::before {
+          content: attr(data-tapas-note-num) "\00a0";
           vertical-align: super;
           font-size: 70%;
-          content: attr(data-tapas-note-num) "\00a0";
         }
       }
     } // note
     
     milestone {
       .block;
-      margin-left:auto;
-      margin-right:auto;
-      text-align:center;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
   
-      :before {
+      &::before {
         .intervention-before("* * * * *");
       }
     } // milestone
@@ -764,8 +764,8 @@
       &[rend~="block"],
       &[rendition~="#block"] {
         .block;
-        padding-left:2em;
-        text-indent:-2em;
+        padding-left: 2em;
+        text-indent: -2em;
       }
       
       tei-title {
@@ -784,7 +784,7 @@
       .list-item
     }
     
-    tei-u:before {
+    tei-u::before {
       content: "-";
     }
     
@@ -802,7 +802,7 @@
     
     signed {
       display: inline-block;
-      margin-top:1.5em;
+      margin-top: 1.5em;
   
       persName {
         .block;
@@ -818,7 +818,7 @@
       signed {
         margin-top: 0;
   
-        &:before {
+        &::before {
           content: "\00000a";
           white-space: pre;
         }
@@ -827,13 +827,13 @@
     
     postscript {
       .block;
-      margin-top:2em;
+      margin-top: 2em;
     }
 
 /* Drama */
     speaker {
-      font-weight:bold;
-      margin-right:0;
+      font-weight: bold;
+      margin-right: 0;
     }
 
     stage {
@@ -844,11 +844,11 @@
 /* Editorial */
     
     add {
-      vertical-align:super;
-      font-size:90%;
+      vertical-align: super;
+      font-size: 90%;
     
       &[place=below] {
-        vertical-align:sub;
+        vertical-align: sub;
       }
     } // add
     
@@ -873,15 +873,15 @@
     att {
       line-height: normal;
     
-      &:before {
+      &::before {
         content: "@";
       }
     } // att
     
     gi {
       
-      &:before { content: "<"; }
-      &:after { content: ">"; }
+      &::before { content: "<"; }
+      &::after { content: ">"; }
     } // gi
     
     egXML {
@@ -894,8 +894,8 @@
       margin-bottom: .75em;
       padding-top: .75em;
       padding-bottom: .75em;
-      font-family:monospace;
-      white-space:pre;
+      font-family: monospace;
+      white-space: pre;
     
       span {
         .inline;
@@ -943,13 +943,13 @@
     binding {
       .block;
   
-      &:before {
+      &::before {
         .intervention;
         content: "Binding: \A";
         white-space: pre-wrap;
       }
   
-      &[contemporary]:before {
+      &[contemporary]::before {
         .intervention;
         content: "Binding: \A" "Contemporary: " attr(contemporary) "\A";
       }
@@ -995,10 +995,10 @@
         &[level=a] {
           .quotes;
   
-          &:before { content: open-quote; }
-          &:after { content: close-quote; }
-          &[next]:after { content: "" !important; }
-          &[prev]:before { content: "" !important; }
+          &::before { content: open-quote; }
+          &::after { content: close-quote; }
+          &[next]::after { content: "" !important; }
+          &[prev]::before { content: "" !important; }
         }
 
         &[level=m] {
@@ -1049,7 +1049,7 @@
       cb {
         .block-margins;
 
-        &:before {
+        &::before {
           .intervention;
           content: "[column break]";
           color: gray;
@@ -1059,7 +1059,7 @@
       *[data-tapas-gotoentry="true"] {
         border-bottom: @hoverunderline;
         background: @tapas-blue;
-        cursor:pointer;
+        cursor: pointer;
       }
   
       div {
@@ -1077,7 +1077,7 @@
     
         &[type=endnotes] {
       
-          &:before {
+          &::before {
             .block;
             margin-top: 1em;
             content: 'Endnotes: ';
@@ -1106,7 +1106,7 @@
         &[data-tapas-att-type="half_title"] > .heading {
           border: 1px dashed lightgray;
           padding: 1em;
-          text-align:center;
+          text-align: center;
         }
         
         .heading {

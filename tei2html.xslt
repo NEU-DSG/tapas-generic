@@ -297,14 +297,14 @@
     </xsl:variable>
     <span class="tapas-pb">
       <xsl:call-template name="set-reliable-attributes"/>
-      <a class="tapas-page-num" data-tapas-n="{$pn}">
+      <span class="tapas-page-num" data-tapas-n="{$pn}">
         <xsl:if test="@n">
           <xsl:attribute name="data-tei-n">
             <xsl:value-of select="@n"/>
           </xsl:attribute>
         </xsl:if>
         <xsl:text> </xsl:text>
-      </a>
+      </span>
       <xsl:if test="@facs">
         <span class="tapas-pb-facs">
           <a class="gallery-facs" rel="prettyPhoto[gallery1]">
@@ -615,7 +615,7 @@
   
   <xd:doc>
     <xd:desc>Insert an HTML note-anchor before each <tt>&lt;note></tt>, except those
-    that already have something pointing at them</xd:desc>
+      that already have something pointing at them</xd:desc>
   </xd:doc>
   <xsl:template match="text//note" priority="99" mode="work">
     <xsl:variable name="noteNum">
@@ -632,7 +632,7 @@
             <xsl:call-template name="generate-unique-id">
               <xsl:with-param name="base" select="$useID"/>
             </xsl:call-template>
-          </xsl:variable>          
+          </xsl:variable>
           <xsl:attribute name="href">
             <xsl:value-of select="concat('#', $ID )"/>
           </xsl:attribute>
