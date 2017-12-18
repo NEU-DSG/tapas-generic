@@ -112,7 +112,7 @@
   margin: 2em 0;
   padding: 0.2em;
 }
-.tapas-generic.diplomatic .tapas-pb a.tapas-page-num:before {
+.tapas-generic.diplomatic .tapas-pb .tapas-page-num:before {
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;
@@ -121,11 +121,11 @@
   font-style: italic;
   content: "Page";
 }
-.tapas-generic.diplomatic .tapas-pb a.tapas-page-num:hover {
+.tapas-generic.diplomatic .tapas-pb .tapas-page-num:hover {
   text-decoration: none;
   color: #808080;
 }
-.tapas-generic.diplomatic .tapas-pb a.tapas-page-num[data-tei-n]:before {
+.tapas-generic.diplomatic .tapas-pb .tapas-page-num[data-tei-n]:before {
   padding: 0 0.25em;
   display: inline;
   background-color: #DDD;

@@ -892,16 +892,16 @@
   margin-top: 0;
   margin-bottom: 0;
   margin: 0.6em 1em 1.5em;
-  font-size: 85%;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 85%;
 }
 .tapas-generic #tei_wrapper note[place~="foot"][data-tapas-note-num]::before,
 #tapas-ref-dialog note[place~="foot"][data-tapas-note-num]::before,
 .tapas-generic #tei_wrapper note[place~="bottom"][data-tapas-note-num]::before,
 #tapas-ref-dialog note[place~="bottom"][data-tapas-note-num]::before {
+  content: attr(data-tapas-note-num) "\00a0";
   vertical-align: super;
   font-size: 70%;
-  content: attr(data-tapas-note-num) "\00a0";
 }
 .tapas-generic #tei_wrapper milestone,
 #tapas-ref-dialog milestone {

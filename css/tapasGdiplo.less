@@ -87,20 +87,20 @@
     margin: 2em 0;
     padding: 0.2em;
     
+    .tapas-page-num {
+      .intervention-before("Page");
+
+      &:hover {
+        text-decoration: none;
+        color: @linkgrey;
+      }
+
+      &[data-tei-n] {
+        .intervention-before("Page " attr(data-tei-n));
+      }
+    } // .tapas-page-num
+    
     a{
-      
-      &.tapas-page-num {
-        .intervention-before("Page");
-      
-        &:hover {
-          text-decoration: none;
-          color: @linkgrey;
-        }
-      
-        &[data-tei-n] {
-          .intervention-before("Page " attr(data-tei-n));
-        }
-      } // a.tapas-page-num
       
       &.gallery-facs {
         margin: 0.2em 0;
