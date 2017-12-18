@@ -91,6 +91,7 @@
 .tapas-generic a {
   color: #337dd3;
   text-decoration: none;
+  cursor: pointer;
   /*&.ref-external:link,
     &.ptr-external:link {
       border-bottom: 1px solid @linkdarkgrey;
@@ -117,7 +118,7 @@
 .tapas-generic a.ptr-not-found,
 .tapas-generic a[class$="-not-found"] {
   color: inherit;
-  pointer: text;
+  cursor: text;
 }
 .tapas-generic a.note-marker {
   padding: 0 0.2em;

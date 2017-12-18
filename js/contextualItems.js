@@ -33,7 +33,7 @@ var Tapas = {};
       if ( isVerbose ) console.log("note data is: " + html);
   };
 
-  //Set up an object to help deal with the needs of negotiating through the document-database
+  // Set up an object to help deal with the needs of negotiating through the document-database
   this.displayRefData = function(e) {
       var html = '',
           target = e.target,
@@ -194,7 +194,6 @@ var Tapas = {};
 
 // Slap on the events/eventHandlers
 $(document).ready(function() {
-  //Tapas.addPageBreaks();
   var refs = $(".tapas-generic [ref]");
   refs.click(Tapas.displayRefData);
   var notes = $(".tapas-generic [class='note-marker']");
@@ -211,7 +210,6 @@ $(document).ready(function() {
       $(".tapas-generic").addClass('diplomatic');
     }
   }
-  Tapas.showPbs = true;
   // Initialize the dialog, which is handled by Tapas.displayRefData
   $("#tapas-ref-dialog").dialog({autoOpen: false});
   // Change views when the user selects a different option.

@@ -52,6 +52,7 @@
   a {
     color: @link-color;
     text-decoration: none;
+    cursor: pointer;
     
     &:hover {
       color: @link-color;
@@ -62,7 +63,7 @@
     &.ptr-not-found,
     &[class$="-not-found"] {
       color: inherit;
-      pointer: text;
+      cursor: text;
     }
     
     &.note-marker {
