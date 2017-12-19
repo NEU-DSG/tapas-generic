@@ -46,7 +46,7 @@ var Tapas = {};
       var coords = [e.clientX, e.clientY],
           aTarget = findATarget(ref);
       if ( isVerbose ) { 
-        console.log(aTarget);
+        //console.log(aTarget);
         console.log("aTarget length is "+ aTarget.length);
       }
       if ( aTarget.length !== 0 ) {
