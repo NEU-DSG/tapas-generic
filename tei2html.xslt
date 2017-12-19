@@ -269,7 +269,10 @@
   </xsl:template>
 
   <xd:doc>
-    <xd:desc>Except @xml:id, which becomes @id</xd:desc>
+    <xd:desc>@xml:id becomes @id. If the parent element needs an anchor to one or 
+      more pointing notes, a data attribute is created to hold references to those 
+      notes. This should only be used when the referencee doesn't point back to the 
+      referencer in a way this stylesheet can handle (e.g. @corresp isn't tested).</xd:desc>
   </xd:doc>
   <xsl:template match="@xml:id" mode="work">
     <!-- copy @xml:id to @id, which browsers use for internal links. -->
@@ -282,6 +285,45 @@
     <xsl:attribute name="data-tapas-xmlid">
       <xsl:value-of select="."/>
     </xsl:attribute>
+    <!-- Get anything that targets this identifier. -->
+    <xsl:variable name="referencedBySeq" select="key('localREFs',.)"/>
+    <xsl:if test="count($referencedBySeq) gt 0">
+      <!-- Are any referencing nodes <note>s? -->
+      <xsl:variable name="referencedByNotes" select="$referencedBySeq[parent::note]"/>
+      <!-- Does this element reference anything? (These will be handled elsewhere.) -->
+      <xsl:variable name="referencesSeq" as="item()*">
+        <xsl:variable name="tokens" 
+          select="if ( ../@ref or ../@target ) then 
+                    (../@ref | ../@target)/tokenize(.,'\s+') 
+                  else ()"/>
+        <xsl:variable name="allReferenced" as="item()*">
+          <xsl:variable name="distinctTokens" select="distinct-values($tokens[starts-with(.,'#')])"/>
+          <xsl:for-each select="$distinctTokens">
+            <xsl:copy-of select="key('IDs',.)"/>
+          </xsl:for-each>
+        </xsl:variable>
+        <xsl:copy-of select="$referencedByNotes except $allReferenced"/>
+      </xsl:variable>
+      <xsl:variable name="numTargets" select="count($referencesSeq)"/>
+      <!-- Create a data attribute if any notes reference this identifier (without 
+        being handled elsewhere). -->
+      <xsl:if test="$numTargets gt 0">
+        <!--<xsl:message select="concat(.,'—',$numTargets)"/>-->
+        <xsl:attribute name="data-tapas-intermediary-targets">
+          <xsl:for-each select="1 to $numTargets">
+            <xsl:variable name="index" select="."/>
+            <xsl:variable name="linkedNode" select="$referencesSeq[.]"/>
+            <xsl:variable name="idref" 
+              select="if ( $linkedNode/@xml:id ) then $linkedNode/@xml:id 
+                      else generate-id($linkedNode)"/>
+            <xsl:value-of select="concat('#',$idref)"/>
+            <xsl:if test="$index ne $numTargets">
+              <xsl:text> </xsl:text>
+            </xsl:if>
+          </xsl:for-each>
+        </xsl:attribute>
+      </xsl:if>
+    </xsl:if>
   </xsl:template>
   
   
