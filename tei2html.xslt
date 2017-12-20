@@ -528,97 +528,6 @@
       </xsl:if>
     </xsl:if>
   </xsl:template>
-  
-  <xd:doc>
-    <xd:desc>For a given token in a whitespace-separated list of pointers, provide 
-      linking functionality for the given element. If the token is considered 
-      'primary' (the first pointer), the wrapper element will display in 
-      intervention style as references to 'ography entries should. Subsequent tokens 
-      are currently (2017-12-19) discarded, but should display as notes with 
-      generated anchors.</xd:desc>
-    <xd:param name="token">The string representing a single pointer.</xd:param>
-    <xd:param name="attribute-name">The name of the attribute which led to this 
-      template being called. Optional.</xd:param>
-    <xd:param name="is-primary">A boolean value representing whether the input token 
-      is the first pointer in the sequence. The default is false.</xd:param>
-  </xd:doc>
-  <xsl:template name="link-ref-among-refs">
-    <xsl:param name="token" as="xs:string" required="yes"/>
-    <xsl:param name="attribute-name" select="''" as="xs:string"/>
-    <xsl:param name="is-primary" select="false()" as="xs:boolean"/>
-    <xsl:variable name="isContextAttr" select=". instance of attribute()" as="xs:boolean"/>
-    <xsl:variable name="ident" select="tps:generate-og-id($token)"/>
-    <xsl:variable name="gotoentry" select="$ogEntries[@id eq $ident] or $ident = $input//@xml:id"/>
-    <xsl:choose>
-      <xsl:when test="$is-primary">
-        <xsl:if test="$isContextAttr">
-          <xsl:attribute 
-            name="{ if ( $attribute-name ne '' ) then $attribute-name 
-                    else if ( $isContextAttr ) then local-name() 
-                    else 'ref' }" 
-            select="concat('#',$ident)"/>
-        </xsl:if>
-        <xsl:attribute name="data-tapas-gotoentry" select="$gotoentry"/>
-        <!-- If there *is* a valid 'ography entry and there is no user-supplied label, 
-          use a generated header. This template will create the content of an element, 
-          so it MUST be run after all other attributes have been added. -->
-        <xsl:if test="$gotoentry and parent::*[not(*) and not(text())]">
-          <xsl:variable name="ogMatch" as="node()" select="($ogEntries[@id eq $ident], key('IDs',$ident))[1]"/>
-          <xsl:variable name="heading">
-            <xsl:call-template name="get-entry-header">
-              <xsl:with-param name="element" select="$ogMatch"/>
-            </xsl:call-template>
-          </xsl:variable>
-          <xsl:value-of select="normalize-space($heading)"/>
-        </xsl:if>
-      </xsl:when>
-      <xsl:otherwise>
-        <!-- This is not the primary reference link, so we can't add any more attributes to the parent element. -->
-        <xsl:if test="$gotoentry">
-          <xsl:call-template name="generate-note-marker">
-            <xsl:with-param name="anchor-text" select="$token"/>
-            <xsl:with-param name="idref" select="$ident"/>
-            <xsl:with-param name="additional-classes" select="'misplaced-ref'"/>
-          </xsl:call-template>
-        </xsl:if>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-  
-  <xd:doc>
-    <xd:desc>For hidden data that should be used to populate a dialog box, generate 
-      a link to serve as an anchor to that information.</xd:desc>
-    <xd:param name="idref">An identifier reference which should point to the 
-      information to be placed in the dialog box.</xd:param>
-    <xd:param name="anchor-text">A human-readable label, used as the content of the 
-      anchor.</xd:param>
-    <xd:param name="additional-classes">A sequence of text classnames to be placed 
-      on the wrapper &lt;html:a&gt;. Optional.</xd:param>
-  </xd:doc>
-  <xsl:template name="generate-note-marker">
-    <xsl:param name="idref" as="xs:string" required="yes"/>
-    <xsl:param name="anchor-text" as="xs:string" required="yes"/>
-    <xsl:param name="additional-classes" as="xs:string*"/>
-    <xsl:variable name="classVal" 
-      select="string-join(('note-marker', $additional-classes),' ')"/>
-    <a class="{$classVal}">
-      <xsl:variable name="ID">
-        <!--<xsl:variable name="useID" 
-          select="if ( . instance of node() ) then 
-                    if ( exists(@xml:id) ) then 
-                      @xml:id 
-                    else generate-id()
-                  else ."/>-->
-        <xsl:call-template name="generate-unique-id">
-          <xsl:with-param name="base" select="$idref"/>
-        </xsl:call-template>
-      </xsl:variable>
-      <xsl:attribute name="href">
-        <xsl:value-of select="concat('#', $idref)"/>
-      </xsl:attribute>
-      <xsl:value-of select="$anchor-text"/>
-    </a>
-  </xsl:template>
 
   <xd:doc>
     <xd:desc>Add an attribute explaining list layout to the CSS</xd:desc>
@@ -1488,6 +1397,41 @@
     </title>
   </xsl:template>
   
+  <xd:doc>
+    <xd:desc>For hidden data that should be used to populate a dialog box, generate 
+      a link to serve as an anchor to that information.</xd:desc>
+    <xd:param name="idref">An identifier reference which should point to the 
+      information to be placed in the dialog box.</xd:param>
+    <xd:param name="anchor-text">A human-readable label, used as the content of the 
+      anchor.</xd:param>
+    <xd:param name="additional-classes">A sequence of text classnames to be placed 
+      on the wrapper &lt;html:a&gt;. Optional.</xd:param>
+  </xd:doc>
+  <xsl:template name="generate-note-marker">
+    <xsl:param name="idref" as="xs:string" required="yes"/>
+    <xsl:param name="anchor-text" as="xs:string" required="yes"/>
+    <xsl:param name="additional-classes" as="xs:string*"/>
+    <xsl:variable name="classVal" 
+      select="string-join(('note-marker', $additional-classes),' ')"/>
+    <a class="{$classVal}">
+      <xsl:variable name="ID">
+        <!--<xsl:variable name="useID" 
+          select="if ( . instance of node() ) then 
+                    if ( exists(@xml:id) ) then 
+                      @xml:id 
+                    else generate-id()
+                  else ."/>-->
+        <xsl:call-template name="generate-unique-id">
+          <xsl:with-param name="base" select="$idref"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:attribute name="href">
+        <xsl:value-of select="concat('#', $idref)"/>
+      </xsl:attribute>
+      <xsl:value-of select="$anchor-text"/>
+    </a>
+  </xsl:template>
+  
   <xsl:template name="generate-toolbox">
     <div id="tapasToolbox">
       <!--<div id="tapasToolbox-pb">
@@ -1547,6 +1491,62 @@
   <xsl:template name="grab-css">
     <xsl:param name="rendition-id"/>
     <xsl:value-of select="normalize-space(key('IDs',$rendition-id)/text())"/>
+  </xsl:template>
+  
+  <xd:doc>
+    <xd:desc>For a given token in a whitespace-separated list of pointers, provide 
+      linking functionality for the given element. If the token is considered 
+      'primary' (the first pointer), the wrapper element will display in 
+      intervention style as references to 'ography entries should. Subsequent tokens 
+      are currently (2017-12-19) discarded, but should display as notes with 
+      generated anchors.</xd:desc>
+    <xd:param name="token">The string representing a single pointer.</xd:param>
+    <xd:param name="attribute-name">The name of the attribute which led to this 
+      template being called. Optional.</xd:param>
+    <xd:param name="is-primary">A boolean value representing whether the input token 
+      is the first pointer in the sequence. The default is false.</xd:param>
+  </xd:doc>
+  <xsl:template name="link-ref-among-refs">
+    <xsl:param name="token" as="xs:string" required="yes"/>
+    <xsl:param name="attribute-name" select="''" as="xs:string"/>
+    <xsl:param name="is-primary" select="false()" as="xs:boolean"/>
+    <xsl:variable name="isContextAttr" select=". instance of attribute()" as="xs:boolean"/>
+    <xsl:variable name="ident" select="tps:generate-og-id($token)"/>
+    <xsl:variable name="gotoentry" select="$ogEntries[@id eq $ident] or $ident = $input//@xml:id"/>
+    <xsl:choose>
+      <xsl:when test="$is-primary">
+        <xsl:if test="$isContextAttr">
+          <xsl:attribute 
+            name="{ if ( $attribute-name ne '' ) then $attribute-name 
+                    else if ( $isContextAttr ) then local-name() 
+                    else 'ref' }" 
+            select="concat('#',$ident)"/>
+        </xsl:if>
+        <xsl:attribute name="data-tapas-gotoentry" select="$gotoentry"/>
+        <!-- If there *is* a valid 'ography entry and there is no user-supplied label, 
+          use a generated header. This template will create the content of an element, 
+          so it MUST be run after all other attributes have been added. -->
+        <xsl:if test="$gotoentry and parent::*[not(*) and not(text())]">
+          <xsl:variable name="ogMatch" as="node()" select="($ogEntries[@id eq $ident], key('IDs',$ident))[1]"/>
+          <xsl:variable name="heading">
+            <xsl:call-template name="get-entry-header">
+              <xsl:with-param name="element" select="$ogMatch"/>
+            </xsl:call-template>
+          </xsl:variable>
+          <xsl:value-of select="normalize-space($heading)"/>
+        </xsl:if>
+      </xsl:when>
+      <xsl:otherwise>
+        <!-- This is not the primary reference link, so we can't add any more attributes to the parent element. -->
+        <xsl:if test="$gotoentry">
+          <xsl:call-template name="generate-note-marker">
+            <xsl:with-param name="anchor-text" select="$token"/>
+            <xsl:with-param name="idref" select="$ident"/>
+            <xsl:with-param name="additional-classes" select="'misplaced-ref'"/>
+          </xsl:call-template>
+        </xsl:if>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
   <xsl:template name="rendition2style">
