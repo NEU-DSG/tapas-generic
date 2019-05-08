@@ -71,7 +71,7 @@
   <xsl:param name="view.diplo" select="concat($assets-base,'css/tapasGdiplo.css')"/>
   <xsl:param name="view.norma" select="concat($assets-base,'css/tapasGnormal.css')"/>
   <xsl:param name="jqueryUIcss"    select="concat($assets-base,'js/jquery-ui-1.12.1/jquery-ui.css')"/>
-  <xsl:param name="jqueryJS"   select="concat($assets-base,'js/jquery/jquery-3.2.1.min.js')"/>
+  <xsl:param name="jqueryJS"   select="concat($assets-base,'js/jquery/jquery-3.4.1.min.js')"/>
   <xsl:param name="jqueryUIJS" select="concat($assets-base,'js/jquery-ui-1.12.1/jquery-ui.min.js')"/>
   <xsl:param name="jqueryBlockUIJS" select="concat($assets-base,'js/jquery/plugins/jquery.blockUI.min.js')"/>
   <xsl:param name="contextualJS" select="concat($assets-base,'js/contextualItems.js')"/>
