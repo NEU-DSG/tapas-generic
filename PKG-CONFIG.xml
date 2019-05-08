@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../config.rnc" type="application/relax-ng-compact-syntax"?>
 <view_package xmlns="http://www.wheatoncollege.edu/TAPAS/1.0" 
-  version="1.4.4" xml:id="tapas-generic" dynamic="false" scope="file">
+  version="1.4.5" xml:id="tapas-generic" dynamic="false" scope="file">
   
   <human_name>TAPAS Generic</human_name>
   <description>A web-friendly, somewhat-generic view. Features include: pop-up notes
@@ -21,7 +21,7 @@
     <css_file>css/tapasGnormal.css</css_file>
   </css_files>
   <js_files>
-    <js_file>js/jquery/jquery-3.2.1.min.js</js_file>
+    <js_file>js/jquery/jquery-3.4.1.min.js</js_file>
     <js_file>js/jquery-ui-1.12.1/jquery-ui.min.js</js_file>
     <js_file>js/jquery/plugins/jquery.blockUI.min.js</js_file>
     <js_file>js/contextualItems.js</js_file>
