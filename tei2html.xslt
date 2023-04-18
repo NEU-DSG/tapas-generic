@@ -329,6 +329,16 @@
       <xsl:apply-templates select="@*|node()" mode="#current"/>
     </tei-title>
   </xsl:template>
+  
+  <xsl:template match="@style | @html:style" mode="work">
+    <xsl:variable name="result" select="normalize-space(.)"/>
+    <xsl:attribute name="style">
+      <xsl:value-of select="$result"/>
+      <xsl:if test="substring($result,string-length($result),1) ne ';'">
+        <xsl:text>; </xsl:text>
+      </xsl:if>
+    </xsl:attribute>
+  </xsl:template>
 
   <xd:doc>
     <xd:desc>Transforms each TEI <tt>&lt;ref></tt> or <tt>&lt;ptr></tt>
