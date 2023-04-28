@@ -326,11 +326,11 @@
   <xsl:template match="title" mode="work">
     <tei-title>
       <xsl:call-template name="addID"/>
-      <xsl:apply-templates select="@*|node()" mode="#current"/>
+      <xsl:apply-templates select="@* | node()" mode="#current"/>
     </tei-title>
   </xsl:template>
   
-  <xsl:template match="@style | @html:style" mode="work">
+  <xsl:template match="@style | @html:style" mode="work" priority="5">
     <xsl:variable name="result" select="normalize-space(.)"/>
     <xsl:attribute name="style">
       <xsl:value-of select="$result"/>
